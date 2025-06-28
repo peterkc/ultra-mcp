@@ -42,6 +42,62 @@ node dist/cli.js config
 npx -y ultra
 ```
 
+## CLI Commands
+
+The Ultra MCP CLI provides several commands:
+
+### Default Command - MCP Server
+When run without arguments, Ultra MCP starts as an MCP server using stdio protocol:
+```bash
+# Start MCP server (stdio protocol)
+npx -y ultra
+# or locally:
+node dist/cli.js
+```
+
+### config - Interactive Configuration
+Configure API keys interactively (similar to rclone):
+```bash
+npx -y ultra config
+# or locally:
+node dist/cli.js config
+```
+
+Features:
+- Interactive menu-driven interface
+- Configure OpenAI, Google Gemini, and Azure OpenAI API keys
+- View current configuration (with masked API keys)
+- Reset configuration
+- API keys are stored securely in your system's config directory
+
+### doctor - Health Check
+Check installation and configuration health:
+```bash
+npx -y ultra doctor
+# or locally:
+node dist/cli.js doctor
+
+# Test connections to configured providers
+npx -y ultra doctor --test
+```
+
+The doctor command checks:
+- Configuration file location and status
+- API key configuration for each provider
+- Provider availability
+- Connection testing (with --test flag)
+
+### chat - Interactive Chat
+Chat interactively with AI models:
+```bash
+npx -y ultra chat
+# or locally:
+node dist/cli.js chat
+
+# Specify model and provider
+npx -y ultra chat -m o3-mini -p openai
+```
+
 ## Configuration
 
 Ultra MCP uses the `conf` library to store configuration locally in your system's default config directory:
