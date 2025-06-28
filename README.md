@@ -10,8 +10,11 @@ This project is inspired by:
 
 ## Features
 
-- 🤖 **Multi-Model Support**: Integrate OpenAI, Google Gemini, and Azure AI models
+- 🤖 **Multi-Model Support**: Integrate OpenAI (O3), Google Gemini (2.5 Pro), and Azure AI models
 - 🔌 **MCP Protocol**: Standard Model Context Protocol interface
+- 🧠 **Deep Reasoning Tools**: Access O3 models for complex problem-solving
+- 🔍 **Investigation & Research**: Built-in tools for thorough investigation and research
+- 🌐 **Google Search Integration**: Gemini 2.5 Pro with real-time web search
 - ⚡ **Real-time Streaming**: Live model responses via Vercel AI SDK
 - 🔧 **Zero Config**: Interactive setup with smart defaults
 - 🔑 **Secure Configuration**: Local API key storage with `conf` library
@@ -86,6 +89,40 @@ Add to your Cursor MCP settings:
     }
   }
 }
+```
+
+## MCP Tools
+
+Ultra MCP provides powerful AI tools accessible through Claude Code and Cursor:
+
+### 🧠 Deep Reasoning (`deep-reasoning`)
+Leverage advanced AI models for complex problem-solving and analysis.
+- **Default**: O3-mini for OpenAI/Azure, Gemini 2.5 Pro with Google Search
+- **Use Cases**: Complex algorithms, architectural decisions, deep analysis
+
+### 🔍 Investigate (`investigate`)
+Thoroughly investigate topics with configurable depth levels.
+- **Depth Levels**: shallow, medium, deep
+- **Google Search**: Enabled by default for Gemini
+- **Use Cases**: Research topics, explore concepts, gather insights
+
+### 📚 Research (`research`)
+Conduct comprehensive research with multiple output formats.
+- **Output Formats**: summary, detailed, academic
+- **Use Cases**: Literature reviews, technology comparisons, documentation
+
+### 📋 List Models (`list-ai-models`)
+View all available AI models and their configuration status.
+
+### Example Usage
+
+```javascript
+// In Claude Code or Cursor with MCP
+await use_mcp_tool("ultra-mcp", "deep-reasoning", {
+  provider: "openai",
+  prompt: "Design a distributed caching system for microservices",
+  reasoningEffort: "high"
+});
 ```
 
 ## Development

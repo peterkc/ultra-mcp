@@ -4,12 +4,19 @@ import {
   ListToolsRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
 import { z } from "zod";
+import { ConfigManager } from "./config/manager.js";
+import { ProviderManager } from "./providers/manager.js";
+import { AIToolHandlers } from "./handlers/ai-tools.js";
 
 const EchoToolSchema = z.object({
   message: z.string().describe("The message to echo back"),
 });
 
 export function createServer() {
+  const configManager = new ConfigManager();
+  const providerManager = new ProviderManager(configManager);
+  const aiToolHandlers = new AIToolHandlers(providerManager);
+
   const server = new Server(
     {
       name: "ultra-mcp",
@@ -23,6 +30,8 @@ export function createServer() {
   );
 
   server.setRequestHandler(ListToolsRequestSchema, async () => {
+    const aiTools = aiToolHandlers.getToolDefinitions();
+    
     return {
       tools: [
         {
@@ -39,45 +48,69 @@ export function createServer() {
             required: ["message"],
           },
         },
+        ...aiTools,
       ],
     };
   });
 
   server.setRequestHandler(CallToolRequestSchema, async (request) => {
-    if (request.params.name === "echo") {
-      try {
-        const args = EchoToolSchema.parse(request.params.arguments);
-        
-        return {
-          content: [
-            {
-              type: "text",
-              text: `Echo: ${args.message}`,
-            },
-          ],
-        };
-      } catch (error) {
-        return {
-          content: [
-            {
-              type: "text",
-              text: `Error: Invalid arguments provided`,
-            },
-          ],
-          isError: true,
-        };
+    try {
+      switch (request.params.name) {
+        case "echo": {
+          const args = EchoToolSchema.parse(request.params.arguments);
+          return {
+            content: [
+              {
+                type: "text",
+                text: `Echo: ${args.message}`,
+              },
+            ],
+          };
+        }
+
+        case "deep-reasoning": {
+          const args = request.params.arguments || {};
+          return await aiToolHandlers.handleDeepReasoning(args as any);
+        }
+
+        case "investigate": {
+          const args = request.params.arguments || {};
+          return await aiToolHandlers.handleInvestigation(args as any);
+        }
+
+        case "research": {
+          const args = request.params.arguments || {};
+          return await aiToolHandlers.handleResearch(args as any);
+        }
+
+        case "list-ai-models": {
+          return await aiToolHandlers.handleListModels();
+        }
+
+        default:
+          return {
+            content: [
+              {
+                type: "text",
+                text: `Error: Unknown tool "${request.params.name}"`,
+              },
+            ],
+            isError: true,
+          };
       }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
+      
+      return {
+        content: [
+          {
+            type: "text",
+            text: `Error: ${errorMessage}`,
+          },
+        ],
+        isError: true,
+      };
     }
-    
-    return {
-      content: [
-        {
-          type: "text",
-          text: `Error: Unknown tool "${request.params.name}"`,
-        },
-      ],
-      isError: true,
-    };
   });
 
   return server;

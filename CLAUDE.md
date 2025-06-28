@@ -87,6 +87,67 @@ This MCP server acts as a bridge between multiple AI model providers and MCP cli
 - `src/providers/`: Model provider implementations (OpenAI, Gemini, Azure)
 - `src/utils/`: Shared utilities for streaming, error handling, etc.
 
+## MCP Tools
+
+Ultra MCP exposes the following AI-powered tools through the Model Context Protocol:
+
+### 1. `deep-reasoning`
+Use advanced AI models for deep reasoning and complex problem-solving.
+- **Default Models**: 
+  - OpenAI/Azure: O3-mini (optimized for reasoning)
+  - Gemini: Gemini 2.5 Pro with Google Search enabled
+- **Parameters**:
+  - `provider`: "openai", "gemini", or "azure"
+  - `prompt`: The complex question or problem
+  - `model`: (optional) Specific model to use
+  - `reasoningEffort`: "low", "medium", "high" (for O3 models)
+  - `enableSearch`: Enable Google Search (Gemini only)
+
+### 2. `investigate`
+Investigate topics thoroughly with configurable depth.
+- **Parameters**:
+  - `provider`: "openai", "gemini", or "azure"
+  - `topic`: The topic to investigate
+  - `depth`: "shallow", "medium", "deep"
+  - `enableSearch`: Enable web search (Gemini only)
+
+### 3. `research`
+Conduct comprehensive research with multiple output formats.
+- **Parameters**:
+  - `provider`: "openai", "gemini", or "azure"
+  - `query`: Research query or topic
+  - `outputFormat`: "summary", "detailed", "academic"
+  - `sources`: (optional) Specific sources to consider
+
+### 4. `list-ai-models`
+List all available AI models and their configuration status.
+
+### Example Usage in Claude Code
+
+```typescript
+// Deep reasoning with O3
+await use_mcp_tool("ultra-mcp", "deep-reasoning", {
+  provider: "openai",
+  prompt: "Explain the implications of quantum computing on cryptography",
+  reasoningEffort: "high"
+});
+
+// Investigation with Gemini and Google Search
+await use_mcp_tool("ultra-mcp", "investigate", {
+  provider: "gemini",
+  topic: "Latest developments in AI safety research",
+  depth: "deep",
+  enableSearch: true
+});
+
+// Academic research
+await use_mcp_tool("ultra-mcp", "research", {
+  provider: "azure",
+  query: "Impact of transformer architectures on NLP",
+  outputFormat: "academic"
+});
+```
+
 ### MCP Implementation Notes
 
 - Use the `@modelcontextprotocol/sdk` package for MCP server implementation

@@ -10,7 +10,7 @@ describe('Ultra MCP Server', () => {
   });
 
   describe('ListTools', () => {
-    it('should return the echo tool', async () => {
+    it('should return all available tools including echo', async () => {
       const request = {
         method: 'tools/list' as const,
         params: {},
@@ -21,23 +21,32 @@ describe('Ultra MCP Server', () => {
       const handler = handlers.get('tools/list');
       const response = await handler?.(request, {});
 
-      expect(response).toEqual({
-        tools: [
-          {
-            name: 'echo',
-            description: 'Echo back the provided message',
-            inputSchema: {
-              type: 'object',
-              properties: {
-                message: {
-                  type: 'string',
-                  description: 'The message to echo back',
-                },
-              },
-              required: ['message'],
+      expect(response.tools).toBeDefined();
+      expect(response.tools.length).toBeGreaterThan(1);
+      
+      // Check that echo tool exists
+      const echoTool = response.tools.find((tool: any) => tool.name === 'echo');
+      expect(echoTool).toBeDefined();
+      expect(echoTool).toEqual({
+        name: 'echo',
+        description: 'Echo back the provided message',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            message: {
+              type: 'string',
+              description: 'The message to echo back',
             },
           },
-        ],
+          required: ['message'],
+        },
+      });
+      
+      // Check that AI tools exist
+      const aiTools = ['deep-reasoning', 'investigate', 'research', 'list-ai-models'];
+      aiTools.forEach(toolName => {
+        const tool = response.tools.find((t: any) => t.name === toolName);
+        expect(tool).toBeDefined();
       });
     });
   });
@@ -84,15 +93,10 @@ describe('Ultra MCP Server', () => {
       const handler = handlers.get('tools/call');
       const response = await handler?.(request, {});
 
-      expect(response).toEqual({
-        content: [
-          {
-            type: 'text',
-            text: 'Error: Invalid arguments provided',
-          },
-        ],
-        isError: true,
-      });
+      expect(response.isError).toBe(true);
+      expect(response.content).toBeDefined();
+      expect(response.content[0].type).toBe('text');
+      expect(response.content[0].text).toContain('Error');
     });
 
     it('should handle unknown tools', async () => {
@@ -135,8 +139,13 @@ describe('Ultra MCP Server', () => {
       
       // Verify it returns tools when called
       const result = await listHandler({ method: 'tools/list', params: {} }, {});
-      expect(result.tools).toHaveLength(1);
-      expect(result.tools[0].name).toBe('echo');
+      expect(result.tools).toBeDefined();
+      expect(result.tools.length).toBe(5); // echo + 4 AI tools
+      
+      // Verify echo tool is included
+      const echoTool = result.tools.find((t: any) => t.name === 'echo');
+      expect(echoTool).toBeDefined();
+      expect(echoTool.name).toBe('echo');
     });
   });
 });
