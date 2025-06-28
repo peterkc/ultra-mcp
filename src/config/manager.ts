@@ -1,4 +1,4 @@
-import { ConfigSchema, Config, defaultConfig } from './schema.js';
+import { ConfigSchema, Config, defaultConfig } from './schema';
 
 export type { Config };
 

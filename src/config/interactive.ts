@@ -1,8 +1,8 @@
 import prompts from 'prompts';
-import { ConfigManager } from './manager.js';
+import chalk from 'chalk';
+import { ConfigManager } from './manager';
 
 export async function runInteractiveConfig(): Promise<void> {
-  const chalk = (await import('chalk')).default;
   const configManager = new ConfigManager();
   const currentConfig = await configManager.getConfig();
 

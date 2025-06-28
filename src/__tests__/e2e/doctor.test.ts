@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { runDoctorWithDeps } from '../../commands/doctor-injectable.js';
-import { createMockContext, setupDefaultMocks } from '../mocks/index.js';
+import { runDoctorWithDeps } from '../../commands/doctor-injectable';
+import { createMockContext, setupDefaultMocks } from '../mocks/index';
 
 describe('Doctor Command E2E', () => {
   const mockConsole = {

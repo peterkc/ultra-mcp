@@ -1,6 +1,6 @@
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { createServer } from "./server.js";
-import { ConfigManager } from "./config/manager.js";
+import { createServer } from "./server";
+import { ConfigManager } from "./config/manager";
 
 export async function startServer(): Promise<void> {
   // Load configuration

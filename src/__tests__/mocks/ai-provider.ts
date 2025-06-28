@@ -1,4 +1,4 @@
-import { AIProvider, AIRequest, AIResponse } from '../../providers/types.js';
+import { AIProvider, AIRequest, AIResponse } from '../../providers/types';
 
 export class MockAIProvider implements AIProvider {
   name: string;

@@ -1,8 +1,8 @@
 import chalk from 'chalk';
 import * as readline from 'readline';
-import { ConfigManager } from '../config/manager.js';
-import { ProviderManager } from '../providers/manager.js';
-import { AIProvider, AIRequest } from '../providers/types.js';
+import { ConfigManager } from '../config/manager';
+import { ProviderManager } from '../providers/manager';
+import { AIProvider, AIRequest } from '../providers/types';
 
 interface ChatOptions {
   model?: string;

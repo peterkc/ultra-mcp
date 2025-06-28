@@ -1,7 +1,7 @@
-import { ProviderManager } from '../../providers/manager.js';
-import { AIProvider } from '../../providers/types.js';
-import { MockAIProvider } from './ai-provider.js';
-import { MockConfigManager } from './config-manager.js';
+import { ProviderManager } from '../../providers/manager';
+import { AIProvider } from '../../providers/types';
+import { MockAIProvider } from './ai-provider';
+import { MockConfigManager } from './config-manager';
 
 export class MockProviderManager extends ProviderManager {
   private mockProviders: Map<string, AIProvider> = new Map();

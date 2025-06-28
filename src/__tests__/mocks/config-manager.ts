@@ -1,5 +1,5 @@
-import { ConfigManager } from '../../config/manager.js';
-import type { Config } from '../../config/manager.js';
+import { ConfigManager } from '../../config/manager';
+import type { Config } from '../../config/manager';
 
 export class MockConfigManager extends ConfigManager {
   private mockConfig: Config = {};

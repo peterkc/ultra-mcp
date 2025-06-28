@@ -4,9 +4,9 @@ import {
   ListToolsRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
 import { z } from "zod";
-import { ConfigManager } from "./config/manager.js";
-import { ProviderManager } from "./providers/manager.js";
-import { AIToolHandlers } from "./handlers/ai-tools.js";
+import { ConfigManager } from "./config/manager";
+import { ProviderManager } from "./providers/manager";
+import { AIToolHandlers } from "./handlers/ai-tools";
 
 const EchoToolSchema = z.object({
   message: z.string().describe("The message to echo back"),

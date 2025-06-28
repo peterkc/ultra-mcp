@@ -1,8 +1,8 @@
-import { AIProvider } from "./types.js";
-import { OpenAIProvider } from "./openai.js";
-import { GeminiProvider } from "./gemini.js";
-import { AzureOpenAIProvider } from "./azure.js";
-import { ConfigManager } from "../config/manager.js";
+import { AIProvider } from "./types";
+import { OpenAIProvider } from "./openai";
+import { GeminiProvider } from "./gemini";
+import { AzureOpenAIProvider } from "./azure";
+import { ConfigManager } from "../config/manager";
 
 export class ProviderManager {
   private providers: Map<string, AIProvider> = new Map();

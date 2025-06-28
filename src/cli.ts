@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
 import { program } from 'commander';
-import { runInteractiveConfig } from './config/interactive.js';
-import { startServer } from './start-server.js';
-import { runDoctor } from './commands/doctor.js';
-import { runChat } from './commands/chat.js';
+import { runInteractiveConfig } from './config/interactive';
+import { startServer } from './start-server';
+import { runDoctor } from './commands/doctor';
+import { runChat } from './commands/chat';
 
 program
   .name('ultra-mcp')

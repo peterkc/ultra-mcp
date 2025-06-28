@@ -1,10 +1,10 @@
-export { MockConfigManager } from './config-manager.js';
-export { MockAIProvider } from './ai-provider.js';
-export { MockProviderManager } from './provider-manager.js';
+export { MockConfigManager } from './config-manager';
+export { MockAIProvider } from './ai-provider';
+export { MockProviderManager } from './provider-manager';
 
-import { MockConfigManager } from './config-manager.js';
-import { MockProviderManager } from './provider-manager.js';
-import type { Config } from '../../config/manager.js';
+import { MockConfigManager } from './config-manager';
+import { MockProviderManager } from './provider-manager';
+import type { Config } from '../../config/manager';
 
 export interface MockContext {
   configManager: MockConfigManager;

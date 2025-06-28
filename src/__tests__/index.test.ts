@@ -3,7 +3,7 @@ import { startServer } from '../start-server';
 import { ConfigManager } from '../config/manager';
 
 // Mock dependencies
-vi.mock('@modelcontextprotocol/sdk/server/stdio.js', () => ({
+vi.mock('@modelcontextprotocol/sdk/server/stdio', () => ({
   StdioServerTransport: vi.fn().mockImplementation(() => ({
     start: vi.fn().mockResolvedValue(undefined),
     send: vi.fn().mockResolvedValue(undefined),
@@ -33,7 +33,7 @@ describe('Server Startup', () => {
   });
 
   it('should load configuration and set environment variables', async () => {
-    const { createServer } = await import('../server.js');
+    const { createServer } = await import('../server');
     const mockServer = {
       connect: vi.fn().mockResolvedValue(undefined),
     };
@@ -66,7 +66,7 @@ describe('Server Startup', () => {
       azure: { apiKey: undefined, endpoint: undefined },
     });
 
-    const { createServer } = await import('../server.js');
+    const { createServer } = await import('../server');
     const mockServer = {
       connect: vi.fn().mockResolvedValue(undefined),
     };

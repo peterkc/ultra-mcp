@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { runChatWithDeps } from '../../commands/chat-injectable.js';
-import { createMockContext, setupDefaultMocks } from '../mocks/index.js';
-import { MockAIProvider } from '../mocks/ai-provider.js';
+import { runChatWithDeps } from '../../commands/chat-injectable';
+import { createMockContext, setupDefaultMocks } from '../mocks/index';
+import { MockAIProvider } from '../mocks/ai-provider';
 import { Readable, Writable } from 'stream';
 import * as readline from 'readline';
 

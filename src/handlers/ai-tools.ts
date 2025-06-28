@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { ProviderManager } from "../providers/manager.js";
-import { AIRequestSchema } from "../providers/types.js";
+import { ProviderManager } from "../providers/manager";
+import { AIRequestSchema } from "../providers/types";
 
 // Schema for the deep-reasoning tool
 const DeepReasoningSchema = z.object({

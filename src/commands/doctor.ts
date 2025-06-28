@@ -1,4 +1,4 @@
-import { runDoctorWithDeps } from './doctor-injectable.js';
+import { runDoctorWithDeps } from './doctor-injectable';
 
 interface DoctorOptions {
   test?: boolean;

@@ -1,4 +1,4 @@
-import { runChatWithDeps } from './chat-injectable.js';
+import { runChatWithDeps } from './chat-injectable';
 
 interface ChatOptions {
   model?: string;

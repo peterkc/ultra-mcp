@@ -1,6 +1,6 @@
 import chalk from 'chalk';
-import { ConfigManager } from '../config/manager.js';
-import { ProviderManager } from '../providers/manager.js';
+import { ConfigManager } from '../config/manager';
+import { ProviderManager } from '../providers/manager';
 
 interface DoctorOptions {
   test?: boolean;

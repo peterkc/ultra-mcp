@@ -1,7 +1,7 @@
 import { createAzure } from "@ai-sdk/azure";
 import { generateText, streamText } from "ai";
-import { AIProvider, AIRequest, AIResponse } from "./types.js";
-import { ConfigManager } from "../config/manager.js";
+import { AIProvider, AIRequest, AIResponse } from "./types";
+import { ConfigManager } from "../config/manager";
 
 export class AzureOpenAIProvider implements AIProvider {
   name = "azure";
