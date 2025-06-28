@@ -31,6 +31,14 @@
   "author": "Mike Chong <oss@realmikechong.com>",
   "license": "MIT",
   "description": "Ultra MCP, a MCP server for using OpenAI and Gemini Models, and Gemini CLI with a single MCP. Use node.js, and Vercel AI SDK",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RealMikeChong/ultra-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/RealMikeChong/ultra-mcp/issues"
+  },
+  "homepage": "https://github.com/RealMikeChong/ultra-mcp#readme",
   "devDependencies": {
     "@types/node": "^22.15.34",
     "@types/prompts": "^2.4.9",
