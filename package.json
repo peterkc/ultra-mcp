@@ -1,11 +1,11 @@
 {
-  "name": "infinite-gauntlet-mcp",
+  "name": "ultra-mcp",
   "version": "1.0.0",
   "main": "src/index.ts",
   "keywords": [],
   "author": "Mike Chong <oss@realmikechong.com>",
   "license": "MIT",
-  "description": "Infinite Gauntlet MCP, a MCP server for using OpenAI and Gemini Models with a single MCP",
+  "description": "Ultra MCP, a MCP server for using OpenAI and Gemini Models with a single MCP",
   "devDependencies": {
     "@types/node": "^22.10.1",
     "typescript": "^5.7.3"
