@@ -5,11 +5,22 @@ import { runInteractiveConfig } from './config/interactive';
 import { startServer } from './start-server';
 import { runDoctor } from './commands/doctor';
 import { runChat } from './commands/chat';
+import { readFileSync } from 'fs';
+import { join } from 'path';
+
+// Read version from package.json
+let version = '0.1.0'; // fallback
+try {
+  const packageJson = JSON.parse(readFileSync(join(__dirname, '../package.json'), 'utf-8'));
+  version = packageJson.version;
+} catch {
+  // Use fallback version
+}
 
 program
   .name('ultra-mcp')
   .description('Ultra MCP - Model Context Protocol server for OpenAI and Gemini')
-  .version('1.0.0');
+  .version(version);
 
 program
   .command('config')
