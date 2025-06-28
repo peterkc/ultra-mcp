@@ -208,6 +208,16 @@ MIT License - see [LICENSE](LICENSE) file for details.
 - **Anthropic** for the [Model Context Protocol](https://modelcontextprotocol.io/)
 - **Vercel** for the excellent [AI SDK](https://sdk.vercel.ai/)
 
+## About the Author
+
+👋 **Mike Chong** - Building tools to amplify human potential through AI.
+
+As one of the earliest **users** of GitHub Copilot (personally invited by Nat Friedman, former GitHub CEO), I've witnessed firsthand how AI-assisted development can transform the way we build software. My journey as a former engineer on **Outlook iOS/Android** taught me the importance of creating tools that genuinely improve people's daily lives.
+
+**Ultra MCP** represents my vision of democratizing access to the best AI models, making cutting-edge AI capabilities accessible to every developer through a unified, simple interface. I believe that by removing barriers between developers and AI models, we can accelerate innovation and create a better world for everyone.
+
+*"The future belongs to those who can seamlessly orchestrate human creativity with AI capabilities."*
+
 ## Links
 
 - [Model Context Protocol](https://modelcontextprotocol.io/)
