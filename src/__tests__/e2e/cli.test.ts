@@ -27,6 +27,11 @@ describe('CLI E2E Tests', () => {
         stderr += data.toString();
       });
 
+      proc.on('error', (error) => {
+        console.error('Process error:', error);
+        resolve({ stdout, stderr: stderr + error.message, code: 1 });
+      });
+
       proc.on('close', (code) => {
         resolve({ stdout, stderr, code });
       });
@@ -39,7 +44,11 @@ describe('CLI E2E Tests', () => {
   }
 
   it('should show help when --help is passed', async () => {
-    const { stdout, code } = await runCLI(['--help']);
+    const { stdout, stderr, code } = await runCLI(['--help']);
+    
+    if (stderr) {
+      console.error('CLI stderr:', stderr);
+    }
     
     expect(code).toBe(0);
     expect(stdout).toContain('Ultra MCP - Model Context Protocol server');

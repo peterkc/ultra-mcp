@@ -9,12 +9,13 @@
     "dist/"
   ],
   "scripts": {
-    "build": "tsup",
+    "build": "tsup && chmod +x dist/cli.js",
     "dev": "tsup --watch",
     "build:tsc": "tsc --noEmit",
-    "test": "vitest run",
+    "test": "vitest run --exclude '**/e2e/**'",
+    "test:all": "vitest run",
     "test:ui": "vitest --ui",
-    "test:coverage": "vitest --coverage",
+    "test:coverage": "vitest --coverage --exclude '**/e2e/**'",
     "test:e2e": "vitest run src/__tests__/e2e",
     "prepublishOnly": "npm run build"
   },
