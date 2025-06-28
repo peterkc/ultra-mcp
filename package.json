@@ -5,7 +5,7 @@
   "keywords": [],
   "author": "Mike Chong <oss@realmikechong.com>",
   "license": "MIT",
-  "description": "Ultra MCP, a MCP server for using OpenAI and Gemini Models with a single MCP",
+  "description": "Ultra MCP, a MCP server for using OpenAI and Gemini Models with a single MCP. Use node.js, and Vercel AI SDK",
   "devDependencies": {
     "@types/node": "^22.10.1",
     "typescript": "^5.7.3"
