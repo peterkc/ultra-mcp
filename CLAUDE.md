@@ -178,6 +178,59 @@ Conduct comprehensive research with multiple output formats.
 ### 4. `list-ai-models`
 List all available AI models and their configuration status.
 
+## Zen-Inspired Simplified Tools
+
+Ultra MCP includes 5 simplified tools inspired by zen-mcp-server but designed for ease of use:
+
+### 5. `analyze-code`
+Analyze code for architecture, performance, security, or quality issues.
+- **Parameters**:
+  - `task`: What to analyze (required)
+  - `files`: File paths to analyze (optional)
+  - `focus`: "architecture", "performance", "security", "quality", "all" (default: "all")
+  - `provider`: "openai", "gemini", "azure" (default: "gemini")
+
+### 6. `review-code`
+Review code for bugs, security issues, performance, or style problems.
+- **Parameters**:
+  - `task`: What to review (required)
+  - `files`: File paths to review (optional)
+  - `focus`: "bugs", "security", "performance", "style", "all" (default: "all")
+  - `provider`: "openai", "gemini", "azure" (default: "openai")
+
+### 7. `debug-issue`
+Debug technical issues with systematic problem-solving approach.
+- **Parameters**:
+  - `task`: What to debug (required)
+  - `files`: Relevant file paths (optional)
+  - `symptoms`: Error symptoms or behavior observed (optional)
+  - `provider`: "openai", "gemini", "azure" (default: "openai")
+
+### 8. `plan-feature`
+Plan feature implementation with step-by-step approach.
+- **Parameters**:
+  - `task`: What to plan (required)
+  - `requirements`: Specific requirements or constraints (optional)
+  - `scope`: "minimal", "standard", "comprehensive" (default: "standard")
+  - `provider`: "openai", "gemini", "azure" (default: "gemini")
+
+### 9. `generate-docs`
+Generate documentation in various formats.
+- **Parameters**:
+  - `task`: What to document (required)
+  - `files`: File paths to document (optional)
+  - `format`: "markdown", "comments", "api-docs", "readme" (default: "markdown")
+  - `provider`: "openai", "gemini", "azure" (default: "gemini")
+
+### Tool Design Philosophy
+
+These zen-inspired tools follow simplified design principles:
+- **Maximum 4 parameters** (vs zen's 10-15 parameters)
+- **Smart defaults** for provider and model selection
+- **Single required parameter** (`task`) for ease of use
+- **Consistent output format** across all tools
+- **Optional file integration** without mandatory specification
+
 ### MCP Implementation Notes
 
 - Use the `@modelcontextprotocol/sdk` package for MCP server implementation

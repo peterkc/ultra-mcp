@@ -87,6 +87,32 @@ export function createServer() {
           return await aiToolHandlers.handleListModels();
         }
 
+        // Zen-inspired simplified tools
+        case "analyze-code": {
+          const args = request.params.arguments || {};
+          return await aiToolHandlers.handleAnalyzeCode(args as any);
+        }
+
+        case "review-code": {
+          const args = request.params.arguments || {};
+          return await aiToolHandlers.handleReviewCode(args as any);
+        }
+
+        case "debug-issue": {
+          const args = request.params.arguments || {};
+          return await aiToolHandlers.handleDebugIssue(args as any);
+        }
+
+        case "plan-feature": {
+          const args = request.params.arguments || {};
+          return await aiToolHandlers.handlePlanFeature(args as any);
+        }
+
+        case "generate-docs": {
+          const args = request.params.arguments || {};
+          return await aiToolHandlers.handleGenerateDocs(args as any);
+        }
+
         default:
           return {
             content: [
