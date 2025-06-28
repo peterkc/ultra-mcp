@@ -86,3 +86,9 @@ When implementing, the MCP server should be configured in Claude Code or Cursor'
   }
 }
 ```
+
+## Coding Guide
+
+1. Be a good TypeScript citizen, DO NOT USE `as any`. Find good typing when needed.
+2. Run `npm run lint` after each code iteration. Fix any lint errors if any.
+3. Have good unit test coverage. For 3rd party dependencies which are hard to test, mock them. But don't write test for test. Just need good coverage for complicated logic.
