@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { createServer } from '../server';
-import type { CallToolRequest, ListToolsRequest } from '@modelcontextprotocol/sdk/types';
+import type { CallToolRequest, ListToolsRequest } from '@modelcontextprotocol/sdk/types.js';
 
 describe('Ultra MCP Server', () => {
   let server: ReturnType<typeof createServer>;
