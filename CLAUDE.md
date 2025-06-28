@@ -13,13 +13,19 @@ This is an MCP (Model Context Protocol) server called "Ultra MCP" that exposes O
 npm install
 
 # Build TypeScript
-npx tsc
+npm run build
 
-# Run the MCP server (after building)
+# Run the MCP server locally (after building)
 node dist/index.js
 
 # Development mode with TypeScript watch
-npx tsc --watch
+npm run dev
+
+# Test with MCP Inspector
+npx @modelcontextprotocol/inspector node dist/index.js
+
+# Run via npx (after publishing)
+npx -y ultra-mcp
 ```
 
 ## Architecture
