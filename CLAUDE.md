@@ -98,6 +98,21 @@ node dist/cli.js chat
 npx -y ultra chat -m o3-mini -p openai
 ```
 
+### install - Install for Claude Code
+Install Ultra MCP as an MCP server for Claude Code:
+```bash
+npx -y ultra install
+# or locally:
+node dist/cli.js install
+```
+
+Features:
+- Automatic detection of Claude Code installation
+- Interactive scope selection (user or project)
+- Verifies API key configuration
+- Provides manual installation instructions if needed
+- Uses `claude mcp add` command internally
+
 ## Configuration
 
 Ultra MCP uses the `conf` library to store configuration locally in your system's default config directory:

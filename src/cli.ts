@@ -5,6 +5,7 @@ import { runInteractiveConfig } from './config/interactive';
 import { startServer } from './start-server';
 import { runDoctor } from './commands/doctor';
 import { runChat } from './commands/chat';
+import { runInstall } from './commands/install';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 
@@ -58,6 +59,18 @@ program
       await runChat(options);
     } catch (error) {
       console.error('Chat error:', error);
+      process.exit(1);
+    }
+  });
+
+program
+  .command('install')
+  .description('Install Ultra MCP for Claude Code')
+  .action(async () => {
+    try {
+      await runInstall();
+    } catch (error) {
+      console.error('Install error:', error);
       process.exit(1);
     }
   });

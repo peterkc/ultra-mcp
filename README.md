@@ -59,6 +59,21 @@ node dist/cli.js
 
 ### Integration with Claude Code
 
+#### Automatic Installation (Recommended)
+
+```bash
+# Install Ultra MCP for Claude Code
+npx -y ultra install
+```
+
+This command will:
+- Detect Claude Code installation
+- Add Ultra MCP as an MCP server
+- Configure for user or project scope
+- Verify API key configuration
+
+#### Manual Installation
+
 Add to your Claude Code settings:
 
 ```json
