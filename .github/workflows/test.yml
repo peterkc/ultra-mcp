@@ -17,29 +17,28 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Install pnpm
+      uses: pnpm/action-setup@v4
+      with:
+        version: 10
+
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
-        cache: 'npm'
+        cache: 'pnpm'
 
     - name: Install dependencies
-      run: |
-        if npm ci; then
-          echo "npm ci succeeded"
-        else
-          echo "npm ci failed, running npm install to fix lock file"
-          npm install
-        fi
+      run: pnpm install --frozen-lockfile
 
     - name: Build project
-      run: npm run build
+      run: pnpm run build
 
     - name: Run tests
-      run: npm test
+      run: pnpm test
 
     - name: Run tests with coverage
-      run: npm run test:coverage
+      run: pnpm run test:coverage
       if: matrix.node-version == '20.x'
 
     - name: Upload coverage reports
@@ -60,26 +59,25 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Install pnpm
+      uses: pnpm/action-setup@v4
+      with:
+        version: 10
+
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
-        cache: 'npm'
+        cache: 'pnpm'
 
     - name: Install dependencies
-      run: |
-        if npm ci; then
-          echo "npm ci succeeded"
-        else
-          echo "npm ci failed, running npm install to fix lock file"
-          npm install
-        fi
+      run: pnpm install --frozen-lockfile
 
     - name: Build project
-      run: npm run build
+      run: pnpm run build
 
     - name: Run E2E tests
-      run: npm run test:e2e
+      run: pnpm run test:e2e
       env:
         # Use mock API keys for E2E tests
         OPENAI_API_KEY: mock-openai-key
