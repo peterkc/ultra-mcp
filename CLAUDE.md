@@ -148,3 +148,4 @@ Or if installed globally via npm:
 1. Be a good TypeScript citizen, DO NOT USE `as any`. Find good typing when needed.
 2. Run `npm run lint` after each code iteration. Fix any lint errors if any.
 3. Have good unit test coverage. For 3rd party dependencies which are hard to test, mock them. But don't write test for test. Just need good coverage for complicated logic.
+4. Do not use `as any` unless you don't have any better way to do that. For Zod to TS interface conversion if you cannot do it, define TS shadow types.
