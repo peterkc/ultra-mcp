@@ -1,8 +1,8 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { spawn } from 'child_process';
-import * as path from 'path';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { startServer } from '../start-server';
+import { ConfigManager } from '../config/manager';
 
-// Mock the stdio transport
+// Mock dependencies
 vi.mock('@modelcontextprotocol/sdk/server/stdio.js', () => ({
   StdioServerTransport: vi.fn().mockImplementation(() => ({
     start: vi.fn().mockResolvedValue(undefined),
@@ -11,52 +11,69 @@ vi.mock('@modelcontextprotocol/sdk/server/stdio.js', () => ({
   })),
 }));
 
-describe('MCP Server Main Entry', () => {
+vi.mock('../config/manager');
+vi.mock('../server');
+
+describe('Server Startup', () => {
+  let mockConfigManager: any;
+
   beforeEach(() => {
     vi.clearAllMocks();
+    
+    // Setup mock ConfigManager
+    mockConfigManager = {
+      getConfig: vi.fn().mockResolvedValue({
+        openai: { apiKey: 'test-openai-key' },
+        google: { apiKey: 'test-google-key' },
+        azure: { apiKey: 'test-azure-key', endpoint: 'https://test.azure.com' },
+      }),
+    };
+    
+    (ConfigManager as any).mockImplementation(() => mockConfigManager);
   });
 
-  afterEach(() => {
-    vi.restoreAllMocks();
-  });
-
-  it('should start the server without errors', async () => {
-    // Import after mocks are set up
-    const { StdioServerTransport } = await import('@modelcontextprotocol/sdk/server/stdio.js');
+  it('should load configuration and set environment variables', async () => {
     const { createServer } = await import('../server.js');
+    const mockServer = {
+      connect: vi.fn().mockResolvedValue(undefined),
+    };
+    (createServer as any).mockReturnValue(mockServer);
 
-    const mockTransport = new StdioServerTransport();
-    const server = createServer();
-
-    // Mock the connect method
-    server.connect = vi.fn().mockResolvedValue(undefined);
-
-    // Run the main logic
-    await server.connect(mockTransport);
-
-    expect(server.connect).toHaveBeenCalledWith(mockTransport);
-    expect(StdioServerTransport).toHaveBeenCalled();
-  });
-
-  it('should log startup message', async () => {
     const mockConsoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
 
-    // Import after mocks are set up
-    const { StdioServerTransport } = await import('@modelcontextprotocol/sdk/server/stdio.js');
-    const { createServer } = await import('../server.js');
+    await startServer();
 
-    const mockTransport = new StdioServerTransport();
-    const server = createServer();
+    // Check that config was loaded
+    expect(mockConfigManager.getConfig).toHaveBeenCalled();
 
-    // Mock the connect method
-    server.connect = vi.fn().mockResolvedValue(undefined);
+    // Check that environment variables were set
+    expect(process.env.OPENAI_API_KEY).toBe('test-openai-key');
+    expect(process.env.GOOGLE_API_KEY).toBe('test-google-key');
+    expect(process.env.AZURE_API_KEY).toBe('test-azure-key');
+    expect(process.env.AZURE_ENDPOINT).toBe('https://test.azure.com');
 
-    // Simulate the main function
-    await server.connect(mockTransport);
-    console.error("Ultra MCP Server running on stdio");
-
+    // Check that server was started
+    expect(mockServer.connect).toHaveBeenCalled();
     expect(mockConsoleError).toHaveBeenCalledWith("Ultra MCP Server running on stdio");
-    
+
     mockConsoleError.mockRestore();
+  });
+
+  it('should start server even without API keys', async () => {
+    mockConfigManager.getConfig.mockResolvedValue({
+      openai: { apiKey: undefined },
+      google: { apiKey: undefined },
+      azure: { apiKey: undefined, endpoint: undefined },
+    });
+
+    const { createServer } = await import('../server.js');
+    const mockServer = {
+      connect: vi.fn().mockResolvedValue(undefined),
+    };
+    (createServer as any).mockReturnValue(mockServer);
+
+    await startServer();
+
+    expect(mockServer.connect).toHaveBeenCalled();
   });
 });

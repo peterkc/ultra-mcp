@@ -1,17 +1,4 @@
-#!/usr/bin/env node
-
-import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { createServer } from "./server.js";
-
-async function main() {
-  const server = createServer();
-  const transport = new StdioServerTransport();
-  await server.connect(transport);
-  
-  console.error("Ultra MCP Server running on stdio");
-}
-
-main().catch((error) => {
-  console.error("Server error:", error);
-  process.exit(1);
-});
+// Re-export for library usage
+export { createServer } from "./server.js";
+export { ConfigManager } from "./config/manager.js";
+export { ConfigSchema, type Config } from "./config/schema.js";

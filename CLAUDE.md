@@ -16,17 +16,59 @@ npm install
 npm run build
 
 # Run the MCP server locally (after building)
-node dist/index.js
+node dist/cli.js
 
 # Development mode with TypeScript watch
 npm run dev
 
+# Run tests
+npm test
+
+# Run tests with UI
+npm run test:ui
+
+# Run tests with coverage
+npm run test:coverage
+
 # Test with MCP Inspector
-npx @modelcontextprotocol/inspector node dist/index.js
+npx @modelcontextprotocol/inspector node dist/cli.js
+
+# Configure API keys
+npx -y ultra config
+# or after building locally:
+node dist/cli.js config
 
 # Run via npx (after publishing)
-npx -y ultra-mcp
+npx -y ultra
 ```
+
+## Configuration
+
+Ultra MCP uses the `conf` library to store configuration locally in your system's default config directory:
+- macOS: `~/Library/Preferences/ultra-mcp-nodejs/`
+- Linux: `~/.config/ultra-mcp/`
+- Windows: `%APPDATA%\ultra-mcp-nodejs\`
+
+### Setting up API Keys
+
+Run the interactive configuration:
+```bash
+npx -y ultra config
+```
+
+This will:
+1. Show current configuration status
+2. Allow you to set/update API keys for OpenAI, Google Gemini, and Azure
+3. Store the configuration securely on your system
+4. Automatically load API keys when the server starts
+
+You can also set API keys via environment variables:
+- `OPENAI_API_KEY`
+- `GOOGLE_API_KEY` 
+- `AZURE_API_KEY`
+- `AZURE_ENDPOINT`
+
+Note: Configuration file takes precedence over environment variables.
 
 ## Architecture
 
@@ -36,9 +78,11 @@ This MCP server acts as a bridge between multiple AI model providers and MCP cli
 2. **Model Providers**: Integrates with OpenAI, Google (Gemini), and Azure AI models via Vercel AI SDK
 3. **Unified Interface**: Provides a single MCP interface to access multiple AI models
 
-### Key Components to Implement
+### Key Components
 
-- `src/index.ts`: Main MCP server entry point
+- `src/cli.ts`: CLI entry point with commander
+- `src/server.ts`: MCP server implementation
+- `src/config/`: Configuration management with schema validation
 - `src/handlers/`: MCP protocol handlers for different tool types
 - `src/providers/`: Model provider implementations (OpenAI, Gemini, Azure)
 - `src/utils/`: Shared utilities for streaming, error handling, etc.
@@ -77,11 +121,23 @@ When implementing, the MCP server should be configured in Claude Code or Cursor'
   "mcpServers": {
     "ultra-mcp": {
       "command": "node",
-      "args": ["path/to/dist/index.js"],
+      "args": ["path/to/dist/cli.js"],
       "env": {
         "OPENAI_API_KEY": "your-key",
         "GOOGLE_API_KEY": "your-key"
       }
+    }
+  }
+}
+```
+
+Or if installed globally via npm:
+```json
+{
+  "mcpServers": {
+    "ultra-mcp": {
+      "command": "npx",
+      "args": ["-y", "ultra"]
     }
   }
 }
