@@ -1,5 +1,7 @@
 import { ConfigSchema, Config, defaultConfig } from './schema.js';
 
+export type { Config };
+
 export class ConfigManager {
   private store: any;
   private initialized: Promise<void>;
@@ -12,7 +14,6 @@ export class ConfigManager {
     const Conf = (await import('conf')).default;
     this.store = new Conf({
       projectName: 'ultra-mcp',
-      schema: ConfigSchema as any, // Conf doesn't fully support zod schemas
       defaults: defaultConfig,
     });
   }

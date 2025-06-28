@@ -14,6 +14,7 @@
     "test": "vitest run",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage",
+    "test:e2e": "vitest run src/__tests__/e2e",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
@@ -21,7 +22,9 @@
     "model-context-protocol",
     "ai",
     "openai",
-    "gemini"
+    "gemini",
+    "gemini-cli",
+    "claude-code"
   ],
   "author": "Mike Chong <oss@realmikechong.com>",
   "license": "MIT",
@@ -41,7 +44,7 @@
     "@ai-sdk/openai": "^1.3.22",
     "@modelcontextprotocol/sdk": "^1.13.2",
     "ai": "^4.3.16",
-    "chalk": "^5.4.1",
+    "chalk": "^4.1.2",
     "commander": "^14.0.0",
     "conf": "^14.0.0",
     "prompts": "^2.4.2",

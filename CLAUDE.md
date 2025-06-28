@@ -122,32 +122,6 @@ Conduct comprehensive research with multiple output formats.
 ### 4. `list-ai-models`
 List all available AI models and their configuration status.
 
-### Example Usage in Claude Code
-
-```typescript
-// Deep reasoning with O3
-await use_mcp_tool("ultra-mcp", "deep-reasoning", {
-  provider: "openai",
-  prompt: "Explain the implications of quantum computing on cryptography",
-  reasoningEffort: "high"
-});
-
-// Investigation with Gemini and Google Search
-await use_mcp_tool("ultra-mcp", "investigate", {
-  provider: "gemini",
-  topic: "Latest developments in AI safety research",
-  depth: "deep",
-  enableSearch: true
-});
-
-// Academic research
-await use_mcp_tool("ultra-mcp", "research", {
-  provider: "azure",
-  query: "Impact of transformer architectures on NLP",
-  outputFormat: "academic"
-});
-```
-
 ### MCP Implementation Notes
 
 - Use the `@modelcontextprotocol/sdk` package for MCP server implementation
@@ -238,3 +212,4 @@ Or if installed globally via npm:
 2. Run `npm run lint` after each code iteration. Fix any lint errors if any.
 3. Have good unit test coverage. For 3rd party dependencies which are hard to test, mock them. But don't write test for test. Just need good coverage for complicated logic.
 4. Do not use `as any` unless you don't have any better way to do that. For Zod to TS interface conversion if you cannot do it, define TS shadow types.
+5. We should not import TS files using .js like `import { ProviderManager } from '../providers/manager.js';` it should be `import { ProviderManager } from '../providers/manager.';` instead.

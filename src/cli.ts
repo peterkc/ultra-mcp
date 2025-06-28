@@ -3,6 +3,8 @@
 import { program } from 'commander';
 import { runInteractiveConfig } from './config/interactive.js';
 import { startServer } from './start-server.js';
+import { runDoctor } from './commands/doctor.js';
+import { runChat } from './commands/chat.js';
 
 program
   .name('ultra-mcp')
@@ -18,6 +20,33 @@ program
       process.exit(0);
     } catch (error) {
       console.error('Configuration error:', error);
+      process.exit(1);
+    }
+  });
+
+program
+  .command('doctor')
+  .description('Check installation and configuration health')
+  .option('--test', 'Test connections to configured providers')
+  .action(async (options) => {
+    try {
+      await runDoctor(options);
+    } catch (error) {
+      console.error('Doctor error:', error);
+      process.exit(1);
+    }
+  });
+
+program
+  .command('chat')
+  .description('Interactive chat with AI models')
+  .option('-m, --model <model>', 'Model to use for chat')
+  .option('-p, --provider <provider>', 'Provider to use (openai, gemini, azure)')
+  .action(async (options) => {
+    try {
+      await runChat(options);
+    } catch (error) {
+      console.error('Chat error:', error);
       process.exit(1);
     }
   });
