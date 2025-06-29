@@ -113,12 +113,45 @@ Features:
 - Provides manual installation instructions if needed
 - Uses `claude mcp add` command internally
 
+### db:show - Show Database Information
+Display database file location and statistics:
+```bash
+npx -y ultra db:show
+# or locally:
+node dist/cli.js db:show
+```
+
+### db:view - View Database with Drizzle Studio
+Launch Drizzle Studio to view and query the usage database:
+```bash
+npx -y ultra db:view
+# or locally:
+node dist/cli.js db:view
+```
+
+### db:stats - Usage Statistics
+Show LLM usage statistics for the last 30 days:
+```bash
+npx -y ultra db:stats
+# or locally:
+node dist/cli.js db:stats
+```
+
+Features:
+- Total requests, tokens, and estimated costs
+- Breakdown by AI provider
+- Tracks all LLM interactions automatically
+
 ## Configuration
 
 Ultra MCP uses the `conf` library to store configuration locally in your system's default config directory:
 - macOS: `~/Library/Preferences/ultra-mcp-nodejs/`
 - Linux: `~/.config/ultra-mcp/`
 - Windows: `%APPDATA%\ultra-mcp-nodejs\`
+
+The usage tracking database is stored separately:
+- Unix (macOS/Linux): `~/.config/ultra-mcp/usage.db`
+- Windows: `%APPDATA%\ultra-mcp-nodejs\usage.db`
 
 ### Setting up API Keys
 
@@ -147,7 +180,8 @@ This MCP server acts as a bridge between multiple AI model providers and MCP cli
 
 1. **MCP Protocol Layer**: Implements the Model Context Protocol to communicate with Claude Code/Cursor
 2. **Model Providers**: Integrates with OpenAI, Google (Gemini), and Azure AI models via Vercel AI SDK
-3. **Unified Interface**: Provides a single MCP interface to access multiple AI models
+3. **Usage Tracking**: SQLite database with Drizzle ORM for automatic LLM usage tracking
+4. **Unified Interface**: Provides a single MCP interface to access multiple AI models
 
 ### Key Components
 
@@ -156,6 +190,7 @@ This MCP server acts as a bridge between multiple AI model providers and MCP cli
 - `src/config/`: Configuration management with schema validation
 - `src/handlers/`: MCP protocol handlers for different tool types
 - `src/providers/`: Model provider implementations (OpenAI, Gemini, Azure)
+- `src/db/`: Database schema, connection, and usage tracking utilities
 - `src/utils/`: Shared utilities for streaming, error handling, etc.
 
 ## MCP Tools

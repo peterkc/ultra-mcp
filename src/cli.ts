@@ -6,6 +6,7 @@ import { startServer } from './start-server';
 import { runDoctor } from './commands/doctor';
 import { runChat } from './commands/chat';
 import { runInstall } from './commands/install';
+import { runDbShow, runDbView, runDbStats } from './commands/db';
 import { showQuickApiKeyGuide } from './utils/api-key-guide';
 import { readFileSync } from 'fs';
 import { join } from 'path';
@@ -76,6 +77,42 @@ program
       await runInstall();
     } catch (error) {
       console.error('Install error:', error);
+      process.exit(1);
+    }
+  });
+
+program
+  .command('db:show')
+  .description('Show database file path and info')
+  .action(async () => {
+    try {
+      await runDbShow();
+    } catch (error) {
+      console.error('Database show error:', error);
+      process.exit(1);
+    }
+  });
+
+program
+  .command('db:view')
+  .description('Launch Drizzle Studio to view database')
+  .action(async () => {
+    try {
+      await runDbView();
+    } catch (error) {
+      console.error('Database view error:', error);
+      process.exit(1);
+    }
+  });
+
+program
+  .command('db:stats')
+  .description('Show usage statistics')
+  .action(async () => {
+    try {
+      await runDbStats();
+    } catch (error) {
+      console.error('Database stats error:', error);
       process.exit(1);
     }
   });

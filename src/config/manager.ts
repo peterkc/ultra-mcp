@@ -1,4 +1,7 @@
 import { ConfigSchema, Config, defaultConfig } from './schema';
+import { join, dirname } from 'path';
+import { platform, homedir } from 'os';
+import { mkdirSync } from 'fs';
 
 export type { Config };
 
@@ -99,5 +102,38 @@ export class ConfigManager {
     );
     
     return { valid: false, errors };
+  }
+
+  // Get the database file path
+  getDatabasePath(): string {
+    const configDir = this.getConfigDir();
+    return join(configDir, 'usage.db');
+  }
+
+  // Get the configuration directory path
+  private getConfigDir(): string {
+    const os = platform();
+    let configDir: string;
+
+    if (os === 'win32') {
+      // Windows: %APPDATA%/ultra-mcp-nodejs/
+      const appData = process.env.APPDATA;
+      if (!appData) {
+        throw new Error('APPDATA environment variable not found');
+      }
+      configDir = join(appData, 'ultra-mcp-nodejs');
+    } else {
+      // Unix-like (macOS/Linux): ~/.config/ultra-mcp/
+      configDir = join(homedir(), '.config', 'ultra-mcp');
+    }
+
+    // Ensure directory exists
+    try {
+      mkdirSync(configDir, { recursive: true });
+    } catch (error) {
+      // Directory might already exist, that's ok
+    }
+
+    return configDir;
   }
 }

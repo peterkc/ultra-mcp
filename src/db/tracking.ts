@@ -1,0 +1,172 @@
+import { getDatabase } from './connection';
+import { llmRequests, type LlmRequest } from './schema';
+import { ensureDatabaseReady } from './migrate';
+import { eq } from 'drizzle-orm';
+
+// Pricing data for cost estimation (per 1K tokens)
+const PRICING = {
+  // OpenAI Models
+  'o3': { input: 0.03, output: 0.06 },
+  'o3-mini': { input: 0.0015, output: 0.002 },
+  'gpt-4': { input: 0.03, output: 0.06 },
+  'gpt-4-turbo': { input: 0.01, output: 0.03 },
+  'gpt-3.5-turbo': { input: 0.0015, output: 0.002 },
+  
+  // Gemini Models  
+  'gemini-2.5-pro': { input: 0.00025, output: 0.0005 },
+  'gemini-2.5-flash': { input: 0.000075, output: 0.0003 },
+  'gemini-pro': { input: 0.00025, output: 0.0005 },
+  
+  // Azure OpenAI (same as OpenAI but may have different pricing)
+  'azure-gpt-4': { input: 0.03, output: 0.06 },
+  'azure-gpt-35-turbo': { input: 0.0015, output: 0.002 },
+} as const;
+
+function estimateCost(model: string, inputTokens: number, outputTokens: number): number {
+  const pricing = PRICING[model as keyof typeof PRICING];
+  if (!pricing) {
+    // Default fallback pricing if model not found
+    return (inputTokens * 0.001 + outputTokens * 0.002) / 1000;
+  }
+  
+  return (inputTokens * pricing.input + outputTokens * pricing.output) / 1000;
+}
+
+export interface TrackingData {
+  provider: 'openai' | 'gemini' | 'azure';
+  model: string;
+  toolName?: string;
+  requestData: any;
+  startTime: number;
+}
+
+export async function trackLLMRequest(data: TrackingData): Promise<string> {
+  const requestId = crypto.randomUUID();
+  
+  // Async, non-blocking database write
+  setImmediate(async () => {
+    try {
+      await ensureDatabaseReady();
+      const db = await getDatabase();
+      
+      await db.insert(llmRequests).values({
+        id: requestId,
+        timestamp: new Date(data.startTime),
+        provider: data.provider,
+        model: data.model,
+        toolName: data.toolName,
+        requestData: data.requestData,
+        status: 'success', // Will update when completed
+        durationMs: 0, // Will update when completed
+      }).execute();
+    } catch (error) {
+      console.warn('Failed to track LLM request:', error.message);
+    }
+  });
+  
+  return requestId;
+}
+
+export interface CompletionData {
+  requestId: string;
+  responseData: any;
+  usage?: {
+    promptTokens: number;
+    completionTokens: number;
+    totalTokens: number;
+  };
+  finishReason?: string;
+  error?: string;
+  endTime: number;
+}
+
+export async function updateLLMCompletion(data: CompletionData): Promise<void> {
+  // Async, non-blocking database write
+  setImmediate(async () => {
+    try {
+      await ensureDatabaseReady();
+      const db = await getDatabase();
+      
+      const updateData: Partial<LlmRequest> = {
+        responseData: data.responseData,
+        status: data.error ? 'error' : 'success',
+        errorMessage: data.error,
+        finishReason: data.finishReason,
+        durationMs: data.endTime - (await getRequestStartTime(data.requestId)),
+      };
+      
+      if (data.usage) {
+        updateData.inputTokens = data.usage.promptTokens;
+        updateData.outputTokens = data.usage.completionTokens;
+        updateData.totalTokens = data.usage.totalTokens;
+        
+        // Get model name for cost estimation
+        const request = await db.select({ model: llmRequests.model })
+          .from(llmRequests)
+          .where(eq(llmRequests.id, data.requestId))
+          .limit(1)
+          .execute();
+          
+        if (request.length > 0) {
+          updateData.estimatedCost = estimateCost(
+            request[0].model,
+            data.usage.promptTokens,
+            data.usage.completionTokens
+          );
+        }
+      }
+      
+      await db.update(llmRequests)
+        .set(updateData)
+        .where(eq(llmRequests.id, data.requestId))
+        .execute();
+        
+    } catch (error) {
+      console.warn('Failed to update LLM completion:', error.message);
+    }
+  });
+}
+
+async function getRequestStartTime(requestId: string): Promise<number> {
+  try {
+    const db = await getDatabase();
+    const result = await db.select({ timestamp: llmRequests.timestamp })
+      .from(llmRequests)
+      .where(eq(llmRequests.id, requestId))
+      .limit(1)
+      .execute();
+      
+    return result.length > 0 ? result[0].timestamp.getTime() : Date.now();
+  } catch {
+    return Date.now();
+  }
+}
+
+// Utility function to get usage statistics
+export async function getUsageStats(days: number = 30) {
+  try {
+    await ensureDatabaseReady();
+    const db = await getDatabase();
+    
+    const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+    
+    // This is a simplified query - in a real implementation you'd want more sophisticated aggregations
+    const stats = await db.select()
+      .from(llmRequests)
+      .where(eq(llmRequests.status, 'success'))
+      .execute();
+      
+    return {
+      totalRequests: stats.length,
+      totalTokens: stats.reduce((sum, req) => sum + (req.totalTokens || 0), 0),
+      totalCost: stats.reduce((sum, req) => sum + (req.estimatedCost || 0), 0),
+      byProvider: stats.reduce((acc, req) => {
+        acc[req.provider] = (acc[req.provider] || 0) + 1;
+        return acc;
+      }, {} as Record<string, number>),
+    };
+  } catch (error) {
+    console.warn('Failed to get usage stats:', error.message);
+    return null;
+  }
+}

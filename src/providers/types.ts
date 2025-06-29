@@ -8,6 +8,7 @@ export const AIRequestSchema = z.object({
   systemPrompt: z.string().optional().describe("System prompt to set context"),
   reasoningEffort: z.enum(["low", "medium", "high"]).optional().describe("Reasoning effort for O3 models"),
   useSearchGrounding: z.boolean().optional().default(false).describe("Enable Google Search for Gemini models"),
+  toolName: z.string().optional().describe("Name of the MCP tool that triggered this request"),
 });
 
 export type AIRequest = z.infer<typeof AIRequestSchema>;
