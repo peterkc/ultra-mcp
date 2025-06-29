@@ -40,7 +40,7 @@ jobs:
         run: pnpm test
 
       - name: Build project
-        run: pnpm run build
+        run: pnpm run build:all
 
       - name: Generate version from commit
         id: version

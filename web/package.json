@@ -13,8 +13,8 @@
   "dependencies": {
     "@tanstack/react-query": "^5.17.0",
     "@tanstack/react-router": "^1.15.0",
-    "@trpc/client": "^10.45.0",
-    "@trpc/react-query": "^10.45.0",
+    "@trpc/client": "^11.4.3",
+    "@trpc/react-query": "^11.4.3",
     "clsx": "^2.1.0",
     "lucide-react": "^0.303.0",
     "react": "^18.2.0",
