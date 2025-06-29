@@ -35,7 +35,7 @@ export async function runDashboard(options: DashboardOptions): Promise<void> {
     }
     
     // Start backend server
-    startDashboardServer(options.port);
+    await startDashboardServer(options.port);
     
     // Start Vite dev server
     console.log(chalk.cyan('\nStarting Vite development server...'));
@@ -58,7 +58,8 @@ export async function runDashboard(options: DashboardOptions): Promise<void> {
   } else {
     // Production mode - serve built files
     // Find the package root directory (where dist-web/ folder is located)
-    const packageRoot = path.join(__dirname, '..', '..');
+    // When running from dist/cli.js, we need to go up one level to reach the package root
+    const packageRoot = path.join(__dirname, '..');
     const distWebPath = path.join(packageRoot, 'dist-web');
     
     if (!existsSync(distWebPath)) {
@@ -69,9 +70,9 @@ export async function runDashboard(options: DashboardOptions): Promise<void> {
       console.log(chalk.green('✓ Serving built dashboard'));
     }
     
-    startDashboardServer(options.port);
+    const actualPort = await startDashboardServer(options.port);
     
-    console.log(chalk.green(`\n✨ Dashboard running at http://localhost:${options.port}`));
+    console.log(chalk.green(`\n✨ Dashboard running at http://localhost:${actualPort}`));
     console.log(chalk.gray('\nPress Ctrl+C to stop\n'));
   }
 }
