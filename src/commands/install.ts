@@ -83,7 +83,7 @@ export async function runInstall(): Promise<void> {
   
   if (!hasKeys) {
     console.log(yellow('\n⚠️  No API keys configured'));
-    console.log('Run ' + cyan('npx -y ultra config') + ' to configure API keys first\n');
+    console.log('Run ' + cyan('npx -y ultra-mcp config') + ' to configure API keys first\n');
     
     const proceed = await question('Do you want to continue with installation anyway? (y/N) ');
     if (proceed.toLowerCase() !== 'y') {

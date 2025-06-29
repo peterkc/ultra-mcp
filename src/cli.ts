@@ -24,7 +24,7 @@ program
   .name('ultra-mcp')
   .description('Ultra MCP - Model Context Protocol server for OpenAI and Gemini')
   .version(version)
-  .addHelpText('after', '\nGetting Started:\n  1. Install for Claude Code: npx -y ultra install\n  2. Configure API keys: npx -y ultra config\n  3. Check health: npx -y ultra doctor')
+  .addHelpText('after', '\nGetting Started:\n  1. Install for Claude Code: npx -y ultra-mcp install\n  2. Configure API keys: npx -y ultra-mcp config\n  3. Check health: npx -y ultra-mcp doctor')
   .on('--help', () => {
     showQuickApiKeyGuide();
   });

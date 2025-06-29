@@ -1,5 +1,8 @@
 # Ultra MCP
 
+[![npm version](https://badge.fury.io/js/ultra-mcp.svg)](https://badge.fury.io/js/ultra-mcp)
+[![npm downloads](https://img.shields.io/npm/dm/ultra-mcp.svg)](https://www.npmjs.com/package/ultra-mcp)
+
 🚀 **Ultra MCP** - A Model Context Protocol server that exposes OpenAI and Gemini AI models through a single MCP interface for use with Claude Code and Cursor.
 
 ## Inspiration
@@ -29,7 +32,7 @@ This project is inspired by:
 npm install -g ultra-mcp
 
 # Or run directly with npx
-npx -y ultra config
+npx -y ultra-mcp config
 ```
 
 ### Configuration
@@ -37,7 +40,7 @@ npx -y ultra config
 Set up your API keys interactively:
 
 ```bash
-npx -y ultra config
+npx -y ultra-mcp config
 ```
 
 This will:
@@ -63,7 +66,7 @@ node dist/cli.js
 
 ```bash
 # Install Ultra MCP for Claude Code
-npx -y ultra install
+npx -y ultra-mcp install
 ```
 
 This command will:

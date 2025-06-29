@@ -34,12 +34,12 @@ npm run test:coverage
 npx @modelcontextprotocol/inspector node dist/cli.js
 
 # Configure API keys
-npx -y ultra config
+npx -y ultra-mcp config
 # or after building locally:
 node dist/cli.js config
 
 # Run via npx (after publishing)
-npx -y ultra
+npx -y ultra-mcp
 ```
 
 ## CLI Commands
@@ -50,7 +50,7 @@ The Ultra MCP CLI provides several commands:
 When run without arguments, Ultra MCP starts as an MCP server using stdio protocol:
 ```bash
 # Start MCP server (stdio protocol)
-npx -y ultra
+npx -y ultra-mcp
 # or locally:
 node dist/cli.js
 ```
@@ -58,7 +58,7 @@ node dist/cli.js
 ### config - Interactive Configuration
 Configure API keys interactively (similar to rclone):
 ```bash
-npx -y ultra config
+npx -y ultra-mcp config
 # or locally:
 node dist/cli.js config
 ```
@@ -73,12 +73,12 @@ Features:
 ### doctor - Health Check
 Check installation and configuration health:
 ```bash
-npx -y ultra doctor
+npx -y ultra-mcp doctor
 # or locally:
 node dist/cli.js doctor
 
 # Test connections to configured providers
-npx -y ultra doctor --test
+npx -y ultra-mcp doctor --test
 ```
 
 The doctor command checks:
@@ -90,18 +90,18 @@ The doctor command checks:
 ### chat - Interactive Chat
 Chat interactively with AI models:
 ```bash
-npx -y ultra chat
+npx -y ultra-mcp chat
 # or locally:
 node dist/cli.js chat
 
 # Specify model and provider
-npx -y ultra chat -m o3-mini -p openai
+npx -y ultra-mcp chat -m o3-mini -p openai
 ```
 
 ### install - Install for Claude Code
 Install Ultra MCP as an MCP server for Claude Code:
 ```bash
-npx -y ultra install
+npx -y ultra-mcp install
 # or locally:
 node dist/cli.js install
 ```
@@ -116,7 +116,7 @@ Features:
 ### db:show - Show Database Information
 Display database file location and statistics:
 ```bash
-npx -y ultra db:show
+npx -y ultra-mcp db:show
 # or locally:
 node dist/cli.js db:show
 ```
@@ -124,7 +124,7 @@ node dist/cli.js db:show
 ### db:view - View Database with Drizzle Studio
 Launch Drizzle Studio to view and query the usage database:
 ```bash
-npx -y ultra db:view
+npx -y ultra-mcp db:view
 # or locally:
 node dist/cli.js db:view
 ```
@@ -132,7 +132,7 @@ node dist/cli.js db:view
 ### db:stats - Usage Statistics
 Show LLM usage statistics for the last 30 days:
 ```bash
-npx -y ultra db:stats
+npx -y ultra-mcp db:stats
 # or locally:
 node dist/cli.js db:stats
 ```
@@ -157,7 +157,7 @@ The usage tracking database is stored separately:
 
 Run the interactive configuration:
 ```bash
-npx -y ultra config
+npx -y ultra-mcp config
 ```
 
 This will:
