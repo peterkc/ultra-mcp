@@ -3,6 +3,7 @@ import { ConfigManager } from '../config/manager';
 import { bold, green, yellow, red, blue, cyan } from 'colorette';
 import * as readline from 'readline';
 import { platform } from 'os';
+import { showApiKeyGuide } from '../utils/api-key-guide';
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -124,8 +125,9 @@ export async function runInstall(): Promise<void> {
     console.log('  3. Ultra MCP tools are now available!\n');
     
     if (!hasKeys) {
-      console.log(yellow('Remember to configure API keys:'));
-      console.log(cyan('  npx -y ultra config\n'));
+      console.log(yellow('⚠️  No API keys configured yet!'));
+      console.log('Ultra MCP needs API keys to work properly.');
+      showApiKeyGuide();
     }
   } else {
     console.log(red('\n❌ Installation failed'));

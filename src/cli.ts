@@ -6,6 +6,7 @@ import { startServer } from './start-server';
 import { runDoctor } from './commands/doctor';
 import { runChat } from './commands/chat';
 import { runInstall } from './commands/install';
+import { showQuickApiKeyGuide } from './utils/api-key-guide';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 
@@ -21,7 +22,11 @@ try {
 program
   .name('ultra-mcp')
   .description('Ultra MCP - Model Context Protocol server for OpenAI and Gemini')
-  .version(version);
+  .version(version)
+  .addHelpText('after', '\nGetting Started:\n  1. Install for Claude Code: npx -y ultra install\n  2. Configure API keys: npx -y ultra config\n  3. Check health: npx -y ultra doctor')
+  .on('--help', () => {
+    showQuickApiKeyGuide();
+  });
 
 program
   .command('config')
