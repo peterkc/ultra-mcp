@@ -17,7 +17,7 @@
     "dev": "tsup --watch",
     "dev:api": "npm run build && node dist/cli.js dashboard --dev",
     "build:tsc": "tsc --noEmit",
-    "test": "vitest run --exclude '**/e2e/**'",
+    "test": "vitest run --exclude '**/e2e/**' --exclude '**/web/**'",
     "test:all": "vitest run",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage --exclude '**/e2e/**'",
