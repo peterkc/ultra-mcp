@@ -63,7 +63,11 @@ jobs:
 
       - name: Update package.json version
         run: |
-          pnpm version ${{ steps.version.outputs.version }} --no-git-tag-version
+          if [[ "${{ github.ref }}" != refs/tags/* ]]; then
+            pnpm version ${{ steps.version.outputs.version }} --no-git-tag-version
+          else
+            echo "Skipping version update for tag release"
+          fi
 
       - name: Publish to NPM
         run: pnpm publish --tag ${{ steps.version.outputs.npm_tag }} --no-git-checks
