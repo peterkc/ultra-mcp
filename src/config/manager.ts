@@ -2,11 +2,12 @@ import { ConfigSchema, Config, defaultConfig } from './schema';
 import { join, dirname } from 'path';
 import { platform, homedir } from 'os';
 import { mkdirSync } from 'fs';
+import type Conf from 'conf';
 
 export type { Config };
 
 export class ConfigManager {
-  private store: any;
+  private store: Conf<Config> | undefined;
   private initialized: Promise<void>;
 
   constructor() {
@@ -15,7 +16,7 @@ export class ConfigManager {
 
   private async init(): Promise<void> {
     const Conf = (await import('conf')).default;
-    this.store = new Conf({
+    this.store = new Conf<Config>({
       projectName: 'ultra-mcp',
       defaults: defaultConfig,
     });
@@ -28,6 +29,9 @@ export class ConfigManager {
   // Get the entire configuration
   async getConfig(): Promise<Config> {
     await this.ensureInitialized();
+    if (!this.store) {
+      throw new Error('Configuration store not initialized');
+    }
     const rawConfig = this.store.store;
     const result = ConfigSchema.safeParse(rawConfig);
     
@@ -43,6 +47,9 @@ export class ConfigManager {
   // Set a specific API key
   async setApiKey(provider: 'openai' | 'google' | 'azure', apiKey: string | undefined): Promise<void> {
     await this.ensureInitialized();
+    if (!this.store) {
+      throw new Error('Configuration store not initialized');
+    }
     if (!apiKey) {
       this.store.delete(`${provider}.apiKey`);
     } else {
@@ -53,12 +60,18 @@ export class ConfigManager {
   // Get a specific API key
   async getApiKey(provider: 'openai' | 'google' | 'azure'): Promise<string | undefined> {
     await this.ensureInitialized();
+    if (!this.store) {
+      throw new Error('Configuration store not initialized');
+    }
     return this.store.get(`${provider}.apiKey`);
   }
 
   // Set Azure endpoint
   async setAzureEndpoint(endpoint: string | undefined): Promise<void> {
     await this.ensureInitialized();
+    if (!this.store) {
+      throw new Error('Configuration store not initialized');
+    }
     if (!endpoint) {
       this.store.delete('azure.endpoint');
     } else {
@@ -79,18 +92,27 @@ export class ConfigManager {
   // Get the path to the config file
   async getConfigPath(): Promise<string> {
     await this.ensureInitialized();
+    if (!this.store) {
+      throw new Error('Configuration store not initialized');
+    }
     return this.store.path;
   }
 
   // Reset configuration to defaults
   async reset(): Promise<void> {
     await this.ensureInitialized();
+    if (!this.store) {
+      throw new Error('Configuration store not initialized');
+    }
     this.store.clear();
   }
 
   // Validate the current configuration
   async validate(): Promise<{ valid: boolean; errors?: string[] }> {
     await this.ensureInitialized();
+    if (!this.store) {
+      throw new Error('Configuration store not initialized');
+    }
     const result = ConfigSchema.safeParse(this.store.store);
     
     if (result.success) {

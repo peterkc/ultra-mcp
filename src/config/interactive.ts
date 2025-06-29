@@ -31,7 +31,7 @@ export async function runInteractiveConfig(): Promise<void> {
   ]);
 
   if (response.action === 'configure') {
-    await configureApiKeys(configManager, chalk);
+    await configureApiKeys(configManager);
   } else if (response.action === 'view') {
     await viewConfiguration(configManager, chalk);
   } else if (response.action === 'reset') {
@@ -39,7 +39,7 @@ export async function runInteractiveConfig(): Promise<void> {
   }
 }
 
-async function configureApiKeys(configManager: ConfigManager, chalk: any): Promise<void> {
+async function configureApiKeys(configManager: ConfigManager): Promise<void> {
   const currentConfig = await configManager.getConfig();
 
   console.log(chalk.blue('\n📝 Configure API Keys'));

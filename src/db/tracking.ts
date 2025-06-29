@@ -2,6 +2,7 @@ import { getDatabase } from './connection';
 import { llmRequests, type LlmRequest } from './schema';
 import { ensureDatabaseReady } from './migrate';
 import { eq } from 'drizzle-orm';
+import * as crypto from 'crypto';
 
 // Pricing data for cost estimation (per 1K tokens)
 const PRICING = {
@@ -32,11 +33,20 @@ function estimateCost(model: string, inputTokens: number, outputTokens: number):
   return (inputTokens * pricing.input + outputTokens * pricing.output) / 1000;
 }
 
+export interface RequestData {
+  prompt: string;
+  systemPrompt?: string;
+  temperature?: number;
+  maxTokens?: number;
+  reasoningEffort?: string;
+  useSearchGrounding?: boolean;
+}
+
 export interface TrackingData {
   provider: 'openai' | 'gemini' | 'azure';
   model: string;
   toolName?: string;
-  requestData: any;
+  requestData: RequestData;
   startTime: number;
 }
 
@@ -67,9 +77,13 @@ export async function trackLLMRequest(data: TrackingData): Promise<string> {
   return requestId;
 }
 
+export interface ResponseData {
+  text: string;
+}
+
 export interface CompletionData {
   requestId: string;
-  responseData: any;
+  responseData: ResponseData | null;
   usage?: {
     promptTokens: number;
     completionTokens: number;

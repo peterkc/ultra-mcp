@@ -2,6 +2,7 @@ import { createAzure } from "@ai-sdk/azure";
 import { generateText, streamText } from "ai";
 import { AIProvider, AIRequest, AIResponse } from "./types";
 import { ConfigManager } from "../config/manager";
+import { trackLLMRequest, updateLLMCompletion } from "../db/tracking";
 
 export class AzureOpenAIProvider implements AIProvider {
   name = "azure";
@@ -37,6 +38,22 @@ export class AzureOpenAIProvider implements AIProvider {
   async generateText(request: AIRequest): Promise<AIResponse> {
     const { apiKey, endpoint } = await this.getCredentials();
     const model = request.model || this.getDefaultModel();
+    const startTime = Date.now();
+    
+    // Track the request
+    const requestId = await trackLLMRequest({
+      provider: 'azure',
+      model: model,
+      toolName: request.toolName,
+      requestData: {
+        prompt: request.prompt,
+        systemPrompt: request.systemPrompt,
+        temperature: request.temperature,
+        maxTokens: request.maxTokens,
+        reasoningEffort: request.reasoningEffort,
+      },
+      startTime,
+    });
     
     const azure = createAzure({ 
       apiKey,
@@ -44,11 +61,35 @@ export class AzureOpenAIProvider implements AIProvider {
     });
     const modelInstance = azure(model);
     
-    const options: any = {
+    type GenerateTextOptions = {
+      model: typeof modelInstance;
+      prompt: string;
+      temperature?: number;
+      maxTokens?: number;
+      system?: string;
+      reasoningEffort?: 'low' | 'medium' | 'high';
+      onFinish?: (result: {
+        text: string;
+        usage?: { promptTokens: number; completionTokens: number; totalTokens: number };
+        finishReason?: string;
+      }) => Promise<void>;
+    };
+
+    const options: GenerateTextOptions = {
       model: modelInstance,
       prompt: request.prompt,
       temperature: request.temperature,
       maxTokens: request.maxTokens,
+      onFinish: async (result) => {
+        // Track completion using onFinish callback
+        await updateLLMCompletion({
+          requestId,
+          responseData: { text: result.text },
+          usage: result.usage,
+          finishReason: result.finishReason,
+          endTime: Date.now(),
+        });
+      },
     };
 
     // Add system prompt if provided
@@ -61,23 +102,50 @@ export class AzureOpenAIProvider implements AIProvider {
       options.reasoningEffort = request.reasoningEffort || "medium";
     }
 
-    const result = await generateText(options);
+    try {
+      const result = await generateText(options);
 
-    return {
-      text: result.text,
-      model: model,
-      usage: result.usage ? {
-        promptTokens: result.usage.promptTokens,
-        completionTokens: result.usage.completionTokens,
-        totalTokens: result.usage.totalTokens,
-      } : undefined,
-      metadata: result.experimental_providerMetadata,
-    };
+      return {
+        text: result.text,
+        model: model,
+        usage: result.usage ? {
+          promptTokens: result.usage.promptTokens || 0,
+          completionTokens: result.usage.completionTokens || 0,
+          totalTokens: result.usage.totalTokens || 0,
+        } : undefined,
+        metadata: result.experimental_providerMetadata,
+      };
+    } catch (error) {
+      // Track error
+      await updateLLMCompletion({
+        requestId,
+        responseData: null,
+        error: error instanceof Error ? error.message : String(error),
+        endTime: Date.now(),
+      });
+      throw error;
+    }
   }
 
   async *streamText(request: AIRequest): AsyncGenerator<string, void, unknown> {
     const { apiKey, endpoint } = await this.getCredentials();
     const model = request.model || this.getDefaultModel();
+    const startTime = Date.now();
+    
+    // Track the request
+    const requestId = await trackLLMRequest({
+      provider: 'azure',
+      model: model,
+      toolName: request.toolName,
+      requestData: {
+        prompt: request.prompt,
+        systemPrompt: request.systemPrompt,
+        temperature: request.temperature,
+        maxTokens: request.maxTokens,
+        reasoningEffort: request.reasoningEffort,
+      },
+      startTime,
+    });
     
     const azure = createAzure({ 
       apiKey,
@@ -85,11 +153,35 @@ export class AzureOpenAIProvider implements AIProvider {
     });
     const modelInstance = azure(model);
     
-    const options: any = {
+    type StreamTextOptions = {
+      model: typeof modelInstance;
+      prompt: string;
+      temperature?: number;
+      maxTokens?: number;
+      system?: string;
+      reasoningEffort?: 'low' | 'medium' | 'high';
+      onFinish?: (result: {
+        text: string;
+        usage?: { promptTokens: number; completionTokens: number; totalTokens: number };
+        finishReason?: string;
+      }) => Promise<void>;
+    };
+
+    const options: StreamTextOptions = {
       model: modelInstance,
       prompt: request.prompt,
       temperature: request.temperature,
       maxTokens: request.maxTokens,
+      onFinish: async (result) => {
+        // Track completion using onFinish callback
+        await updateLLMCompletion({
+          requestId,
+          responseData: { text: result.text },
+          usage: result.usage,
+          finishReason: result.finishReason,
+          endTime: Date.now(),
+        });
+      },
     };
 
     if (request.systemPrompt) {
@@ -100,10 +192,21 @@ export class AzureOpenAIProvider implements AIProvider {
       options.reasoningEffort = request.reasoningEffort || "medium";
     }
 
-    const result = await streamText(options);
+    try {
+      const result = await streamText(options);
 
-    for await (const chunk of result.textStream) {
-      yield chunk;
+      for await (const chunk of result.textStream) {
+        yield chunk;
+      }
+    } catch (error) {
+      // Track error
+      await updateLLMCompletion({
+        requestId,
+        responseData: null,
+        error: error instanceof Error ? error.message : String(error),
+        endTime: Date.now(),
+      });
+      throw error;
     }
   }
 }

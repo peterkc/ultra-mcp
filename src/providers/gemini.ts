@@ -62,12 +62,25 @@ export class GeminiProvider implements AIProvider {
     const google = createGoogleGenerativeAI({ apiKey });
     const modelInstance = google(model, { useSearchGrounding });
     
-    const options: any = {
+    type GenerateTextOptions = {
+      model: typeof modelInstance;
+      prompt: string;
+      temperature?: number;
+      maxTokens?: number;
+      system?: string;
+      onFinish?: (result: {
+        text: string;
+        usage?: { promptTokens: number; completionTokens: number; totalTokens: number };
+        finishReason?: string;
+      }) => Promise<void>;
+    };
+
+    const options: GenerateTextOptions = {
       model: modelInstance,
       prompt: request.prompt,
       temperature: request.temperature,
       maxTokens: request.maxTokens,
-      onFinish: async (result: any) => {
+      onFinish: async (result) => {
         // Track completion using onFinish callback
         await updateLLMCompletion({
           requestId,
@@ -91,9 +104,9 @@ export class GeminiProvider implements AIProvider {
         text: result.text,
         model: model,
         usage: result.usage ? {
-          promptTokens: result.usage.promptTokens,
-          completionTokens: result.usage.completionTokens,
-          totalTokens: result.usage.totalTokens,
+          promptTokens: result.usage.promptTokens || 0,
+          completionTokens: result.usage.completionTokens || 0,
+          totalTokens: result.usage.totalTokens || 0,
         } : undefined,
         metadata: {
           ...result.experimental_providerMetadata,
@@ -139,12 +152,25 @@ export class GeminiProvider implements AIProvider {
     const google = createGoogleGenerativeAI({ apiKey });
     const modelInstance = google(model, { useSearchGrounding });
     
-    const options: any = {
+    type StreamTextOptions = {
+      model: typeof modelInstance;
+      prompt: string;
+      temperature?: number;
+      maxTokens?: number;
+      system?: string;
+      onFinish?: (result: {
+        text: string;
+        usage?: { promptTokens: number; completionTokens: number; totalTokens: number };
+        finishReason?: string;
+      }) => Promise<void>;
+    };
+
+    const options: StreamTextOptions = {
       model: modelInstance,
       prompt: request.prompt,
       temperature: request.temperature,
       maxTokens: request.maxTokens,
-      onFinish: async (result: any) => {
+      onFinish: async (result) => {
         // Track completion using onFinish callback
         await updateLLMCompletion({
           requestId,
