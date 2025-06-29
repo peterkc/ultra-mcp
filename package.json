@@ -11,7 +11,7 @@
     "drizzle/"
   ],
   "scripts": {
-    "build": "tsup && chmod +x dist/cli.js",
+    "build": "tsup && chmod +x dist/cli.js && cp -r drizzle dist/",
     "build:dashboard": "cd web && npm install && npm run build",
     "build:all": "npm run build && npm run build:dashboard",
     "dev": "tsup --watch",

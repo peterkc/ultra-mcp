@@ -1,15 +1,13 @@
 import { migrate } from 'drizzle-orm/libsql/migrator';
 import { getDatabase } from './connection';
-import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
+import { join } from 'path';
 
 export async function runMigrations(): Promise<void> {
   try {
     const db = await getDatabase();
-    // Find the package root directory (where drizzle/ folder is located)
-    // In built package, this file is in dist/db/, so we go up to package root
-    const packageRoot = join(__dirname, '..', '..');
-    const migrationsFolder = join(packageRoot, 'drizzle');
+    // The drizzle folder is copied to dist/ by tsup, making it a sibling of the bundled code
+    // In built package, this file is in dist/, and drizzle/ is also in dist/
+    const migrationsFolder = join(__dirname, 'drizzle');
     
     await migrate(db as any, { migrationsFolder });
     
