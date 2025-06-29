@@ -7,6 +7,7 @@ import { runDoctor } from './commands/doctor';
 import { runChat } from './commands/chat';
 import { runInstall } from './commands/install';
 import { runDbShow, runDbView, runDbStats } from './commands/db';
+import { runDashboard } from './commands/dashboard';
 import { showQuickApiKeyGuide } from './utils/api-key-guide';
 import { readFileSync } from 'fs';
 import { join } from 'path';
@@ -113,6 +114,23 @@ program
       await runDbStats();
     } catch (error) {
       console.error('Database stats error:', error);
+      process.exit(1);
+    }
+  });
+
+program
+  .command('dashboard')
+  .description('Start web dashboard for analytics and configuration')
+  .option('-p, --port <port>', 'port to run dashboard on', '3000')
+  .option('--dev', 'run in development mode')
+  .action(async (options) => {
+    try {
+      await runDashboard({
+        port: parseInt(options.port, 10),
+        dev: options.dev || false,
+      });
+    } catch (error) {
+      console.error('Dashboard error:', error);
       process.exit(1);
     }
   });

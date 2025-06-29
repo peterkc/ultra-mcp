@@ -7,18 +7,22 @@
   },
   "files": [
     "dist/",
+    "dist-web/",
     "drizzle/"
   ],
   "scripts": {
     "build": "tsup && chmod +x dist/cli.js",
+    "build:dashboard": "cd web && npm install && npm run build",
+    "build:all": "npm run build && npm run build:dashboard",
     "dev": "tsup --watch",
+    "dev:api": "npm run build && node dist/cli.js dashboard --dev",
     "build:tsc": "tsc --noEmit",
     "test": "vitest run --exclude '**/e2e/**'",
     "test:all": "vitest run",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage --exclude '**/e2e/**'",
     "test:e2e": "vitest run src/__tests__/e2e",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build:all"
   },
   "keywords": [
     "mcp",
@@ -56,8 +60,11 @@
     "@ai-sdk/azure": "^1.3.23",
     "@ai-sdk/google": "^1.2.19",
     "@ai-sdk/openai": "^1.3.22",
+    "@hono/node-server": "^1.14.4",
+    "@hono/trpc-server": "^0.4.0",
     "@libsql/client": "^0.15.9",
     "@modelcontextprotocol/sdk": "^1.13.2",
+    "@trpc/server": "^11.4.3",
     "ai": "^4.3.16",
     "chalk": "^4.1.2",
     "colorette": "^2.0.20",
@@ -65,6 +72,7 @@
     "conf": "^14.0.0",
     "drizzle-kit": "^0.31.4",
     "drizzle-orm": "^0.44.2",
+    "hono": "^4.8.3",
     "prompts": "^2.4.2",
     "zod": "^3.25.67"
   }

@@ -159,3 +159,13 @@ export class ConfigManager {
     return configDir;
   }
 }
+
+// Singleton instance
+let configManagerInstance: ConfigManager | null = null;
+
+export async function getConfigManager(): Promise<ConfigManager> {
+  if (!configManagerInstance) {
+    configManagerInstance = new ConfigManager();
+  }
+  return configManagerInstance;
+}
