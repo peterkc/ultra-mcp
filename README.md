@@ -270,6 +270,15 @@ As one of the earliest **users** of GitHub Copilot (personally invited by Nat Fr
 
 *"The future belongs to those who can seamlessly orchestrate human creativity with AI capabilities."*
 
+## Why Ultra MCP is Different from Zen MCP Server
+
+While both projects aim to enhance AI development workflows, Ultra MCP brings unique advantages:
+
+1. **Written in TypeScript** - Full type safety, better IDE support, and more maintainable codebase compared to Python-based alternatives
+2. **Built-in Usage Analytics** - Lightweight SQLite database powered by libsql for automatic LLM usage tracking and cost monitoring. Without knowing your bill, it's not great to use AI by AI IMHO.
+
+These features make Ultra MCP particularly suited for developers who want robust tooling with built-in cost visibility for responsible AI usage.
+
 ## Links
 
 - [Model Context Protocol](https://modelcontextprotocol.io/)

@@ -91,7 +91,7 @@ export async function runDbStats(): Promise<void> {
     }
     
   } catch (error) {
-    console.error('Failed to get usage statistics:', error.message);
+    console.error('Failed to get usage statistics:', error instanceof Error ? error.message : String(error));
     console.log(yellow('\nTry running the doctor command to check database health:'));
     console.log(cyan('  npx ultra doctor'));
   }

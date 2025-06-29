@@ -62,7 +62,7 @@ export class OpenAIProvider implements AIProvider {
       prompt: request.prompt,
       temperature: request.temperature,
       maxTokens: request.maxTokens,
-      onFinish: async (result) => {
+      onFinish: async (result: any) => {
         // Track completion using onFinish callback
         await updateLLMCompletion({
           requestId,
@@ -102,7 +102,7 @@ export class OpenAIProvider implements AIProvider {
       await updateLLMCompletion({
         requestId,
         responseData: null,
-        error: error.message,
+        error: error instanceof Error ? error.message : String(error),
         endTime: Date.now(),
       });
       throw error;
@@ -137,7 +137,7 @@ export class OpenAIProvider implements AIProvider {
       prompt: request.prompt,
       temperature: request.temperature,
       maxTokens: request.maxTokens,
-      onFinish: async (result) => {
+      onFinish: async (result: any) => {
         // Track completion using onFinish callback
         await updateLLMCompletion({
           requestId,
@@ -168,7 +168,7 @@ export class OpenAIProvider implements AIProvider {
       await updateLLMCompletion({
         requestId,
         responseData: null,
-        error: error.message,
+        error: error instanceof Error ? error.message : String(error),
         endTime: Date.now(),
       });
       throw error;

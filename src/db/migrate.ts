@@ -22,6 +22,6 @@ export async function ensureDatabaseReady(): Promise<void> {
   try {
     await runMigrations();
   } catch (error) {
-    console.warn('Failed to run migrations, database may not be initialized:', error.message);
+    console.warn('Failed to run migrations, database may not be initialized:', error instanceof Error ? error.message : String(error));
   }
 }

@@ -60,7 +60,7 @@ export async function trackLLMRequest(data: TrackingData): Promise<string> {
         durationMs: 0, // Will update when completed
       }).execute();
     } catch (error) {
-      console.warn('Failed to track LLM request:', error.message);
+      console.warn('Failed to track LLM request:', error instanceof Error ? error.message : String(error));
     }
   });
   
@@ -107,7 +107,7 @@ export async function updateLLMCompletion(data: CompletionData): Promise<void> {
           .limit(1)
           .execute();
           
-        if (request.length > 0) {
+        if (request.length > 0 && request[0].model) {
           updateData.estimatedCost = estimateCost(
             request[0].model,
             data.usage.promptTokens,
@@ -122,7 +122,7 @@ export async function updateLLMCompletion(data: CompletionData): Promise<void> {
         .execute();
         
     } catch (error) {
-      console.warn('Failed to update LLM completion:', error.message);
+      console.warn('Failed to update LLM completion:', error instanceof Error ? error.message : String(error));
     }
   });
 }
@@ -136,7 +136,7 @@ async function getRequestStartTime(requestId: string): Promise<number> {
       .limit(1)
       .execute();
       
-    return result.length > 0 ? result[0].timestamp.getTime() : Date.now();
+    return result.length > 0 && result[0].timestamp ? result[0].timestamp.getTime() : Date.now();
   } catch {
     return Date.now();
   }
@@ -166,7 +166,7 @@ export async function getUsageStats(days: number = 30) {
       }, {} as Record<string, number>),
     };
   } catch (error) {
-    console.warn('Failed to get usage stats:', error.message);
+    console.warn('Failed to get usage stats:', error instanceof Error ? error.message : String(error));
     return null;
   }
 }

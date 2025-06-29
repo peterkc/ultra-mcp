@@ -33,7 +33,7 @@ export async function getDatabase() {
     console.log('Database connected using @libsql/client');
     return db;
   } catch (error) {
-    throw new Error(`Failed to connect to database: ${error.message}`);
+    throw new Error(`Failed to connect to database: ${error instanceof Error ? error.message : String(error)}`);
   }
 }
 
