@@ -15,7 +15,7 @@ export async function runDashboard(options: DashboardOptions): Promise<void> {
 
   // Check if API keys are configured
   const configManager = await getConfigManager();
-  const config = configManager.getAll();
+  const config = await configManager.getConfig();
   
   if (!config.openai?.apiKey && !config.google?.apiKey && !config.azure?.apiKey) {
     console.log(chalk.yellow('⚠️  No API keys configured'));
@@ -57,7 +57,9 @@ export async function runDashboard(options: DashboardOptions): Promise<void> {
     
   } else {
     // Production mode - serve built files
-    const distWebPath = path.join(process.cwd(), 'dist-web');
+    // Find the package root directory (where dist-web/ folder is located)
+    const packageRoot = path.join(__dirname, '..', '..');
+    const distWebPath = path.join(packageRoot, 'dist-web');
     
     if (!existsSync(distWebPath)) {
       console.log(chalk.yellow('⚠️  Built dashboard not found'));

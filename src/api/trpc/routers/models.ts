@@ -6,7 +6,7 @@ import { ProviderManager } from '../../../providers/manager';
 export const modelsRouter = router({
   list: publicProcedure.query(async () => {
     const configManager = await getConfigManager();
-    const config = configManager.getAll();
+    const config = await configManager.getConfig();
     const providerManager = new ProviderManager(config);
     
     const models = [];

@@ -6,7 +6,7 @@ import { configSchema } from '../../../config/schema';
 export const configRouter = router({
   get: publicProcedure.query(async () => {
     const configManager = await getConfigManager();
-    const config = configManager.getAll();
+    const config = await configManager.getConfig();
     
     // Mask API keys for security
     const maskedConfig = {
@@ -41,17 +41,12 @@ export const configRouter = router({
     .mutation(async ({ input }) => {
       const configManager = await getConfigManager();
       
-      if (input.provider === 'openai' && input.config.apiKey) {
-        configManager.setOpenAIKey(input.config.apiKey);
-      } else if (input.provider === 'google' && input.config.apiKey) {
-        configManager.setGoogleKey(input.config.apiKey);
-      } else if (input.provider === 'azure') {
-        if (input.config.apiKey) {
-          configManager.setAzureKey(input.config.apiKey);
-        }
-        if (input.config.endpoint) {
-          configManager.setAzureEndpoint(input.config.endpoint);
-        }
+      if (input.config.apiKey) {
+        await configManager.setApiKey(input.provider, input.config.apiKey);
+      }
+      
+      if (input.provider === 'azure' && input.config.endpoint) {
+        await configManager.setAzureEndpoint(input.config.endpoint);
       }
       
       return { success: true };
@@ -82,17 +77,13 @@ export const configRouter = router({
       
       if (input.provider) {
         // Reset specific provider
-        if (input.provider === 'openai') {
-          configManager.setOpenAIKey('');
-        } else if (input.provider === 'google') {
-          configManager.setGoogleKey('');
-        } else if (input.provider === 'azure') {
-          configManager.setAzureKey('');
-          configManager.setAzureEndpoint('');
+        await configManager.setApiKey(input.provider, undefined);
+        if (input.provider === 'azure') {
+          await configManager.setAzureEndpoint(undefined);
         }
       } else {
         // Reset all
-        configManager.reset();
+        await configManager.reset();
       }
       
       return { success: true };
