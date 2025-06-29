@@ -1,13 +1,24 @@
 import { migrate } from 'drizzle-orm/libsql/migrator';
 import { getDatabase } from './connection';
 import { join } from 'path';
+import { existsSync } from 'fs';
 
 export async function runMigrations(): Promise<void> {
   try {
     const db = await getDatabase();
-    // The drizzle folder is copied to dist/ by tsup, making it a sibling of the bundled code
-    // In built package, this file is in dist/, and drizzle/ is also in dist/
-    const migrationsFolder = join(__dirname, 'drizzle');
+    
+    // Try bundled location first (production)
+    let migrationsFolder = join(__dirname, 'drizzle');
+    
+    // If not found, try source location (development/tests)
+    if (!existsSync(migrationsFolder)) {
+      migrationsFolder = join(__dirname, '..', '..', 'drizzle');
+    }
+    
+    // Final fallback for edge cases
+    if (!existsSync(migrationsFolder)) {
+      throw new Error(`Migrations folder not found. Searched: ${migrationsFolder}`);
+    }
     
     await migrate(db as any, { migrationsFolder });
     
