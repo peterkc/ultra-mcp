@@ -20,7 +20,7 @@
     "test": "vitest run --exclude '**/e2e/**' --exclude '**/web/**'",
     "test:all": "vitest run",
     "test:ui": "vitest --ui",
-    "test:coverage": "vitest --coverage --exclude '**/e2e/**'",
+    "test:coverage": "vitest --coverage --exclude '**/e2e/**' --exclude '**/web/**'",
     "test:e2e": "vitest run src/__tests__/e2e",
     "prepublishOnly": "npm run build:all"
   },
