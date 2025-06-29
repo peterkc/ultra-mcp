@@ -4,7 +4,7 @@ import { AIRequestSchema } from "../providers/types";
 
 // Schema for the deep-reasoning tool
 const DeepReasoningSchema = z.object({
-  provider: z.enum(["openai", "gemini", "azure"]).describe("AI provider to use"),
+  provider: z.enum(["openai", "gemini", "azure"]).optional().describe("AI provider to use (defaults to Azure if configured, otherwise OpenAI)"),
   prompt: z.string().describe("The complex question or problem requiring deep reasoning"),
   model: z.string().optional().describe("Specific model to use (optional, will use provider default)"),
   temperature: z.number().min(0).max(2).optional().default(0.7).describe("Temperature for response generation"),
@@ -16,7 +16,7 @@ const DeepReasoningSchema = z.object({
 
 // Schema for the investigation tool
 const InvestigationSchema = z.object({
-  provider: z.enum(["openai", "gemini", "azure"]).describe("AI provider to use"),
+  provider: z.enum(["openai", "gemini", "azure"]).optional().describe("AI provider to use (defaults to Azure if configured, otherwise best available)"),
   topic: z.string().describe("The topic or question to investigate"),
   depth: z.enum(["shallow", "medium", "deep"]).default("deep").describe("Investigation depth"),
   model: z.string().optional().describe("Specific model to use"),
@@ -25,7 +25,7 @@ const InvestigationSchema = z.object({
 
 // Schema for the research tool
 const ResearchSchema = z.object({
-  provider: z.enum(["openai", "gemini", "azure"]).describe("AI provider to use"),
+  provider: z.enum(["openai", "gemini", "azure"]).optional().describe("AI provider to use (defaults to Azure if configured, otherwise best available)"),
   query: z.string().describe("Research query or topic"),
   sources: z.array(z.string()).optional().describe("Specific sources or contexts to consider"),
   model: z.string().optional().describe("Specific model to use"),
@@ -76,7 +76,9 @@ export class AIToolHandlers {
   }
 
   async handleDeepReasoning(params: z.infer<typeof DeepReasoningSchema>) {
-    const provider = this.providerManager.getProvider(params.provider);
+    // Use provided provider or get the preferred one (Azure if configured)
+    const providerName = params.provider || await this.providerManager.getPreferredProvider(['openai', 'azure']);
+    const provider = this.providerManager.getProvider(providerName);
     
     // Build a comprehensive system prompt for deep reasoning
     const systemPrompt = params.systemPrompt || `You are an expert AI assistant specializing in deep reasoning and complex problem-solving. 
@@ -90,7 +92,8 @@ export class AIToolHandlers {
       maxTokens: params.maxTokens,
       systemPrompt,
       reasoningEffort: params.reasoningEffort,
-      useSearchGrounding: params.provider === "gemini" ? params.enableSearch : false,
+      useSearchGrounding: providerName === "gemini" ? params.enableSearch : false,
+      toolName: 'deep-reasoning',
     });
 
     return {
@@ -110,7 +113,9 @@ export class AIToolHandlers {
   }
 
   async handleInvestigation(params: z.infer<typeof InvestigationSchema>) {
-    const provider = this.providerManager.getProvider(params.provider);
+    // Use provided provider or get the preferred one (Azure if configured)
+    const providerName = params.provider || await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure']);
+    const provider = this.providerManager.getProvider(providerName);
     
     // Build investigation prompts based on depth
     const depthPrompts = {
@@ -129,8 +134,8 @@ export class AIToolHandlers {
       prompt,
       model: params.model,
       systemPrompt,
-      reasoningEffort: params.provider === "openai" || params.provider === "azure" ? "high" : undefined,
-      useSearchGrounding: params.provider === "gemini" ? params.enableSearch : false,
+      reasoningEffort: providerName === "openai" || providerName === "azure" ? "high" : undefined,
+      useSearchGrounding: providerName === "gemini" ? params.enableSearch : false,
       temperature: 0.5, // Lower temperature for investigation
     });
 
@@ -142,7 +147,7 @@ export class AIToolHandlers {
         },
       ],
       metadata: {
-        provider: params.provider,
+        provider: providerName,
         model: response.model,
         investigationDepth: params.depth,
         usage: response.usage,
@@ -152,7 +157,9 @@ export class AIToolHandlers {
   }
 
   async handleResearch(params: z.infer<typeof ResearchSchema>) {
-    const provider = this.providerManager.getProvider(params.provider);
+    // Use provided provider or get the preferred one (Azure if configured)
+    const providerName = params.provider || await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure']);
+    const provider = this.providerManager.getProvider(providerName);
     
     // Build research prompts based on output format
     const formatInstructions = {
@@ -170,8 +177,8 @@ export class AIToolHandlers {
       prompt: `Research the following: ${params.query}`,
       model: params.model,
       systemPrompt,
-      reasoningEffort: params.provider === "openai" || params.provider === "azure" ? "high" : undefined,
-      useSearchGrounding: params.provider === "gemini", // Always enable search for research with Gemini
+      reasoningEffort: providerName === "openai" || providerName === "azure" ? "high" : undefined,
+      useSearchGrounding: providerName === "gemini", // Always enable search for research with Gemini
       temperature: 0.4, // Lower temperature for research accuracy
     });
 
@@ -183,7 +190,7 @@ export class AIToolHandlers {
         },
       ],
       metadata: {
-        provider: params.provider,
+        provider: providerName,
         model: response.model,
         outputFormat: params.outputFormat,
         usage: response.usage,
@@ -226,7 +233,9 @@ export class AIToolHandlers {
 
   // Zen-inspired simplified tool handlers
   async handleAnalyzeCode(params: z.infer<typeof AnalyzeCodeSchema>) {
-    const provider = this.providerManager.getProvider(params.provider);
+    // Use provided provider or get the preferred one (Azure if configured)
+    const providerName = params.provider || await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure']);
+    const provider = this.providerManager.getProvider(providerName);
     
     const focusPrompts = {
       architecture: "Focus on architectural patterns, design decisions, modularity, and code organization",
@@ -253,8 +262,8 @@ export class AIToolHandlers {
       prompt,
       systemPrompt,
       temperature: 0.3, // Lower temperature for analytical tasks
-      reasoningEffort: params.provider === "openai" || params.provider === "azure" ? "high" : undefined,
-      useSearchGrounding: params.provider === "gemini",
+      reasoningEffort: providerName === "openai" || providerName === "azure" ? "high" : undefined,
+      useSearchGrounding: providerName === "gemini",
     });
 
     return {
@@ -265,7 +274,7 @@ export class AIToolHandlers {
         },
       ],
       metadata: {
-        provider: params.provider,
+        provider: providerName,
         model: response.model,
         focus: params.focus,
         usage: response.usage,
@@ -275,7 +284,9 @@ export class AIToolHandlers {
   }
 
   async handleReviewCode(params: z.infer<typeof ReviewCodeSchema>) {
-    const provider = this.providerManager.getProvider(params.provider);
+    // Use provided provider or get the preferred one (Azure if configured)
+    const providerName = params.provider || await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure']);
+    const provider = this.providerManager.getProvider(providerName);
     
     const focusPrompts = {
       bugs: "Focus on identifying potential bugs, logic errors, and runtime issues",
@@ -302,7 +313,7 @@ export class AIToolHandlers {
       prompt,
       systemPrompt,
       temperature: 0.2, // Very low temperature for code review accuracy
-      reasoningEffort: params.provider === "openai" || params.provider === "azure" ? "high" : undefined,
+      reasoningEffort: providerName === "openai" || providerName === "azure" ? "high" : undefined,
       useSearchGrounding: false, // No search needed for code review
     });
 
@@ -314,7 +325,7 @@ export class AIToolHandlers {
         },
       ],
       metadata: {
-        provider: params.provider,
+        provider: providerName,
         model: response.model,
         focus: params.focus,
         usage: response.usage,
@@ -324,7 +335,9 @@ export class AIToolHandlers {
   }
 
   async handleDebugIssue(params: z.infer<typeof DebugIssueSchema>) {
-    const provider = this.providerManager.getProvider(params.provider);
+    // Use provided provider or get the preferred one (Azure if configured)
+    const providerName = params.provider || await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure']);
+    const provider = this.providerManager.getProvider(providerName);
     
     const systemPrompt = `You are an expert debugger and problem solver. Help identify and solve technical issues.
     
@@ -349,7 +362,7 @@ export class AIToolHandlers {
       prompt,
       systemPrompt,
       temperature: 0.4, // Balanced temperature for debugging creativity
-      reasoningEffort: params.provider === "openai" || params.provider === "azure" ? "high" : undefined,
+      reasoningEffort: providerName === "openai" || providerName === "azure" ? "high" : undefined,
       useSearchGrounding: false, // No search needed for debugging
     });
 
@@ -361,7 +374,7 @@ export class AIToolHandlers {
         },
       ],
       metadata: {
-        provider: params.provider,
+        provider: providerName,
         model: response.model,
         symptoms: params.symptoms,
         usage: response.usage,
@@ -371,7 +384,9 @@ export class AIToolHandlers {
   }
 
   async handlePlanFeature(params: z.infer<typeof PlanFeatureSchema>) {
-    const provider = this.providerManager.getProvider(params.provider);
+    // Use provided provider or get the preferred one (Azure if configured)
+    const providerName = params.provider || await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure']);
+    const provider = this.providerManager.getProvider(providerName);
     
     const scopePrompts = {
       minimal: "Provide a basic implementation plan with essential components only",
@@ -400,8 +415,8 @@ export class AIToolHandlers {
       prompt,
       systemPrompt,
       temperature: 0.6, // Moderate temperature for creative planning
-      reasoningEffort: params.provider === "openai" || params.provider === "azure" ? "medium" : undefined,
-      useSearchGrounding: params.provider === "gemini",
+      reasoningEffort: providerName === "openai" || providerName === "azure" ? "medium" : undefined,
+      useSearchGrounding: providerName === "gemini",
     });
 
     return {
@@ -412,7 +427,7 @@ export class AIToolHandlers {
         },
       ],
       metadata: {
-        provider: params.provider,
+        provider: providerName,
         model: response.model,
         scope: params.scope,
         usage: response.usage,
@@ -422,7 +437,9 @@ export class AIToolHandlers {
   }
 
   async handleGenerateDocs(params: z.infer<typeof GenerateDocsSchema>) {
-    const provider = this.providerManager.getProvider(params.provider);
+    // Use provided provider or get the preferred one (Azure if configured)
+    const providerName = params.provider || await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure']);
+    const provider = this.providerManager.getProvider(providerName);
     
     const formatPrompts = {
       markdown: "Generate documentation in markdown format with proper structure and formatting",
@@ -452,7 +469,7 @@ export class AIToolHandlers {
       prompt,
       systemPrompt,
       temperature: 0.5, // Balanced temperature for documentation clarity
-      useSearchGrounding: params.provider === "gemini",
+      useSearchGrounding: providerName === "gemini",
     });
 
     return {
@@ -463,7 +480,7 @@ export class AIToolHandlers {
         },
       ],
       metadata: {
-        provider: params.provider,
+        provider: providerName,
         model: response.model,
         format: params.format,
         usage: response.usage,
@@ -483,7 +500,7 @@ export class AIToolHandlers {
             provider: {
               type: "string",
               enum: ["openai", "gemini", "azure"],
-              description: "AI provider to use",
+              description: "AI provider to use (defaults to Azure if configured, otherwise best available)",
             },
             prompt: {
               type: "string",
@@ -520,7 +537,7 @@ export class AIToolHandlers {
               description: "Enable Google Search for Gemini models",
             },
           },
-          required: ["provider", "prompt"],
+          required: ["prompt"],
         },
       },
       {
@@ -532,7 +549,7 @@ export class AIToolHandlers {
             provider: {
               type: "string",
               enum: ["openai", "gemini", "azure"],
-              description: "AI provider to use",
+              description: "AI provider to use (defaults to Azure if configured, otherwise best available)",
             },
             topic: {
               type: "string",
@@ -554,7 +571,7 @@ export class AIToolHandlers {
               description: "Enable web search for investigation (Gemini only)",
             },
           },
-          required: ["provider", "topic"],
+          required: ["topic"],
         },
       },
       {
@@ -566,7 +583,7 @@ export class AIToolHandlers {
             provider: {
               type: "string",
               enum: ["openai", "gemini", "azure"],
-              description: "AI provider to use",
+              description: "AI provider to use (defaults to Azure if configured, otherwise best available)",
             },
             query: {
               type: "string",
@@ -590,7 +607,7 @@ export class AIToolHandlers {
               description: "Output format for research",
             },
           },
-          required: ["provider", "query"],
+          required: ["query"],
         },
       },
       {

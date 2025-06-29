@@ -66,4 +66,29 @@ export class ProviderManager {
 
     return configured;
   }
+
+  async getPreferredProvider(preferredProviders?: string[]): Promise<string> {
+    const configured = await this.getConfiguredProviders();
+    
+    // If Azure is configured, always prefer it
+    if (configured.includes("azure")) {
+      return "azure";
+    }
+    
+    // If preferred providers are specified, use the first configured one
+    if (preferredProviders) {
+      for (const provider of preferredProviders) {
+        if (configured.includes(provider)) {
+          return provider;
+        }
+      }
+    }
+    
+    // Otherwise, return the first configured provider
+    if (configured.length > 0) {
+      return configured[0];
+    }
+    
+    throw new Error("No AI providers configured. Run 'ultra-mcp config' to set up API keys.");
+  }
 }

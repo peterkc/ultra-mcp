@@ -174,6 +174,13 @@ You can also set API keys via environment variables:
 
 Note: Configuration file takes precedence over environment variables.
 
+### Provider Priority
+
+When Azure OpenAI is configured, it is automatically preferred over other providers:
+- If Azure is configured and no provider is specified in a tool call, Azure will be used
+- This applies to all AI tools (deep-reasoning, investigate, research, etc.)
+- You can still explicitly specify a different provider if needed
+
 ## Architecture
 
 This MCP server acts as a bridge between multiple AI model providers and MCP clients:
@@ -203,26 +210,26 @@ Use advanced AI models for deep reasoning and complex problem-solving.
   - OpenAI/Azure: O3-mini (optimized for reasoning)
   - Gemini: Gemini 2.5 Pro with Google Search enabled
 - **Parameters**:
-  - `provider`: "openai", "gemini", or "azure"
-  - `prompt`: The complex question or problem
+  - `prompt`: The complex question or problem (required)
+  - `provider`: (optional) "openai", "gemini", or "azure" - defaults to Azure if configured
   - `model`: (optional) Specific model to use
-  - `reasoningEffort`: "low", "medium", "high" (for O3 models)
-  - `enableSearch`: Enable Google Search (Gemini only)
+  - `reasoningEffort`: (optional) "low", "medium", "high" (for O3 models)
+  - `enableSearch`: (optional) Enable Google Search (Gemini only)
 
 ### 2. `investigate`
 Investigate topics thoroughly with configurable depth.
 - **Parameters**:
-  - `provider`: "openai", "gemini", or "azure"
-  - `topic`: The topic to investigate
-  - `depth`: "shallow", "medium", "deep"
-  - `enableSearch`: Enable web search (Gemini only)
+  - `topic`: The topic to investigate (required)
+  - `provider`: (optional) "openai", "gemini", or "azure" - defaults to Azure if configured
+  - `depth`: (optional) "shallow", "medium", "deep" (default: "deep")
+  - `enableSearch`: (optional) Enable web search (Gemini only)
 
 ### 3. `research`
 Conduct comprehensive research with multiple output formats.
 - **Parameters**:
-  - `provider`: "openai", "gemini", or "azure"
-  - `query`: Research query or topic
-  - `outputFormat`: "summary", "detailed", "academic"
+  - `query`: Research query or topic (required)
+  - `provider`: (optional) "openai", "gemini", or "azure" - defaults to Azure if configured
+  - `outputFormat`: (optional) "summary", "detailed", "academic" (default: "detailed")
   - `sources`: (optional) Specific sources to consider
 
 ### 4. `list-ai-models`
