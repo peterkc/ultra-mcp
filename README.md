@@ -11,6 +11,34 @@ This project is inspired by:
 - **[Agent2Agent (A2A)](https://developers.googleblog.com/en/a2a-a-new-era-of-agent-interoperability/)** by Google - Thank you Google for pioneering agent-to-agent communication protocols
 - **[Zen MCP](https://github.com/BeehiveInnovations/zen-mcp-server)** - The AI orchestration server that enables Claude to collaborate with multiple AI models
 
+## Why Ultra MCP?
+
+While inspired by zen-mcp-server, Ultra MCP offers several key advantages:
+
+### 🚀 **Easier to Use**
+- **No cloning required** - Just run `npx ultra-mcp` to get started
+- **NPM package** - Install globally with `npm install -g ultra-mcp`
+- **Interactive setup** - Guided configuration with `npx ultra-mcp config`
+- **Zero friction** - From zero to AI-powered coding in under a minute
+
+### 📊 **Built-in Usage Analytics**
+- **Local SQLite database** - All usage data stored locally using libSQL
+- **Automatic tracking** - Every LLM request is tracked with token counts and costs
+- **Usage statistics** - View your AI usage with `npx ultra-mcp db:stats`
+- **Privacy first** - Your data never leaves your machine
+
+### 🌐 **Modern Web Dashboard**
+- **Beautiful UI** - React dashboard with Tailwind CSS
+- **Real-time stats** - View usage trends, costs by provider, and model distribution
+- **Easy access** - Just run `npx ultra-mcp dashboard`
+- **Configuration UI** - Manage API keys and model priorities from the web
+
+### 🔧 **Additional Benefits**
+- **Simplified tools** - Maximum 4 parameters per tool (vs zen's 10-15)
+- **Smart defaults** - Optimal model selection out of the box
+- **TypeScript first** - Full type safety and better developer experience
+- **Regular updates** - Active development with new features weekly
+
 ## Features
 
 - 🤖 **Multi-Model Support**: Integrate OpenAI (O3), Google Gemini (2.5 Pro), and Azure AI models
@@ -59,6 +87,72 @@ npx -y ultra
 npm run build
 node dist/cli.js
 ```
+
+## CLI Commands
+
+Ultra MCP provides several powerful commands:
+
+### `config` - Interactive Configuration
+```bash
+npx -y ultra-mcp config
+```
+Configure API keys interactively with a user-friendly menu system.
+
+### `dashboard` - Web Dashboard
+```bash
+npx -y ultra-mcp dashboard
+
+# Custom port
+npx -y ultra-mcp dashboard --port 4000
+
+# Development mode
+npx -y ultra-mcp dashboard --dev
+```
+Launch the web dashboard to view usage statistics, manage configurations, and monitor AI costs.
+
+### `install` - Install for Claude Code
+```bash
+npx -y ultra-mcp install
+```
+Automatically install Ultra MCP as an MCP server for Claude Code.
+
+### `doctor` - Health Check
+```bash
+npx -y ultra-mcp doctor
+
+# Test connections to providers
+npx -y ultra-mcp doctor --test
+```
+Check installation health and test API connections.
+
+### `chat` - Interactive Chat
+```bash
+npx -y ultra-mcp chat
+
+# Specify model and provider
+npx -y ultra-mcp chat -m o3-mini -p openai
+```
+Chat interactively with AI models from the command line.
+
+### Database Commands
+
+#### `db:show` - Show Database Info
+```bash
+npx -y ultra-mcp db:show
+```
+Display database file location and basic statistics.
+
+#### `db:stats` - Usage Statistics
+```bash
+npx -y ultra-mcp db:stats
+```
+Show detailed usage statistics for the last 30 days including costs by provider.
+
+#### `db:view` - Database Viewer
+```bash
+npx -y ultra-mcp db:view
+```
+Launch Drizzle Studio to explore the usage database interactively.
 
 ### Integration with Claude Code
 
