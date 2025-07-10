@@ -14,6 +14,7 @@ export async function runInteractiveConfig(): Promise<void> {
   console.log(chalk.gray('- OpenAI API Key:'), currentConfig.openai?.apiKey ? chalk.green('✓ Set') : chalk.red('✗ Not set'));
   console.log(chalk.gray('- Google API Key:'), currentConfig.google?.apiKey ? chalk.green('✓ Set') : chalk.red('✗ Not set'));
   console.log(chalk.gray('- Azure API Key:'), currentConfig.azure?.apiKey ? chalk.green('✓ Set') : chalk.red('✗ Not set'));
+  console.log(chalk.gray('- xAI API Key:'), currentConfig.xai?.apiKey ? chalk.green('✓ Set') : chalk.red('✗ Not set'));
   console.log();
 
   const response = await prompts([
@@ -122,6 +123,33 @@ async function configureApiKeys(configManager: ConfigManager): Promise<void> {
     }
   }
 
+  // xAI API Key (optional)
+  const xaiPrompt = await prompts({
+    type: 'confirm',
+    name: 'configureXai',
+    message: 'Would you like to configure xAI Grok?',
+    initial: false,
+  });
+
+  if (xaiPrompt.configureXai) {
+    const xaiResponse = await prompts({
+      type: 'text',
+      name: 'apiKey',
+      message: 'xAI Grok API Key:',
+      initial: currentConfig.xai?.apiKey ? '(current value hidden)' : '',
+    });
+
+    if (xaiResponse.apiKey && xaiResponse.apiKey !== '(current value hidden)') {
+      if (xaiResponse.apiKey.toLowerCase() === 'clear') {
+        await configManager.setApiKey('xai', undefined);
+        console.log(chalk.yellow('xAI API Key cleared'));
+      } else {
+        await configManager.setApiKey('xai', xaiResponse.apiKey);
+        console.log(chalk.green('xAI API Key updated'));
+      }
+    }
+  }
+
   console.log(chalk.green('\n✅ Configuration updated successfully!'));
   
   // Run the main menu again
@@ -142,6 +170,9 @@ async function viewConfiguration(configManager: ConfigManager, chalk: any): Prom
   console.log(chalk.bold('\nAzure:'));
   console.log(chalk.gray('  API Key:'), config.azure?.apiKey ? chalk.green(maskApiKey(config.azure.apiKey)) : chalk.red('Not set'));
   console.log(chalk.gray('  Endpoint:'), config.azure?.endpoint || chalk.red('Not set'));
+  
+  console.log(chalk.bold('\nxAI:'));
+  console.log(chalk.gray('  API Key:'), config.xai?.apiKey ? chalk.green(maskApiKey(config.xai.apiKey)) : chalk.red('Not set'));
   
   console.log(chalk.gray(`\nConfig file: ${await configManager.getConfigPath()}`));
   

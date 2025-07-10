@@ -16,6 +16,9 @@ export const ConfigSchema = z.object({
     apiKey: ApiKeySchema,
     endpoint: z.string().url().optional(),
   }).optional(),
+  xai: z.object({
+    apiKey: ApiKeySchema,
+  }).optional(),
 });
 
 export type Config = z.infer<typeof ConfigSchema>;
@@ -31,5 +34,8 @@ export const defaultConfig: Config = {
   azure: {
     apiKey: undefined,
     endpoint: undefined,
+  },
+  xai: {
+    apiKey: undefined,
   },
 };

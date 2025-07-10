@@ -14,6 +14,9 @@ describe('ConfigSchema', () => {
         apiKey: 'test-azure-key',
         endpoint: 'https://test.azure.com',
       },
+      xai: {
+        apiKey: 'xai-test-key',
+      },
     };
 
     const result = ConfigSchema.safeParse(validConfig);
@@ -80,6 +83,9 @@ describe('ConfigSchema', () => {
       azure: {
         apiKey: undefined,
         endpoint: undefined,
+      },
+      xai: {
+        apiKey: undefined,
       },
     });
   });

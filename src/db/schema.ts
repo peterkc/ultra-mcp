@@ -3,7 +3,7 @@ import { sqliteTable, text, integer, real, index } from 'drizzle-orm/sqlite-core
 export const llmRequests = sqliteTable('llm_requests', {
   id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
   timestamp: integer('timestamp', { mode: 'timestamp_ms' }).$defaultFn(() => new Date()),
-  provider: text('provider', { enum: ['openai', 'gemini', 'azure'] }).notNull(),
+  provider: text('provider', { enum: ['openai', 'gemini', 'azure', 'grok'] }).notNull(),
   model: text('model').notNull(),
   toolName: text('tool_name'), // MCP tool that triggered this request
   inputTokens: integer('input_tokens'),

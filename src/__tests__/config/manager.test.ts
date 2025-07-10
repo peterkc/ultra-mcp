@@ -62,6 +62,7 @@ describe('ConfigManager', () => {
         openai: { apiKey: undefined },
         google: { apiKey: undefined },
         azure: { apiKey: undefined, endpoint: undefined },
+        xai: { apiKey: undefined },
       });
     });
   });
@@ -80,6 +81,11 @@ describe('ConfigManager', () => {
     it('should set and get Azure API key', async () => {
       await configManager.setApiKey('azure', 'test-azure-key');
       expect(await configManager.getApiKey('azure')).toBe('test-azure-key');
+    });
+
+    it('should set and get xAI API key', async () => {
+      await configManager.setApiKey('xai', 'test-xai-key');
+      expect(await configManager.getApiKey('xai')).toBe('test-xai-key');
     });
 
     it('should delete API key when setting to undefined', async () => {
@@ -123,6 +129,11 @@ describe('ConfigManager', () => {
       await configManager.setApiKey('azure', 'test-key');
       expect(await configManager.hasAnyApiKeys()).toBe(true);
     });
+
+    it('should return true when xAI key is set', async () => {
+      await configManager.setApiKey('xai', 'test-key');
+      expect(await configManager.hasAnyApiKeys()).toBe(true);
+    });
   });
 
   describe('getConfigPath', () => {
@@ -142,6 +153,7 @@ describe('ConfigManager', () => {
         openai: { apiKey: undefined },
         google: { apiKey: undefined },
         azure: { apiKey: undefined, endpoint: undefined },
+        xai: { apiKey: undefined },
       });
     });
   });

@@ -45,7 +45,7 @@ export class ConfigManager {
   }
 
   // Set a specific API key
-  async setApiKey(provider: 'openai' | 'google' | 'azure', apiKey: string | undefined): Promise<void> {
+  async setApiKey(provider: 'openai' | 'google' | 'azure' | 'xai', apiKey: string | undefined): Promise<void> {
     await this.ensureInitialized();
     if (!this.store) {
       throw new Error('Configuration store not initialized');
@@ -58,7 +58,7 @@ export class ConfigManager {
   }
 
   // Get a specific API key
-  async getApiKey(provider: 'openai' | 'google' | 'azure'): Promise<string | undefined> {
+  async getApiKey(provider: 'openai' | 'google' | 'azure' | 'xai'): Promise<string | undefined> {
     await this.ensureInitialized();
     if (!this.store) {
       throw new Error('Configuration store not initialized');
@@ -85,7 +85,8 @@ export class ConfigManager {
     return !!(
       config.openai?.apiKey ||
       config.google?.apiKey ||
-      config.azure?.apiKey
+      config.azure?.apiKey ||
+      config.xai?.apiKey
     );
   }
 

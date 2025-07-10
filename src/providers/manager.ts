@@ -2,6 +2,7 @@ import { AIProvider } from "./types";
 import { OpenAIProvider } from "./openai";
 import { GeminiProvider } from "./gemini";
 import { AzureOpenAIProvider } from "./azure";
+import { GrokProvider } from "./grok";
 import { ConfigManager } from "../config/manager";
 
 export class ProviderManager {
@@ -18,6 +19,7 @@ export class ProviderManager {
     this.providers.set("openai", new OpenAIProvider(this.configManager));
     this.providers.set("gemini", new GeminiProvider(this.configManager));
     this.providers.set("azure", new AzureOpenAIProvider(this.configManager));
+    this.providers.set("grok", new GrokProvider(this.configManager));
   }
 
   getProvider(name: string): AIProvider {
@@ -62,6 +64,10 @@ export class ProviderManager {
     if ((config.azure?.apiKey || process.env.AZURE_API_KEY) && 
         (config.azure?.endpoint || process.env.AZURE_ENDPOINT)) {
       configured.push("azure");
+    }
+
+    if (config.xai?.apiKey || process.env.XAI_API_KEY) {
+      configured.push("grok");
     }
 
     return configured;

@@ -82,6 +82,7 @@ describe('Interactive Config', () => {
         .mockResolvedValueOnce({ apiKey: 'new-openai-key' })
         .mockResolvedValueOnce({ apiKey: '' }) // Skip Google
         .mockResolvedValueOnce({ configureAzure: false })
+        .mockResolvedValueOnce({ configureXai: false })
         .mockResolvedValueOnce({ action: 'exit' }); // Exit after config
       
       await runInteractiveConfig();
@@ -95,6 +96,7 @@ describe('Interactive Config', () => {
         .mockResolvedValueOnce({ apiKey: 'clear' })
         .mockResolvedValueOnce({ apiKey: '' }) // Skip Google
         .mockResolvedValueOnce({ configureAzure: false })
+        .mockResolvedValueOnce({ configureXai: false })
         .mockResolvedValueOnce({ action: 'exit' });
       
       await runInteractiveConfig();
@@ -112,6 +114,7 @@ describe('Interactive Config', () => {
           apiKey: 'azure-key',
           endpoint: 'https://test.azure.com'
         })
+        .mockResolvedValueOnce({ configureXai: false })
         .mockResolvedValueOnce({ action: 'exit' });
       
       await runInteractiveConfig();

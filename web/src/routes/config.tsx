@@ -30,6 +30,12 @@ function Configuration() {
       apiKey: config?.azure?.apiKey,
       endpoint: config?.azure?.endpoint,
     },
+    {
+      name: 'xAI Grok',
+      key: 'xai' as const,
+      configured: config?.xai?.configured,
+      apiKey: config?.xai?.apiKey,
+    },
   ];
 
   return (

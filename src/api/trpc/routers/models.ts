@@ -7,7 +7,7 @@ export const modelsRouter = router({
   list: publicProcedure.query(async () => {
     const configManager = await getConfigManager();
     const config = await configManager.getConfig();
-    const providerManager = new ProviderManager(config);
+    const providerManager = new ProviderManager(configManager);
     
     const models = [];
     

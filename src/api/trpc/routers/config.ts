@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { router, publicProcedure } from '../trpc';
 import { getConfigManager } from '../../../config/manager';
-import { configSchema } from '../../../config/schema';
+import { ConfigSchema } from '../../../config/schema';
 
 export const configRouter = router({
   get: publicProcedure.query(async () => {
@@ -23,6 +23,10 @@ export const configRouter = router({
         apiKey: config.azure?.apiKey ? '***' + config.azure.apiKey.slice(-4) : undefined,
         endpoint: config.azure?.endpoint,
       },
+      xai: {
+        configured: !!config.xai?.apiKey,
+        apiKey: config.xai?.apiKey ? '***' + config.xai.apiKey.slice(-4) : undefined,
+      },
     };
     
     return maskedConfig;
@@ -31,7 +35,7 @@ export const configRouter = router({
   update: publicProcedure
     .input(
       z.object({
-        provider: z.enum(['openai', 'google', 'azure']),
+        provider: z.enum(['openai', 'google', 'azure', 'xai']),
         config: z.object({
           apiKey: z.string().optional(),
           endpoint: z.string().optional(),
@@ -55,7 +59,7 @@ export const configRouter = router({
   testConnection: publicProcedure
     .input(
       z.object({
-        provider: z.enum(['openai', 'google', 'azure']),
+        provider: z.enum(['openai', 'google', 'azure', 'xai']),
       })
     )
     .mutation(async ({ input }) => {
@@ -69,7 +73,7 @@ export const configRouter = router({
   reset: publicProcedure
     .input(
       z.object({
-        provider: z.enum(['openai', 'google', 'azure']).optional(),
+        provider: z.enum(['openai', 'google', 'azure', 'xai']).optional(),
       })
     )
     .mutation(async ({ input }) => {

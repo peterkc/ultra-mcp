@@ -21,6 +21,13 @@ const PRICING = {
   // Azure OpenAI (same as OpenAI but may have different pricing)
   'azure-gpt-4': { input: 0.03, output: 0.06 },
   'azure-gpt-35-turbo': { input: 0.0015, output: 0.002 },
+  
+  // xAI Grok Models
+  'grok-4': { input: 0.015, output: 0.015 },
+  'grok-3': { input: 0.01, output: 0.01 },
+  'grok-3-fast': { input: 0.005, output: 0.005 },
+  'grok-3-mini': { input: 0.002, output: 0.002 },
+  'grok-beta': { input: 0.005, output: 0.005 },
 } as const;
 
 function estimateCost(model: string, inputTokens: number, outputTokens: number): number {
@@ -43,7 +50,7 @@ export interface RequestData {
 }
 
 export interface TrackingData {
-  provider: 'openai' | 'gemini' | 'azure';
+  provider: 'openai' | 'gemini' | 'azure' | 'grok';
   model: string;
   toolName?: string;
   requestData: RequestData;

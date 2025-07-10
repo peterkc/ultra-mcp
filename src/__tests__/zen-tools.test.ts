@@ -12,7 +12,8 @@ describe('Zen-Inspired Tools', () => {
     mockProviderManager.addMockProvider('openai');
     mockProviderManager.addMockProvider('gemini');
     mockProviderManager.addMockProvider('azure');
-    mockProviderManager.setConfiguredProviders(['openai', 'gemini', 'azure']);
+    mockProviderManager.addMockProvider('grok');
+    mockProviderManager.setConfiguredProviders(['openai', 'gemini', 'azure', 'grok']);
     handlers = new AIToolHandlers(mockProviderManager as any);
   });
 
@@ -55,7 +56,7 @@ describe('Zen-Inspired Tools', () => {
       const params = {
         task: 'review pull request changes',
         focus: 'all' as const, // explicit default
-        provider: 'openai' as const, // explicit default
+        provider: 'gemini' as const, // explicit default
       };
 
       const result = await handlers.handleReviewCode(params);
@@ -63,7 +64,7 @@ describe('Zen-Inspired Tools', () => {
       expect(result).toBeDefined();
       expect(result.content).toHaveLength(1);
       expect(result.content[0].type).toBe('text');
-      expect(result.metadata.provider).toBe('openai'); // default provider
+      expect(result.metadata.provider).toBe('gemini'); // default provider
       expect(result.metadata.focus).toBe('all'); // default focus
     });
 
@@ -87,7 +88,7 @@ describe('Zen-Inspired Tools', () => {
     it('should debug issue with basic parameters', async () => {
       const params = {
         task: 'fix login error',
-        provider: 'openai' as const, // explicit default
+        provider: 'gemini' as const, // explicit default
       };
 
       const result = await handlers.handleDebugIssue(params);
@@ -95,7 +96,7 @@ describe('Zen-Inspired Tools', () => {
       expect(result).toBeDefined();
       expect(result.content).toHaveLength(1);
       expect(result.content[0].type).toBe('text');
-      expect(result.metadata.provider).toBe('openai'); // default provider
+      expect(result.metadata.provider).toBe('gemini'); // default provider
     });
 
     it('should debug issue with symptoms and files', async () => {
@@ -212,12 +213,12 @@ describe('Zen-Inspired Tools', () => {
       const reviewCode = definitions.find(def => def.name === 'review-code');
       expect(reviewCode).toBeDefined();
       expect(reviewCode!.inputSchema.required).toEqual(['task']);
-      expect((reviewCode!.inputSchema.properties as any).provider.default).toBe('openai');
+      expect((reviewCode!.inputSchema.properties as any).provider.default).toBe('gemini');
 
       const debugIssue = definitions.find(def => def.name === 'debug-issue');
       expect(debugIssue).toBeDefined();
       expect(debugIssue!.inputSchema.required).toEqual(['task']);
-      expect((debugIssue!.inputSchema.properties as any).provider.default).toBe('openai');
+      expect((debugIssue!.inputSchema.properties as any).provider.default).toBe('gemini');
 
       const planFeature = definitions.find(def => def.name === 'plan-feature');
       expect(planFeature).toBeDefined();

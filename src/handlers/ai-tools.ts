@@ -4,7 +4,7 @@ import { AIRequestSchema } from "../providers/types";
 
 // Schema for the deep-reasoning tool
 const DeepReasoningSchema = z.object({
-  provider: z.enum(["openai", "gemini", "azure"]).optional().describe("AI provider to use (defaults to Azure if configured, otherwise OpenAI)"),
+  provider: z.enum(["openai", "gemini", "azure", "grok"]).optional().describe("AI provider to use (defaults to Azure if configured, otherwise OpenAI)"),
   prompt: z.string().describe("The complex question or problem requiring deep reasoning"),
   model: z.string().optional().describe("Specific model to use (optional, will use provider default)"),
   temperature: z.number().min(0).max(2).optional().default(0.7).describe("Temperature for response generation"),
@@ -16,7 +16,7 @@ const DeepReasoningSchema = z.object({
 
 // Schema for the investigation tool
 const InvestigationSchema = z.object({
-  provider: z.enum(["openai", "gemini", "azure"]).optional().describe("AI provider to use (defaults to Azure if configured, otherwise best available)"),
+  provider: z.enum(["openai", "gemini", "azure", "grok"]).optional().describe("AI provider to use (defaults to Azure if configured, otherwise best available)"),
   topic: z.string().describe("The topic or question to investigate"),
   depth: z.enum(["shallow", "medium", "deep"]).default("deep").describe("Investigation depth"),
   model: z.string().optional().describe("Specific model to use"),
@@ -25,7 +25,7 @@ const InvestigationSchema = z.object({
 
 // Schema for the research tool
 const ResearchSchema = z.object({
-  provider: z.enum(["openai", "gemini", "azure"]).optional().describe("AI provider to use (defaults to Azure if configured, otherwise best available)"),
+  provider: z.enum(["openai", "gemini", "azure", "grok"]).optional().describe("AI provider to use (defaults to Azure if configured, otherwise best available)"),
   query: z.string().describe("Research query or topic"),
   sources: z.array(z.string()).optional().describe("Specific sources or contexts to consider"),
   model: z.string().optional().describe("Specific model to use"),
@@ -37,35 +37,35 @@ const AnalyzeCodeSchema = z.object({
   task: z.string().describe("What to analyze (e.g., 'analyze performance of user authentication', 'review database queries')"),
   files: z.array(z.string()).optional().describe("File paths to analyze (optional)"),
   focus: z.enum(["architecture", "performance", "security", "quality", "all"]).default("all").describe("Analysis focus area"),
-  provider: z.enum(["openai", "gemini", "azure"]).optional().default("gemini").describe("AI provider to use"),
+  provider: z.enum(["openai", "gemini", "azure", "grok"]).optional().default("gemini").describe("AI provider to use"),
 });
 
 const ReviewCodeSchema = z.object({
   task: z.string().describe("What to review (e.g., 'review pull request changes', 'check for security issues')"),
   files: z.array(z.string()).optional().describe("File paths to review (optional)"),
   focus: z.enum(["bugs", "security", "performance", "style", "all"]).default("all").describe("Review focus area"),
-  provider: z.enum(["openai", "gemini", "azure"]).optional().default("openai").describe("AI provider to use"),
+  provider: z.enum(["openai", "gemini", "azure", "grok"]).optional().default("gemini").describe("AI provider to use"),
 });
 
 const DebugIssueSchema = z.object({
   task: z.string().describe("What to debug (e.g., 'fix login error', 'investigate memory leak')"),
   files: z.array(z.string()).optional().describe("Relevant file paths (optional)"),
   symptoms: z.string().optional().describe("Error symptoms or behavior observed"),
-  provider: z.enum(["openai", "gemini", "azure"]).optional().default("openai").describe("AI provider to use"),
+  provider: z.enum(["openai", "gemini", "azure", "grok"]).optional().default("gemini").describe("AI provider to use"),
 });
 
 const PlanFeatureSchema = z.object({
   task: z.string().describe("What to plan (e.g., 'add user profiles', 'implement payment system')"),
   requirements: z.string().optional().describe("Specific requirements or constraints"),
   scope: z.enum(["minimal", "standard", "comprehensive"]).default("standard").describe("Planning scope"),
-  provider: z.enum(["openai", "gemini", "azure"]).optional().default("gemini").describe("AI provider to use"),
+  provider: z.enum(["openai", "gemini", "azure", "grok"]).optional().default("gemini").describe("AI provider to use"),
 });
 
 const GenerateDocsSchema = z.object({
   task: z.string().describe("What to document (e.g., 'API endpoints', 'setup instructions', 'code comments')"),
   files: z.array(z.string()).optional().describe("File paths to document (optional)"),
   format: z.enum(["markdown", "comments", "api-docs", "readme"]).default("markdown").describe("Documentation format"),
-  provider: z.enum(["openai", "gemini", "azure"]).optional().default("gemini").describe("AI provider to use"),
+  provider: z.enum(["openai", "gemini", "azure", "grok"]).optional().default("gemini").describe("AI provider to use"),
 });
 
 export class AIToolHandlers {
@@ -134,7 +134,7 @@ export class AIToolHandlers {
       prompt,
       model: params.model,
       systemPrompt,
-      reasoningEffort: providerName === "openai" || providerName === "azure" ? "high" : undefined,
+      reasoningEffort: (providerName === "openai" || providerName === "azure" || providerName === "grok") ? "high" : undefined,
       useSearchGrounding: providerName === "gemini" ? params.enableSearch : false,
       temperature: 0.5, // Lower temperature for investigation
     });
@@ -177,7 +177,7 @@ export class AIToolHandlers {
       prompt: `Research the following: ${params.query}`,
       model: params.model,
       systemPrompt,
-      reasoningEffort: providerName === "openai" || providerName === "azure" ? "high" : undefined,
+      reasoningEffort: (providerName === "openai" || providerName === "azure" || providerName === "grok") ? "high" : undefined,
       useSearchGrounding: providerName === "gemini", // Always enable search for research with Gemini
       temperature: 0.4, // Lower temperature for research accuracy
     });
@@ -220,6 +220,7 @@ export class AIToolHandlers {
     response += `\n## Default Models\n`;
     response += `- OpenAI/Azure: o3 (optimized for reasoning)\n`;
     response += `- Gemini: gemini-2.5-pro (with Google Search enabled)\n`;
+    response += `- Grok: grok-4 (latest xAI model with reasoning support)\n`;
 
     return {
       content: [
@@ -262,7 +263,7 @@ export class AIToolHandlers {
       prompt,
       systemPrompt,
       temperature: 0.3, // Lower temperature for analytical tasks
-      reasoningEffort: providerName === "openai" || providerName === "azure" ? "high" : undefined,
+      reasoningEffort: (providerName === "openai" || providerName === "azure" || providerName === "grok") ? "high" : undefined,
       useSearchGrounding: providerName === "gemini",
     });
 
@@ -313,7 +314,7 @@ export class AIToolHandlers {
       prompt,
       systemPrompt,
       temperature: 0.2, // Very low temperature for code review accuracy
-      reasoningEffort: providerName === "openai" || providerName === "azure" ? "high" : undefined,
+      reasoningEffort: (providerName === "openai" || providerName === "azure" || providerName === "grok") ? "high" : undefined,
       useSearchGrounding: false, // No search needed for code review
     });
 
@@ -362,7 +363,7 @@ export class AIToolHandlers {
       prompt,
       systemPrompt,
       temperature: 0.4, // Balanced temperature for debugging creativity
-      reasoningEffort: providerName === "openai" || providerName === "azure" ? "high" : undefined,
+      reasoningEffort: (providerName === "openai" || providerName === "azure" || providerName === "grok") ? "high" : undefined,
       useSearchGrounding: false, // No search needed for debugging
     });
 
@@ -499,7 +500,7 @@ export class AIToolHandlers {
           properties: {
             provider: {
               type: "string",
-              enum: ["openai", "gemini", "azure"],
+              enum: ["openai", "gemini", "azure", "grok"],
               description: "AI provider to use (defaults to Azure if configured, otherwise best available)",
             },
             prompt: {
@@ -548,7 +549,7 @@ export class AIToolHandlers {
           properties: {
             provider: {
               type: "string",
-              enum: ["openai", "gemini", "azure"],
+              enum: ["openai", "gemini", "azure", "grok"],
               description: "AI provider to use (defaults to Azure if configured, otherwise best available)",
             },
             topic: {
@@ -582,7 +583,7 @@ export class AIToolHandlers {
           properties: {
             provider: {
               type: "string",
-              enum: ["openai", "gemini", "azure"],
+              enum: ["openai", "gemini", "azure", "grok"],
               description: "AI provider to use (defaults to Azure if configured, otherwise best available)",
             },
             query: {
@@ -642,7 +643,7 @@ export class AIToolHandlers {
             },
             provider: {
               type: "string",
-              enum: ["openai", "gemini", "azure"],
+              enum: ["openai", "gemini", "azure", "grok"],
               default: "gemini",
               description: "AI provider to use",
             },
@@ -673,8 +674,8 @@ export class AIToolHandlers {
             },
             provider: {
               type: "string",
-              enum: ["openai", "gemini", "azure"],
-              default: "openai",
+              enum: ["openai", "gemini", "azure", "grok"],
+              default: "gemini",
               description: "AI provider to use",
             },
           },
@@ -702,8 +703,8 @@ export class AIToolHandlers {
             },
             provider: {
               type: "string",
-              enum: ["openai", "gemini", "azure"],
-              default: "openai",
+              enum: ["openai", "gemini", "azure", "grok"],
+              default: "gemini",
               description: "AI provider to use",
             },
           },
@@ -732,7 +733,7 @@ export class AIToolHandlers {
             },
             provider: {
               type: "string",
-              enum: ["openai", "gemini", "azure"],
+              enum: ["openai", "gemini", "azure", "grok"],
               default: "gemini",
               description: "AI provider to use",
             },
@@ -763,7 +764,7 @@ export class AIToolHandlers {
             },
             provider: {
               type: "string",
-              enum: ["openai", "gemini", "azure"],
+              enum: ["openai", "gemini", "azure", "grok"],
               default: "gemini",
               description: "AI provider to use",
             },

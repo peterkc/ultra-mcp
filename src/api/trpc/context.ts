@@ -1,11 +1,6 @@
 import type { FetchCreateContextFnOptions } from '@trpc/server/adapters/fetch';
 
-export interface Context {
-  req: Request;
-  resHeaders: Headers;
-}
-
-export function createContext({ req, resHeaders }: FetchCreateContextFnOptions): Context {
+export function createContext({ req, resHeaders }: FetchCreateContextFnOptions) {
   return {
     req,
     resHeaders,
