@@ -79,11 +79,12 @@ export async function runChatWithDeps(
     return; // TypeScript needs this to know execution ends here
   }
 
-  // Set up readline interface
+  // Set up readline interface with proper input handling
   const rl = createReadlineInterface({
     input: customProcess.stdin,
-    output: customProcess.stdout,
+    output: customProcess.stderr, // Use stderr to avoid input echo conflicts
     prompt: chalk.blue('You> '),
+    terminal: false, // Disable automatic terminal handling
   });
 
   // Handle Ctrl+C
@@ -133,16 +134,8 @@ export async function runChatWithDeps(
           temperature: 0.7,
         } as AIRequest);
         customConsole.log(response.text);
-      }
-
-      // Show usage if available
-      if (provider.generateText) {
-        const response = await provider.generateText({
-          prompt: input,
-          model: selectedModel,
-          temperature: 0.7,
-        } as AIRequest);
         
+        // Show usage if available
         if (response.usage) {
           customConsole.log(chalk.dim(`\n[Tokens: ${response.usage.totalTokens} | Model: ${response.model}]`));
         }

@@ -108,12 +108,13 @@ export async function updateLLMCompletion(data: CompletionData): Promise<void> {
       await ensureDatabaseReady();
       const db = await getDatabase();
       
+      const startTime = await getRequestStartTime(data.requestId);
       const updateData: Partial<LlmRequest> = {
         responseData: data.responseData,
         status: data.error ? 'error' : 'success',
         errorMessage: data.error,
         finishReason: data.finishReason,
-        durationMs: data.endTime - (await getRequestStartTime(data.requestId)),
+        durationMs: data.endTime - startTime,
       };
       
       if (data.usage) {

@@ -81,7 +81,11 @@ export class OpenAIProvider implements AIProvider {
         await updateLLMCompletion({
           requestId,
           responseData: { text: result.text },
-          usage: result.usage,
+          usage: result.usage ? {
+            promptTokens: result.usage.promptTokens || 0,
+            completionTokens: result.usage.completionTokens || 0,
+            totalTokens: result.usage.totalTokens || 0,
+          } : undefined,
           finishReason: result.finishReason,
           endTime: Date.now(),
         });
@@ -170,7 +174,11 @@ export class OpenAIProvider implements AIProvider {
         await updateLLMCompletion({
           requestId,
           responseData: { text: result.text },
-          usage: result.usage,
+          usage: result.usage ? {
+            promptTokens: result.usage.promptTokens || 0,
+            completionTokens: result.usage.completionTokens || 0,
+            totalTokens: result.usage.totalTokens || 0,
+          } : undefined,
           finishReason: result.finishReason,
           endTime: Date.now(),
         });
