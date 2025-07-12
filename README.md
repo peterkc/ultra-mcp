@@ -186,22 +186,25 @@ Add to your Claude Code settings:
 
 ### Integration with Cursor
 
-Add to your Cursor MCP settings:
+First configure your API keys:
+```bash
+npx -y ultra-mcp config
+```
+
+Then add to your Cursor MCP settings:
 
 ```json
 {
   "mcpServers": {
     "ultra-mcp": {
       "command": "npx", 
-      "args": ["-y", "ultra"],
-      "env": {
-        "OPENAI_API_KEY": "your-key",
-        "GOOGLE_API_KEY": "your-key"
-      }
+      "args": ["-y", "ultra"]
     }
   }
 }
 ```
+
+Ultra MCP will automatically use the API keys you configured with the `config` command.
 
 ## MCP Tools
 
