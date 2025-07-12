@@ -187,8 +187,9 @@ describe('Zen-Inspired Tools', () => {
       
       // Original tools: deep-reasoning, investigate, research, list-ai-models (4)
       // Zen-inspired tools: analyze-code, review-code, debug-issue, plan-feature, generate-docs (5)
-      // Total: 9 tools
-      expect(definitions).toHaveLength(9);
+      // Workflow tools: challenge, consensus, planner, precommit, secaudit, tracer (6)
+      // Total: 15 tools
+      expect(definitions).toHaveLength(15);
 
       const toolNames = definitions.map(def => def.name);
       

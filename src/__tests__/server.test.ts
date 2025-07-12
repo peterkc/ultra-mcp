@@ -140,7 +140,7 @@ describe('Ultra MCP Server', () => {
       // Verify it returns tools when called
       const result = await listHandler({ method: 'tools/list', params: {} }, {});
       expect(result.tools).toBeDefined();
-      expect(result.tools.length).toBe(10); // echo + 4 original AI tools + 5 zen-inspired tools
+      expect(result.tools.length).toBe(16); // echo + 4 original AI tools + 5 zen-inspired tools + 6 workflow tools
       
       // Verify echo tool is included
       const echoTool = result.tools.find((t: any) => t.name === 'echo');

@@ -113,6 +113,36 @@ export function createServer() {
           return await aiToolHandlers.handleGenerateDocs(args as any);
         }
 
+        case "challenge": {
+          const args = request.params.arguments || {};
+          return await aiToolHandlers.handleChallenge(args as any);
+        }
+
+        case "consensus": {
+          const args = request.params.arguments || {};
+          return await aiToolHandlers.handleConsensus(args as any);
+        }
+
+        case "planner": {
+          const args = request.params.arguments || {};
+          return await aiToolHandlers.handlePlanner(args as any);
+        }
+
+        case "precommit": {
+          const args = request.params.arguments || {};
+          return await aiToolHandlers.handlePrecommit(args as any);
+        }
+
+        case "secaudit": {
+          const args = request.params.arguments || {};
+          return await aiToolHandlers.handleSecaudit(args as any);
+        }
+
+        case "tracer": {
+          const args = request.params.arguments || {};
+          return await aiToolHandlers.handleTracer(args as any);
+        }
+
         default:
           return {
             content: [

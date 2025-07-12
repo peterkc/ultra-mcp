@@ -143,3 +143,6 @@ xcuserdata/
 *.xccheckout
 
 tmp/
+
+# Temporary analysis directory
+temp-analysis/
