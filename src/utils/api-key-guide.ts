@@ -21,8 +21,8 @@ export function showApiKeyGuide(): void {
   console.log(bold('🔵 Azure OpenAI:'));
   console.log('  1. Visit ' + cyan('https://portal.azure.com'));
   console.log('  2. Create an Azure OpenAI resource');
-  console.log('  3. Go to Keys and BaseURL section');
-  console.log('  4. Copy Key 1 or Key 2 and the base URL');
+  console.log('  3. Go to Keys and Endpoint section');
+  console.log('  4. Copy Key 1 or Key 2 and the endpoint URL');
   console.log('  5. Run ' + cyan('npx -y ultra-mcp config') + ' to add them\n');
   
   console.log(green('💡 Tip: Start with one provider first!'));

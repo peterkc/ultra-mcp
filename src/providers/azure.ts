@@ -15,12 +15,13 @@ export class AzureOpenAIProvider implements AIProvider {
   private async getCredentials(): Promise<{ apiKey: string; baseURL: string }> {
     const config = await this.configManager.getConfig();
     const apiKey = config.azure?.apiKey || process.env.AZURE_API_KEY;
-    const baseURL = config.azure?.baseURL || process.env.AZURE_BASE_URL;
-    
+    // Support both new AZURE_BASE_URL and legacy AZURE_ENDPOINT for backward compatibility
+    const baseURL = config.azure?.baseURL || process.env.AZURE_BASE_URL || process.env.AZURE_ENDPOINT;
+
     if (!apiKey || !baseURL) {
       throw new Error("Azure OpenAI credentials not configured. Run 'ultra config' or set AZURE_API_KEY and AZURE_BASE_URL environment variables.");
     }
-    
+
     return { apiKey, baseURL };
   }
 

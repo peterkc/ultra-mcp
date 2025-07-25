@@ -81,7 +81,8 @@ export async function runDoctorWithDeps(
 
     // Check 4: Azure Configuration
     const azureKey = config.azure?.apiKey || env.AZURE_API_KEY;
-    const azureBaseURL = config.azure?.baseURL || env.AZURE_BASE_URL;
+    // Support both new AZURE_BASE_URL and legacy AZURE_ENDPOINT for backward compatibility
+    const azureBaseURL = config.azure?.baseURL || env.AZURE_BASE_URL || env.AZURE_ENDPOINT;
     if (azureKey && azureBaseURL) {
       results.push({
         name: 'Azure OpenAI',

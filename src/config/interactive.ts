@@ -143,8 +143,8 @@ async function configureApiKeys(configManager: ConfigManager): Promise<void> {
       }
     }
 
-    if (azureResponse.baseURL) {
-      await configManager.setBaseURL('azure', azureResponse.baseURL);
+    if (azureResponse.baseURL !== undefined && azureResponse.baseURL !== currentConfig.azure?.baseURL) {
+      await configManager.setBaseURL('azure', azureResponse.baseURL || undefined);
       console.log(chalk.green('Azure Base URL updated'));
     }
   }
