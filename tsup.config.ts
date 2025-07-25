@@ -11,9 +11,12 @@ export default defineConfig({
   shims: true,
   target: 'node18',
   platform: 'node',
-  noExternal: [
-    // Bundle all node_modules
-    /^(?!node:).*/,
+  external: [
+    // Keep native dependencies external
+    '@libsql/client',
+    'better-sqlite3',
+    // Keep other problematic packages external
+    'conf',
   ],
   esbuildOptions(options) {
     // Don't add banner since the source file already has shebang
