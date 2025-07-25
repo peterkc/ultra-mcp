@@ -12,7 +12,7 @@ describe('ConfigSchema', () => {
       },
       azure: {
         apiKey: 'test-azure-key',
-        endpoint: 'https://test.azure.com',
+        baseURL: 'https://test.azure.com',
       },
       xai: {
         apiKey: 'xai-test-key',
@@ -57,18 +57,18 @@ describe('ConfigSchema', () => {
     expect(result.success).toBe(true);
   });
 
-  it('should reject invalid URL for Azure endpoint', () => {
+  it('should reject invalid URL for Azure baseURL', () => {
     const invalidConfig = {
       azure: {
         apiKey: 'test-key',
-        endpoint: 'not-a-url',
+        baseURL: 'not-a-url',
       },
     };
 
     const result = ConfigSchema.safeParse(invalidConfig);
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.errors[0].path).toContain('endpoint');
+      expect(result.error.errors[0].path).toContain('baseURL');
     }
   });
 
@@ -76,16 +76,19 @@ describe('ConfigSchema', () => {
     expect(defaultConfig).toEqual({
       openai: {
         apiKey: undefined,
+        baseURL: undefined,
       },
       google: {
         apiKey: undefined,
+        baseURL: undefined,
       },
       azure: {
         apiKey: undefined,
-        endpoint: undefined,
+        baseURL: undefined,
       },
       xai: {
         apiKey: undefined,
+        baseURL: undefined,
       },
     });
   });

@@ -16,25 +16,28 @@ function Configuration() {
       key: 'openai' as const,
       configured: config?.openai?.configured,
       apiKey: config?.openai?.apiKey,
+      baseURL: config?.openai?.baseURL,
     },
     {
       name: 'Google Gemini',
       key: 'google' as const,
       configured: config?.google?.configured,
       apiKey: config?.google?.apiKey,
+      baseURL: config?.google?.baseURL,
     },
     {
       name: 'Azure OpenAI',
       key: 'azure' as const,
       configured: config?.azure?.configured,
       apiKey: config?.azure?.apiKey,
-      endpoint: config?.azure?.endpoint,
+      baseURL: config?.azure?.baseURL,
     },
     {
       name: 'xAI Grok',
       key: 'xai' as const,
       configured: config?.xai?.configured,
       apiKey: config?.xai?.apiKey,
+      baseURL: config?.xai?.baseURL,
     },
   ];
 
@@ -73,11 +76,11 @@ function Configuration() {
                     </code>
                   </div>
                 )}
-                {provider.endpoint && (
+                {provider.baseURL && (
                   <div>
-                    <span className="text-sm text-muted-foreground">Endpoint: </span>
+                    <span className="text-sm text-muted-foreground">Base URL: </span>
                     <code className="text-sm bg-muted px-1 py-0.5 rounded">
-                      {provider.endpoint}
+                      {provider.baseURL}
                     </code>
                   </div>
                 )}

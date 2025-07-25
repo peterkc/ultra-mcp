@@ -23,9 +23,10 @@ describe('Server Startup', () => {
     // Setup mock ConfigManager
     mockConfigManager = {
       getConfig: vi.fn().mockResolvedValue({
-        openai: { apiKey: 'test-openai-key' },
-        google: { apiKey: 'test-google-key' },
-        azure: { apiKey: 'test-azure-key', endpoint: 'https://test.azure.com' },
+        openai: { apiKey: 'test-openai-key', baseURL: undefined },
+        google: { apiKey: 'test-google-key', baseURL: undefined },
+        azure: { apiKey: 'test-azure-key', baseURL: 'https://test.azure.com' },
+        xai: { apiKey: undefined, baseURL: undefined },
       }),
     };
     
@@ -50,7 +51,7 @@ describe('Server Startup', () => {
     expect(process.env.OPENAI_API_KEY).toBe('test-openai-key');
     expect(process.env.GOOGLE_API_KEY).toBe('test-google-key');
     expect(process.env.AZURE_API_KEY).toBe('test-azure-key');
-    expect(process.env.AZURE_ENDPOINT).toBe('https://test.azure.com');
+    expect(process.env.AZURE_BASE_URL).toBe('https://test.azure.com');
 
     // Check that server was started
     expect(mockServer.connect).toHaveBeenCalled();
@@ -63,7 +64,8 @@ describe('Server Startup', () => {
     mockConfigManager.getConfig.mockResolvedValue({
       openai: { apiKey: undefined },
       google: { apiKey: undefined },
-      azure: { apiKey: undefined, endpoint: undefined },
+      azure: { apiKey: undefined, baseURL: undefined },
+      xai: { apiKey: undefined, baseURL: undefined },
     });
 
     const { createServer } = await import('../server');

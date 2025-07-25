@@ -60,7 +60,7 @@ program
   .command('chat')
   .description('Interactive chat with AI models')
   .option('-m, --model <model>', 'Model to use for chat')
-  .option('-p, --provider <provider>', 'Provider to use (openai, gemini, azure)')
+  .option('-p, --provider <provider>', 'Provider to use (openai, gemini, azure, grok)')
   .action(async (options) => {
     try {
       await runChat(options);

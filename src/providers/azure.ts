@@ -12,16 +12,17 @@ export class AzureOpenAIProvider implements AIProvider {
     this.configManager = configManager;
   }
 
-  private async getCredentials(): Promise<{ apiKey: string; endpoint: string }> {
+  private async getCredentials(): Promise<{ apiKey: string; baseURL: string }> {
     const config = await this.configManager.getConfig();
     const apiKey = config.azure?.apiKey || process.env.AZURE_API_KEY;
-    const endpoint = config.azure?.endpoint || process.env.AZURE_ENDPOINT;
-    
-    if (!apiKey || !endpoint) {
-      throw new Error("Azure OpenAI credentials not configured. Run 'ultra config' or set AZURE_API_KEY and AZURE_ENDPOINT environment variables.");
+    // Support both new AZURE_BASE_URL and legacy AZURE_ENDPOINT for backward compatibility
+    const baseURL = config.azure?.baseURL || process.env.AZURE_BASE_URL || process.env.AZURE_ENDPOINT;
+
+    if (!apiKey || !baseURL) {
+      throw new Error("Azure OpenAI credentials not configured. Run 'ultra config' or set AZURE_API_KEY and AZURE_BASE_URL environment variables.");
     }
-    
-    return { apiKey, endpoint };
+
+    return { apiKey, baseURL };
   }
 
   getDefaultModel(): string {
@@ -36,7 +37,7 @@ export class AzureOpenAIProvider implements AIProvider {
   }
 
   async generateText(request: AIRequest): Promise<AIResponse> {
-    const { apiKey, endpoint } = await this.getCredentials();
+    const { apiKey, baseURL } = await this.getCredentials();
     const model = request.model || this.getDefaultModel();
     const startTime = Date.now();
     
@@ -57,7 +58,7 @@ export class AzureOpenAIProvider implements AIProvider {
     
     const azure = createAzure({ 
       apiKey,
-      baseURL: endpoint,
+      baseURL,
     });
     const modelInstance = azure(model);
     
@@ -128,7 +129,7 @@ export class AzureOpenAIProvider implements AIProvider {
   }
 
   async *streamText(request: AIRequest): AsyncGenerator<string, void, unknown> {
-    const { apiKey, endpoint } = await this.getCredentials();
+    const { apiKey, baseURL } = await this.getCredentials();
     const model = request.model || this.getDefaultModel();
     const startTime = Date.now();
     
@@ -149,7 +150,7 @@ export class AzureOpenAIProvider implements AIProvider {
     
     const azure = createAzure({ 
       apiKey,
-      baseURL: endpoint,
+      baseURL,
     });
     const modelInstance = azure(model);
     

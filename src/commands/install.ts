@@ -79,7 +79,7 @@ export async function runInstall(): Promise<void> {
   // Check if API keys are configured
   const configManager = new ConfigManager();
   const config = await configManager.getConfig();
-  const hasKeys = config.openai?.apiKey || config.google?.apiKey || config.azure?.apiKey;
+  const hasKeys = config.openai?.apiKey || config.google?.apiKey || config.azure?.apiKey || config.xai?.apiKey;
   
   if (!hasKeys) {
     console.log(yellow('\n⚠️  No API keys configured'));

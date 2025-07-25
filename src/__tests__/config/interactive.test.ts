@@ -42,13 +42,14 @@ describe('Interactive Config', () => {
     // Setup mock ConfigManager
     mockConfigManager = {
       getConfig: vi.fn().mockResolvedValue({
-        openai: { apiKey: undefined },
-        google: { apiKey: undefined },
-        azure: { apiKey: undefined, endpoint: undefined },
+        openai: { apiKey: undefined, baseURL: undefined },
+        google: { apiKey: undefined, baseURL: undefined },
+        azure: { apiKey: undefined, baseURL: undefined },
+        xai: { apiKey: undefined, baseURL: undefined },
       }),
       getConfigPath: vi.fn().mockResolvedValue('/mock/config/path'),
       setApiKey: vi.fn().mockResolvedValue(undefined),
-      setAzureEndpoint: vi.fn().mockResolvedValue(undefined),
+      setBaseURL: vi.fn().mockResolvedValue(undefined),
       reset: vi.fn().mockResolvedValue(undefined),
     };
     
@@ -104,32 +105,33 @@ describe('Interactive Config', () => {
       expect(mockConfigManager.setApiKey).toHaveBeenCalledWith('openai', undefined);
     });
 
-    it('should configure Azure with API key and endpoint', async () => {
+    it('should configure Azure with API key and baseURL', async () => {
       mockPrompts
         .mockResolvedValueOnce({ action: 'configure' })
-        .mockResolvedValueOnce({ apiKey: '' }) // Skip OpenAI
-        .mockResolvedValueOnce({ apiKey: '' }) // Skip Google
+        .mockResolvedValueOnce({ apiKey: '', baseURL: '' }) // Skip OpenAI
+        .mockResolvedValueOnce({ apiKey: '', baseURL: '' }) // Skip Google
         .mockResolvedValueOnce({ configureAzure: true })
-        .mockResolvedValueOnce({ 
+        .mockResolvedValueOnce({
           apiKey: 'azure-key',
-          endpoint: 'https://test.azure.com'
+          baseURL: 'https://test.azure.com'
         })
         .mockResolvedValueOnce({ configureXai: false })
         .mockResolvedValueOnce({ action: 'exit' });
-      
+
       await runInteractiveConfig();
-      
+
       expect(mockConfigManager.setApiKey).toHaveBeenCalledWith('azure', 'azure-key');
-      expect(mockConfigManager.setAzureEndpoint).toHaveBeenCalledWith('https://test.azure.com');
+      expect(mockConfigManager.setBaseURL).toHaveBeenCalledWith('azure', 'https://test.azure.com');
     });
   });
 
   describe('View Configuration', () => {
     it('should display current configuration with masked API keys', async () => {
       mockConfigManager.getConfig.mockResolvedValue({
-        openai: { apiKey: 'sk-1234567890abcdef' },
-        google: { apiKey: 'test-google-key' },
-        azure: { apiKey: undefined, endpoint: undefined },
+        openai: { apiKey: 'sk-1234567890abcdef', baseURL: undefined },
+        google: { apiKey: 'test-google-key', baseURL: undefined },
+        azure: { apiKey: undefined, baseURL: undefined },
+        xai: { apiKey: undefined, baseURL: undefined },
       });
       
       mockPrompts

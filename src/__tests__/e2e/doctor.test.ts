@@ -63,6 +63,9 @@ describe('Doctor Command E2E', () => {
     expect(mockConsole.log).toHaveBeenCalledWith(
       expect.stringContaining('✅ Azure OpenAI:')
     );
+    expect(mockConsole.log).toHaveBeenCalledWith(
+      expect.stringContaining('✅ xAI API Key:')
+    );
 
     // Check success summary
     expect(mockConsole.log).toHaveBeenCalledWith(
@@ -143,7 +146,7 @@ describe('Doctor Command E2E', () => {
       OPENAI_API_KEY: 'sk-test-key',
       GOOGLE_API_KEY: 'google-test-key',
       AZURE_API_KEY: 'azure-test-key',
-      AZURE_ENDPOINT: 'https://test.openai.azure.com/',
+      AZURE_BASE_URL: 'https://test.openai.azure.com/',
     };
 
     await runDoctorWithDeps({}, {

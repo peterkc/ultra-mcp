@@ -1,5 +1,5 @@
 import { ConfigSchema, Config, defaultConfig } from './schema';
-import { join, dirname } from 'path';
+import { join } from 'path';
 import { platform, homedir } from 'os';
 import { mkdirSync } from 'fs';
 import type Conf from 'conf';
@@ -66,17 +66,31 @@ export class ConfigManager {
     return this.store.get(`${provider}.apiKey`);
   }
 
-  // Set Azure endpoint
-  async setAzureEndpoint(endpoint: string | undefined): Promise<void> {
+  // Set a specific baseURL
+  async setBaseURL(provider: 'openai' | 'google' | 'azure' | 'xai', baseURL: string | undefined): Promise<void> {
     await this.ensureInitialized();
     if (!this.store) {
       throw new Error('Configuration store not initialized');
     }
-    if (!endpoint) {
-      this.store.delete('azure.endpoint');
+    if (!baseURL) {
+      this.store.delete(`${provider}.baseURL`);
     } else {
-      this.store.set('azure.endpoint', endpoint);
+      this.store.set(`${provider}.baseURL`, baseURL);
     }
+  }
+
+  // Get a specific baseURL
+  async getBaseURL(provider: 'openai' | 'google' | 'azure' | 'xai'): Promise<string | undefined> {
+    await this.ensureInitialized();
+    if (!this.store) {
+      throw new Error('Configuration store not initialized');
+    }
+    return this.store.get(`${provider}.baseURL`);
+  }
+
+  // Set Azure baseURL (deprecated, use setBaseURL instead)
+  async setAzureBaseURL(baseURL: string | undefined): Promise<void> {
+    return this.setBaseURL('azure', baseURL);
   }
 
   // Check if any API keys are configured

@@ -11,14 +11,26 @@ export async function startServer(): Promise<void> {
   if (config.openai?.apiKey) {
     process.env.OPENAI_API_KEY = config.openai.apiKey;
   }
+  if (config.openai?.baseURL) {
+    process.env.OPENAI_BASE_URL = config.openai.baseURL;
+  }
   if (config.google?.apiKey) {
     process.env.GOOGLE_API_KEY = config.google.apiKey;
+  }
+  if (config.google?.baseURL) {
+    process.env.GOOGLE_BASE_URL = config.google.baseURL;
   }
   if (config.azure?.apiKey) {
     process.env.AZURE_API_KEY = config.azure.apiKey;
   }
-  if (config.azure?.endpoint) {
-    process.env.AZURE_ENDPOINT = config.azure.endpoint;
+  if (config.azure?.baseURL) {
+    process.env.AZURE_BASE_URL = config.azure.baseURL;
+  }
+  if (config.xai?.apiKey) {
+    process.env.XAI_API_KEY = config.xai.apiKey;
+  }
+  if (config.xai?.baseURL) {
+    process.env.XAI_BASE_URL = config.xai.baseURL;
   }
   
   const server = createServer();

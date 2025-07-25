@@ -12,15 +12,16 @@ export class GrokProvider implements AIProvider {
     this.configManager = configManager;
   }
 
-  private async getApiKey(): Promise<string> {
+  private async getApiKey(): Promise<{ apiKey: string; baseURL?: string }> {
     const config = await this.configManager.getConfig();
     const apiKey = config.xai?.apiKey || process.env.XAI_API_KEY;
+    const baseURL = config.xai?.baseURL || process.env.XAI_BASE_URL;
     
     if (!apiKey) {
       throw new Error("xAI API key not configured. Run 'ultra config' or set XAI_API_KEY environment variable.");
     }
     
-    return apiKey;
+    return { apiKey, baseURL };
   }
 
   getDefaultModel(): string {
@@ -38,7 +39,7 @@ export class GrokProvider implements AIProvider {
   }
 
   async generateText(request: AIRequest): Promise<AIResponse> {
-    const apiKey = await this.getApiKey();
+    const { apiKey, baseURL } = await this.getApiKey();
     const model = request.model || this.getDefaultModel();
     const startTime = Date.now();
     
@@ -57,7 +58,7 @@ export class GrokProvider implements AIProvider {
       startTime,
     });
     
-    const grokClient = createXai({ apiKey });
+    const grokClient = createXai({ apiKey, baseURL });
     const modelInstance = grokClient(model);
     
     type GenerateTextOptions = {
@@ -127,7 +128,7 @@ export class GrokProvider implements AIProvider {
   }
 
   async *streamText(request: AIRequest): AsyncGenerator<string, void, unknown> {
-    const apiKey = await this.getApiKey();
+    const { apiKey, baseURL } = await this.getApiKey();
     const model = request.model || this.getDefaultModel();
     const startTime = Date.now();
     
@@ -146,7 +147,7 @@ export class GrokProvider implements AIProvider {
       startTime,
     });
     
-    const grokClient = createXai({ apiKey });
+    const grokClient = createXai({ apiKey, baseURL });
     const modelInstance = grokClient(model);
     
     type StreamTextOptions = {

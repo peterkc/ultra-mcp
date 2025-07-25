@@ -13,19 +13,22 @@ export const configRouter = router({
       openai: {
         configured: !!config.openai?.apiKey,
         apiKey: config.openai?.apiKey ? '***' + config.openai.apiKey.slice(-4) : undefined,
+        baseURL: config.openai?.baseURL,
       },
       google: {
         configured: !!config.google?.apiKey,
         apiKey: config.google?.apiKey ? '***' + config.google.apiKey.slice(-4) : undefined,
+        baseURL: config.google?.baseURL,
       },
       azure: {
         configured: !!config.azure?.apiKey,
         apiKey: config.azure?.apiKey ? '***' + config.azure.apiKey.slice(-4) : undefined,
-        endpoint: config.azure?.endpoint,
+        baseURL: config.azure?.baseURL,
       },
       xai: {
         configured: !!config.xai?.apiKey,
         apiKey: config.xai?.apiKey ? '***' + config.xai.apiKey.slice(-4) : undefined,
+        baseURL: config.xai?.baseURL,
       },
     };
     
@@ -38,7 +41,7 @@ export const configRouter = router({
         provider: z.enum(['openai', 'google', 'azure', 'xai']),
         config: z.object({
           apiKey: z.string().optional(),
-          endpoint: z.string().optional(),
+          baseURL: z.string().optional(),
         }),
       })
     )
@@ -48,9 +51,9 @@ export const configRouter = router({
       if (input.config.apiKey) {
         await configManager.setApiKey(input.provider, input.config.apiKey);
       }
-      
-      if (input.provider === 'azure' && input.config.endpoint) {
-        await configManager.setAzureEndpoint(input.config.endpoint);
+
+      if (input.config.baseURL !== undefined) {
+        await configManager.setBaseURL(input.provider, input.config.baseURL || undefined);
       }
       
       return { success: true };
@@ -82,9 +85,7 @@ export const configRouter = router({
       if (input.provider) {
         // Reset specific provider
         await configManager.setApiKey(input.provider, undefined);
-        if (input.provider === 'azure') {
-          await configManager.setAzureEndpoint(undefined);
-        }
+        await configManager.setBaseURL(input.provider, undefined);
       } else {
         // Reset all
         await configManager.reset();
