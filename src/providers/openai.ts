@@ -12,15 +12,16 @@ export class OpenAIProvider implements AIProvider {
     this.configManager = configManager;
   }
 
-  private async getApiKey(): Promise<string> {
+  private async getCredentials(): Promise<{ apiKey: string; baseURL?: string }> {
     const config = await this.configManager.getConfig();
     const apiKey = config.openai?.apiKey || process.env.OPENAI_API_KEY;
-    
+    const baseURL = config.openai?.baseURL || process.env.OPENAI_BASE_URL;
+
     if (!apiKey) {
       throw new Error("OpenAI API key not configured. Run 'ultra config' or set OPENAI_API_KEY environment variable.");
     }
-    
-    return apiKey;
+
+    return { apiKey, baseURL };
   }
 
   getDefaultModel(): string {
@@ -35,10 +36,10 @@ export class OpenAIProvider implements AIProvider {
   }
 
   async generateText(request: AIRequest): Promise<AIResponse> {
-    const apiKey = await this.getApiKey();
+    const { apiKey, baseURL } = await this.getCredentials();
     const model = request.model || this.getDefaultModel();
     const startTime = Date.now();
-    
+
     // Track the request
     const requestId = await trackLLMRequest({
       provider: 'openai',
@@ -53,8 +54,8 @@ export class OpenAIProvider implements AIProvider {
       },
       startTime,
     });
-    
-    const openai = createOpenAI({ apiKey });
+
+    const openai = createOpenAI({ apiKey, baseURL });
     const modelInstance = openai(model);
     
     type GenerateTextOptions = {
@@ -128,10 +129,10 @@ export class OpenAIProvider implements AIProvider {
   }
 
   async *streamText(request: AIRequest): AsyncGenerator<string, void, unknown> {
-    const apiKey = await this.getApiKey();
+    const { apiKey, baseURL } = await this.getCredentials();
     const model = request.model || this.getDefaultModel();
     const startTime = Date.now();
-    
+
     // Track the request
     const requestId = await trackLLMRequest({
       provider: 'openai',
@@ -146,8 +147,8 @@ export class OpenAIProvider implements AIProvider {
       },
       startTime,
     });
-    
-    const openai = createOpenAI({ apiKey });
+
+    const openai = createOpenAI({ apiKey, baseURL });
     const modelInstance = openai(model);
     
     type StreamTextOptions = {

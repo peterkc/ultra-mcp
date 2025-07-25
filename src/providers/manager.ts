@@ -62,7 +62,7 @@ export class ProviderManager {
     }
 
     if ((config.azure?.apiKey || process.env.AZURE_API_KEY) && 
-        (config.azure?.endpoint || process.env.AZURE_ENDPOINT)) {
+        (config.azure?.baseURL || process.env.AZURE_BASE_URL)) {
       configured.push("azure");
     }
 

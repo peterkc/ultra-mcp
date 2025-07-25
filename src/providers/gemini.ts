@@ -12,15 +12,15 @@ export class GeminiProvider implements AIProvider {
     this.configManager = configManager;
   }
 
-  private async getApiKey(): Promise<string> {
+  private async getApiKey(): Promise<{ apiKey: string; baseURL?: string }> {
     const config = await this.configManager.getConfig();
     const apiKey = config.google?.apiKey || process.env.GOOGLE_API_KEY;
-    
+    const baseURL = config.google?.baseURL || process.env.GOOGLE_BASE_URL;
     if (!apiKey) {
       throw new Error("Google API key not configured. Run 'ultra config' or set GOOGLE_API_KEY environment variable.");
     }
     
-    return apiKey;
+    return { apiKey, baseURL };
   }
 
   getDefaultModel(): string {
@@ -35,7 +35,7 @@ export class GeminiProvider implements AIProvider {
   }
 
   async generateText(request: AIRequest): Promise<AIResponse> {
-    const apiKey = await this.getApiKey();
+    const { apiKey, baseURL } = await this.getApiKey();
     const model = request.model || this.getDefaultModel();
     const startTime = Date.now();
     
@@ -59,7 +59,7 @@ export class GeminiProvider implements AIProvider {
       startTime,
     });
 
-    const google = createGoogleGenerativeAI({ apiKey });
+    const google = createGoogleGenerativeAI({ apiKey, baseURL });
     const modelInstance = google(model, { useSearchGrounding });
     
     type GenerateTextOptions = {
@@ -126,7 +126,7 @@ export class GeminiProvider implements AIProvider {
   }
 
   async *streamText(request: AIRequest): AsyncGenerator<string, void, unknown> {
-    const apiKey = await this.getApiKey();
+    const { apiKey, baseURL } = await this.getApiKey();
     const model = request.model || this.getDefaultModel();
     const startTime = Date.now();
     
@@ -149,7 +149,7 @@ export class GeminiProvider implements AIProvider {
       startTime,
     });
 
-    const google = createGoogleGenerativeAI({ apiKey });
+    const google = createGoogleGenerativeAI({ apiKey, baseURL });
     const modelInstance = google(model, { useSearchGrounding });
     
     type StreamTextOptions = {

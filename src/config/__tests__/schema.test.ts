@@ -5,9 +5,13 @@ describe('Config Schema', () => {
   describe('defaultConfig', () => {
     it('should have all provider API keys undefined by default', () => {
       expect(defaultConfig.openai?.apiKey).toBeUndefined();
+      expect(defaultConfig.openai?.baseURL).toBeUndefined();
       expect(defaultConfig.google?.apiKey).toBeUndefined();
+      expect(defaultConfig.google?.baseURL).toBeUndefined();
       expect(defaultConfig.azure?.apiKey).toBeUndefined();
-      expect(defaultConfig.azure?.endpoint).toBeUndefined();
+      expect(defaultConfig.azure?.baseURL).toBeUndefined();
+      expect(defaultConfig.xai?.apiKey).toBeUndefined();
+      expect(defaultConfig.xai?.baseURL).toBeUndefined();
     });
   });
 
@@ -34,7 +38,7 @@ describe('Config Schema', () => {
       const config: Config = {
         azure: {
           apiKey: 'test-azure-key',
-          endpoint: 'https://test.openai.azure.com',
+          baseURL: 'https://test.openai.azure.com',
         },
       };
       
@@ -44,12 +48,13 @@ describe('Config Schema', () => {
 
     it('should accept configuration with all providers', () => {
       const config: Config = {
-        openai: { apiKey: 'sk-test' },
-        google: { apiKey: 'AIza-test' },
+        openai: { apiKey: 'sk-test', baseURL: undefined },
+        google: { apiKey: 'AIza-test', baseURL: undefined },
         azure: {
           apiKey: 'azure-test',
-          endpoint: 'https://test.openai.azure.com',
+          baseURL: 'https://test.openai.azure.com',
         },
+        xai: { apiKey: undefined, baseURL: undefined },
       };
       
       const result = ConfigSchema.safeParse(config);

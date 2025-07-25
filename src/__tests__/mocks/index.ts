@@ -26,14 +26,16 @@ export function setupDefaultMocks(context: MockContext): void {
   context.providerManager.addMockProvider('openai');
   context.providerManager.addMockProvider('gemini');
   context.providerManager.addMockProvider('azure');
-  
+  context.providerManager.addMockProvider('grok');
+
   // Set up default config
   context.configManager.setMockConfig({
-    openai: { apiKey: 'mock-openai-key' },
-    google: { apiKey: 'mock-google-key' },
-    azure: { 
+    openai: { apiKey: 'mock-openai-key', baseURL: undefined },
+    google: { apiKey: 'mock-google-key', baseURL: undefined },
+    azure: {
       apiKey: 'mock-azure-key',
-      endpoint: 'https://mock.openai.azure.com/',
+      baseURL: 'https://mock.openai.azure.com/',
     },
+    xai: { apiKey: 'mock-xai-key', baseURL: undefined },
   });
 }

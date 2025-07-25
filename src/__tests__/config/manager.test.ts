@@ -59,10 +59,10 @@ describe('ConfigManager', () => {
     it('should return default config when store is empty', async () => {
       const config = await configManager.getConfig();
       expect(config).toEqual({
-        openai: { apiKey: undefined },
-        google: { apiKey: undefined },
-        azure: { apiKey: undefined, endpoint: undefined },
-        xai: { apiKey: undefined },
+        openai: { apiKey: undefined, baseURL: undefined },
+        google: { apiKey: undefined, baseURL: undefined },
+        azure: { apiKey: undefined, baseURL: undefined },
+        xai: { apiKey: undefined, baseURL: undefined },
       });
     });
   });
@@ -95,18 +95,24 @@ describe('ConfigManager', () => {
     });
   });
 
-  describe('setAzureEndpoint', () => {
-    it('should set Azure endpoint', async () => {
-      await configManager.setAzureEndpoint('https://test.azure.com');
+  describe('setBaseURL', () => {
+    it('should set Azure baseURL', async () => {
+      await configManager.setBaseURL('azure', 'https://test.azure.com');
       const config = await configManager.getConfig();
-      expect(config.azure?.endpoint).toBe('https://test.azure.com');
+      expect(config.azure?.baseURL).toBe('https://test.azure.com');
     });
 
-    it('should delete Azure endpoint when setting to undefined', async () => {
-      await configManager.setAzureEndpoint('https://test.azure.com');
-      await configManager.setAzureEndpoint(undefined);
+    it('should delete Azure baseURL when setting to undefined', async () => {
+      await configManager.setBaseURL('azure', 'https://test.azure.com');
+      await configManager.setBaseURL('azure', undefined);
       const config = await configManager.getConfig();
-      expect(config.azure?.endpoint).toBeUndefined();
+      expect(config.azure?.baseURL).toBeUndefined();
+    });
+
+    it('should set OpenAI baseURL', async () => {
+      await configManager.setBaseURL('openai', 'https://api.openai.com/v1');
+      const config = await configManager.getConfig();
+      expect(config.openai?.baseURL).toBe('https://api.openai.com/v1');
     });
   });
 
@@ -150,10 +156,10 @@ describe('ConfigManager', () => {
       
       expect(await configManager.hasAnyApiKeys()).toBe(false);
       expect(await configManager.getConfig()).toEqual({
-        openai: { apiKey: undefined },
-        google: { apiKey: undefined },
-        azure: { apiKey: undefined, endpoint: undefined },
-        xai: { apiKey: undefined },
+        openai: { apiKey: undefined, baseURL: undefined },
+        google: { apiKey: undefined, baseURL: undefined },
+        azure: { apiKey: undefined, baseURL: undefined },
+        xai: { apiKey: undefined, baseURL: undefined },
       });
     });
   });

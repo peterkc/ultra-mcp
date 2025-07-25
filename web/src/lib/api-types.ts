@@ -23,15 +23,22 @@ export type ConfigResponse = {
   openai?: {
     configured: boolean;
     apiKey?: string;
+    baseURL?: string;
   };
   google?: {
     configured: boolean;
     apiKey?: string;
+    baseURL?: string;
   };
   azure?: {
     configured: boolean;
     apiKey?: string;
-    endpoint?: string;
+    baseURL?: string;
+  };
+  xai?: {
+    configured: boolean;
+    apiKey?: string;
+    baseURL?: string;
   };
 };
 

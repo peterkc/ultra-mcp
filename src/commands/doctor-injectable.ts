@@ -81,18 +81,18 @@ export async function runDoctorWithDeps(
 
     // Check 4: Azure Configuration
     const azureKey = config.azure?.apiKey || env.AZURE_API_KEY;
-    const azureEndpoint = config.azure?.endpoint || env.AZURE_ENDPOINT;
-    if (azureKey && azureEndpoint) {
+    const azureBaseURL = config.azure?.baseURL || env.AZURE_BASE_URL;
+    if (azureKey && azureBaseURL) {
       results.push({
         name: 'Azure OpenAI',
         status: true,
-        message: 'API Key and Endpoint configured',
+        message: 'API Key and baseURL configured',
       });
-    } else if (azureKey || azureEndpoint) {
+    } else if (azureKey || azureBaseURL) {
       results.push({
         name: 'Azure OpenAI',
         status: false,
-        message: azureKey ? 'Missing endpoint' : 'Missing API key',
+        message: azureKey ? 'Missing baseURL' : 'Missing API key',
       });
     } else {
       results.push({
@@ -102,8 +102,24 @@ export async function runDoctorWithDeps(
       });
     }
 
-    // Check 5: At least one provider configured
-    const hasAnyProvider = !!(openaiKey || googleKey || (azureKey && azureEndpoint));
+    // Check 5: xAI API Key
+    const xaiKey = config.xai?.apiKey || env.XAI_API_KEY;
+    if (xaiKey) {
+      results.push({
+        name: 'xAI API Key',
+        status: true,
+        message: 'Configured',
+      });
+    } else {
+      results.push({
+        name: 'xAI API Key',
+        status: false,
+        message: 'Not configured',
+      });
+    }
+
+    // Check 6: At least one provider configured
+    const hasAnyProvider = !!(openaiKey || googleKey || (azureKey && azureBaseURL) || xaiKey);
     results.push({
       name: 'Provider availability',
       status: hasAnyProvider,
@@ -120,10 +136,11 @@ export async function runDoctorWithDeps(
         try {
           const provider = providerManager.getProvider(providerName);
           // Simple test - just check if we can create the provider
+          const models = provider.listModels();
           results.push({
             name: `${providerName} connection`,
             status: true,
-            message: 'Provider initialized successfully',
+            message: `Provider initialized successfully (${models.length} models available)`,
           });
         } catch (error) {
           results.push({
@@ -166,8 +183,8 @@ export async function runDoctorWithDeps(
       customConsole.log(chalk.dim('  • Run "npx ultra-mcp config" to set up your configuration'));
     }
     
-    const providerResults = results.filter(r => 
-      ['OpenAI API Key', 'Google API Key', 'Azure OpenAI'].includes(r.name)
+    const providerResults = results.filter(r =>
+      ['OpenAI API Key', 'Google API Key', 'Azure OpenAI', 'xAI API Key'].includes(r.name)
     );
     
     if (providerResults.every(r => !r.status)) {

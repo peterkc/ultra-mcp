@@ -178,7 +178,7 @@ export class AIToolHandlers {
 
   async handleInvestigation(params: z.infer<typeof InvestigationSchema>) {
     // Use provided provider or get the preferred one (Azure if configured)
-    const providerName = params.provider || await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure']);
+    const providerName = params.provider || await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure', 'grok']);
     const provider = this.providerManager.getProvider(providerName);
     
     // Build investigation prompts based on depth
@@ -222,7 +222,7 @@ export class AIToolHandlers {
 
   async handleResearch(params: z.infer<typeof ResearchSchema>) {
     // Use provided provider or get the preferred one (Azure if configured)
-    const providerName = params.provider || await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure']);
+    const providerName = params.provider || await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure', 'grok']);
     const provider = this.providerManager.getProvider(providerName);
     
     // Build research prompts based on output format
@@ -299,7 +299,7 @@ export class AIToolHandlers {
   // Zen-inspired simplified tool handlers
   async handleAnalyzeCode(params: z.infer<typeof AnalyzeCodeSchema>) {
     // Use provided provider or get the preferred one (Azure if configured)
-    const providerName = params.provider || await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure']);
+    const providerName = params.provider || await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure', 'grok']);
     const provider = this.providerManager.getProvider(providerName);
     
     const focusPrompts = {
@@ -350,7 +350,7 @@ export class AIToolHandlers {
 
   async handleReviewCode(params: z.infer<typeof ReviewCodeSchema>) {
     // Use provided provider or get the preferred one (Azure if configured)
-    const providerName = params.provider || await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure']);
+    const providerName = params.provider || await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure', 'grok']);
     const provider = this.providerManager.getProvider(providerName);
     
     const focusPrompts = {
@@ -450,7 +450,7 @@ export class AIToolHandlers {
 
   async handlePlanFeature(params: z.infer<typeof PlanFeatureSchema>) {
     // Use provided provider or get the preferred one (Azure if configured)
-    const providerName = params.provider || await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure']);
+    const providerName = params.provider || await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure', 'grok']);
     const provider = this.providerManager.getProvider(providerName);
     
     const scopePrompts = {
@@ -503,7 +503,7 @@ export class AIToolHandlers {
 
   async handleGenerateDocs(params: z.infer<typeof GenerateDocsSchema>) {
     // Use provided provider or get the preferred one (Azure if configured)
-    const providerName = params.provider || await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure']);
+    const providerName = params.provider || await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure', 'grok']);
     const provider = this.providerManager.getProvider(providerName);
     
     const formatPrompts = {
@@ -596,7 +596,7 @@ export class AIToolHandlers {
     
     // Consult each model with their specified stance
     for (const modelConfig of params.models) {
-      const providerName = modelConfig.provider || await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure']);
+      const providerName = modelConfig.provider || await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure', 'grok']);
       const provider = this.providerManager.getProvider(providerName);
       
       // Build stance-specific system prompt
@@ -674,11 +674,12 @@ Please synthesize these perspectives into:
 
 Be objective and highlight both the strongest arguments for and against the proposal.`;
 
-    const synthesisProvider = this.providerManager.getProvider(await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure']));
+    const synthesisProvider = this.providerManager.getProvider(await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure', 'grok']));
     const synthesis = await synthesisProvider.generateText({
       prompt: synthesisPrompt,
       systemPrompt: "You are an expert facilitator synthesizing multiple expert opinions. Provide balanced, objective analysis that captures the full spectrum of perspectives.",
       temperature: 0.4,
+      useSearchGrounding: false,
       toolName: 'consensus',
     });
 
@@ -874,7 +875,7 @@ ${params.requirements ? `\nREQUIREMENTS TO CONSIDER:\n${params.requirements}` : 
   }
 
   async handlePrecommit(params: z.infer<typeof PrecommitSchema>) {
-    const providerName = params.provider || await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure']);
+    const providerName = params.provider || await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure', 'grok']);
     const provider = this.providerManager.getProvider(providerName);
     
     // Build focus-specific system prompt
@@ -1197,7 +1198,7 @@ Minimum severity to report: ${params.severity}`;
   }
 
   async handleTracer(params: z.infer<typeof TracerSchema>) {
-    const providerName = params.provider || await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure']);
+    const providerName = params.provider || await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure', 'grok']);
     const provider = this.providerManager.getProvider(providerName);
     
     // Build trace mode specific system prompt
