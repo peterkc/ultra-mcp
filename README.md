@@ -1,9 +1,16 @@
 # Ultra MCP
 
+> **All Models. One Interface. Zero Friction.**
+
 [![npm version](https://badge.fury.io/js/ultra-mcp.svg)](https://badge.fury.io/js/ultra-mcp)
 [![npm downloads](https://img.shields.io/npm/dm/ultra-mcp.svg)](https://www.npmjs.com/package/ultra-mcp)
 
 🚀 **Ultra MCP** - A Model Context Protocol server that exposes OpenAI, Gemini, Azure OpenAI, and xAI Grok AI models through a single MCP interface for use with Claude Code and Cursor.
+
+
+![img](https://github.com/user-attachments/assets/b2ade474-7c68-458c-84e4-daa73e32ad8c)
+
+> Stop wasting time having meetings with human. Now it's time to ask AI models do this.
 
 ## Inspiration
 
