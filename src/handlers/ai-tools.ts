@@ -77,7 +77,7 @@ const ChallengeSchema = z.object({
 const ConsensusSchema = z.object({
   proposal: z.string().describe("The proposal, idea, or decision to analyze from multiple perspectives"),
   models: z.array(z.object({
-    model: z.string().describe("Model name to consult (e.g., 'gemini-pro', 'gpt-4', 'o3-mini')"),
+    model: z.string().describe("Model name to consult (e.g., 'gemini-pro', 'gpt-4', 'o3')"),
     stance: z.enum(["for", "against", "neutral"]).default("neutral").describe("Perspective stance for this model"),
     provider: z.enum(["openai", "gemini", "azure", "grok"]).optional().describe("AI provider for this model")
   })).min(1).describe("List of models to consult with their stances"),
@@ -1676,7 +1676,7 @@ Explain these options clearly and wait for the user to specify which mode to use
                 properties: {
                   model: {
                     type: "string",
-                    description: "Model name to consult (e.g., 'gemini-pro', 'gpt-4', 'o3-mini')",
+                    description: "Model name to consult (e.g., 'gemini-pro', 'gpt-4', 'o3')",
                   },
                   stance: {
                     type: "string",

@@ -105,7 +105,7 @@ npx -y ultra-mcp chat
 node dist/cli.js chat
 
 # Specify model and provider
-npx -y ultra-mcp chat -m o3-mini -p openai
+npx -y ultra-mcp chat -m o3 -p openai
 npx -y ultra-mcp chat -m grok-4 -p grok
 ```
 
@@ -236,7 +236,7 @@ Ultra MCP exposes the following AI-powered tools through the Model Context Proto
 Use advanced AI models for deep reasoning and complex problem-solving.
 
 - **Default Models**:
-  - OpenAI/Azure: O3-mini (optimized for reasoning)
+  - OpenAI/Azure: O3 (optimized for reasoning)
   - Gemini: Gemini 2.5 Pro with Google Search enabled
 - **Parameters**:
   - `prompt`: The complex question or problem (required)
