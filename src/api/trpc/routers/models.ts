@@ -18,7 +18,7 @@ export const modelsRouter = router({
         { id: 'gpt-4o-mini', name: 'GPT-4o Mini', provider: 'openai', description: 'Faster, cheaper' },
         { id: 'o1', name: 'O1', provider: 'openai', description: 'Advanced reasoning' },
         { id: 'o1-mini', name: 'O1 Mini', provider: 'openai', description: 'Efficient reasoning' },
-        { id: 'o3-mini', name: 'O3 Mini', provider: 'openai', description: 'Latest reasoning model' },
+        { id: 'o3', name: 'O3', provider: 'openai', description: 'Latest reasoning model' },
       );
     }
     
@@ -36,7 +36,7 @@ export const modelsRouter = router({
       models.push(
         { id: 'gpt-4o', name: 'GPT-4o (Azure)', provider: 'azure', description: 'Enterprise grade' },
         { id: 'gpt-4o-mini', name: 'GPT-4o Mini (Azure)', provider: 'azure', description: 'Cost effective' },
-        { id: 'o3-mini', name: 'O3 Mini (Azure)', provider: 'azure', description: 'Latest reasoning' },
+        { id: 'o3', name: 'O3 (Azure)', provider: 'azure', description: 'Latest reasoning' },
       );
     }
     
@@ -48,7 +48,7 @@ export const modelsRouter = router({
     return {
       defaultProvider: 'azure',
       modelPriorities: [
-        { model: 'o3-mini', priority: 1 },
+        { model: 'o3', priority: 1 },
         { model: 'gpt-4o', priority: 2 },
         { model: 'gemini-2.0-flash-exp', priority: 3 },
       ],

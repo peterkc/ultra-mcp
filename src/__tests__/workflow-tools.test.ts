@@ -73,7 +73,7 @@ describe('Workflow Tools - Zen MCP Integration', () => {
         models: [
           { model: 'gemini-pro', stance: 'for' as const, provider: 'gemini' as const },
           { model: 'gpt-4', stance: 'against' as const, provider: 'openai' as const },
-          { model: 'o3-mini', stance: 'neutral' as const, provider: 'azure' as const }
+          { model: 'o3', stance: 'neutral' as const, provider: 'azure' as const }
         ]
       };
 

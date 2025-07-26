@@ -145,7 +145,7 @@ Check installation health and test API connections.
 npx -y ultra-mcp chat
 
 # Specify model and provider
-npx -y ultra-mcp chat -m o3-mini -p openai
+npx -y ultra-mcp chat -m o3 -p openai
 npx -y ultra-mcp chat -m grok-4 -p grok
 ```
 
@@ -239,7 +239,7 @@ Ultra MCP provides powerful AI tools accessible through Claude Code and Cursor:
 
 Leverage advanced AI models for complex problem-solving and analysis.
 
-- **Default**: O3-mini for OpenAI/Azure, Gemini 2.5 Pro with Google Search, Grok-4 for xAI
+- **Default**: O3 for OpenAI/Azure, Gemini 2.5 Pro with Google Search, Grok-4 for xAI
 - **Use Cases**: Complex algorithms, architectural decisions, deep analysis
 
 ### 🔍 Investigate (`investigate`)
