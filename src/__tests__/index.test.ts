@@ -33,31 +33,20 @@ describe('Server Startup', () => {
     (ConfigManager as any).mockImplementation(() => mockConfigManager);
   });
 
-  it('should load configuration and set environment variables', async () => {
+  it('should start server without loading configuration immediately', async () => {
     const { createServer } = await import('../server');
     const mockServer = {
       connect: vi.fn().mockResolvedValue(undefined),
     };
     (createServer as any).mockReturnValue(mockServer);
 
-    const mockConsoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
-
     await startServer();
 
-    // Check that config was loaded
-    expect(mockConfigManager.getConfig).toHaveBeenCalled();
-
-    // Check that environment variables were set
-    expect(process.env.OPENAI_API_KEY).toBe('test-openai-key');
-    expect(process.env.GOOGLE_API_KEY).toBe('test-google-key');
-    expect(process.env.AZURE_API_KEY).toBe('test-azure-key');
-    expect(process.env.AZURE_BASE_URL).toBe('https://test.azure.com');
+    // Config should NOT be loaded immediately (lazy loading)
+    expect(mockConfigManager.getConfig).not.toHaveBeenCalled();
 
     // Check that server was started
     expect(mockServer.connect).toHaveBeenCalled();
-    expect(mockConsoleError).toHaveBeenCalledWith("Ultra MCP Server running on stdio");
-
-    mockConsoleError.mockRestore();
   });
 
   it('should start server even without API keys', async () => {
