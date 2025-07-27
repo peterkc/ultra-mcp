@@ -107,7 +107,7 @@ describe('EmbeddingProvider', () => {
 
       await provider.getEmbedding('test');
 
-      expect(openai.embedding).toHaveBeenCalledWith('text-embedding-3-large', {
+      expect(openai.embedding).toHaveBeenCalledWith('text-embedding-3-small', {
         apiKey: 'test-openai-key',
         baseURL: undefined,
       });
@@ -129,7 +129,7 @@ describe('EmbeddingProvider', () => {
         apiKey: 'test-azure-key',
         resourceName: 'test',
       });
-      expect(mockEmbedding).toHaveBeenCalledWith('text-embedding-3-large');
+      expect(mockEmbedding).toHaveBeenCalledWith('text-embedding-3-small');
     });
 
     it('should use Google provider', async () => {

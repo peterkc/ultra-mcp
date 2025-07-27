@@ -64,7 +64,7 @@ export class EmbeddingProvider {
           throw new Error('OpenAI API key not configured');
         }
         
-        const modelName = this.config.model || 'text-embedding-3-large';
+        const modelName = this.config.model || config.vectorConfig?.embeddingModel?.openai || 'text-embedding-3-small';
         return openai.embedding(modelName, {
           apiKey,
           baseURL: this.config.baseURL || config.openai?.baseURL,
@@ -98,7 +98,7 @@ export class EmbeddingProvider {
           resourceName,
         });
         
-        const modelName = this.config.model || 'text-embedding-3-large';
+        const modelName = this.config.model || config.vectorConfig?.embeddingModel?.azure || 'text-embedding-3-small';
         return azure.embedding(modelName);
       }
       
@@ -108,7 +108,7 @@ export class EmbeddingProvider {
           throw new Error('Google API key not configured');
         }
         
-        const modelName = this.config.model || 'text-embedding-004';
+        const modelName = this.config.model || config.vectorConfig?.embeddingModel?.gemini || 'text-embedding-004';
         return google.embedding(modelName, {
           apiKey,
           baseURL: this.config.baseURL || config.google?.baseURL,

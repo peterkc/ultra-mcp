@@ -339,6 +339,38 @@ You can also set API keys and base URLs via environment variables:
 
 _Note: Configuration file takes precedence over environment variables._
 
+## Vector Embeddings Configuration
+
+Ultra MCP supports vector embeddings for semantic code search. By default, it uses **text-embedding-3-small** for cost efficiency (6.5x cheaper than the large model).
+
+### Embedding Model Configuration
+
+You can customize the embedding models in your configuration:
+
+```json
+{
+  "vectorConfig": {
+    "embeddingModel": {
+      "openai": "text-embedding-3-small",  // or "text-embedding-3-large"
+      "azure": "text-embedding-3-small",    // or "text-embedding-3-large"
+      "gemini": "text-embedding-004"
+    }
+  }
+}
+```
+
+### Model Comparison
+
+| Model | Cost | Dimensions | MTEB Score | Best For |
+|-------|------|------------|------------|----------|
+| text-embedding-3-small | $0.02/1M tokens | 1536 | 62.3% | Cost-effective code search |
+| text-embedding-3-large | $0.13/1M tokens | 3072 | 64.6% | Maximum accuracy |
+
+### Migration Notes
+
+- **Existing Databases**: If you have an existing vector database created with `text-embedding-3-large`, it will continue to work but won't be compatible with new embeddings from `text-embedding-3-small`. Consider re-indexing if you want to use the smaller model.
+- **Backward Compatibility**: You can always override the model by configuring `embeddingModel` in your vector config.
+
 ## Roadmap
 
 ### Phase 1: Zero Config Setup

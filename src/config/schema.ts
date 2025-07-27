@@ -15,8 +15,8 @@ export const VectorConfigSchema = z.object({
     '**/*.yaml', '**/*.yml'
   ]),
   embeddingModel: z.object({
-    openai: z.string().default('text-embedding-3-large'),
-    azure: z.string().default('text-embedding-3-large'),
+    openai: z.string().default('text-embedding-3-small'),
+    azure: z.string().default('text-embedding-3-small'),
     gemini: z.string().default('text-embedding-004'),
   }).optional(),
 });
