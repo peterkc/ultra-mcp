@@ -24,6 +24,7 @@ export async function runInteractiveConfig(): Promise<void> {
       message: 'What would you like to do?',
       choices: [
         { title: 'Configure API Keys', value: 'configure' },
+        { title: 'Configure Vector Indexing', value: 'vector' },
         { title: 'View Current Configuration', value: 'view' },
         { title: 'Reset Configuration', value: 'reset' },
         { title: 'Exit', value: 'exit' },
@@ -33,6 +34,8 @@ export async function runInteractiveConfig(): Promise<void> {
 
   if (response.action === 'configure') {
     await configureApiKeys(configManager);
+  } else if (response.action === 'vector') {
+    await configureVectorIndexing(configManager);
   } else if (response.action === 'view') {
     await viewConfiguration(configManager, chalk);
   } else if (response.action === 'reset') {
@@ -215,6 +218,13 @@ async function viewConfiguration(configManager: ConfigManager, chalk: any): Prom
   console.log(chalk.bold('\nxAI:'));
   console.log(chalk.gray('  API Key:'), config.xai?.apiKey ? chalk.green(maskApiKey(config.xai.apiKey)) : chalk.red('Not set'));
   console.log(chalk.gray('  Base URL:'), config.xai?.baseURL || chalk.gray('Default'));
+
+  console.log(chalk.bold('\nVector Indexing:'));
+  console.log(chalk.gray('  Default Provider:'), config.vectorConfig?.defaultProvider || chalk.gray('openai'));
+  console.log(chalk.gray('  Chunk Size:'), config.vectorConfig?.chunkSize || 1500);
+  console.log(chalk.gray('  Chunk Overlap:'), config.vectorConfig?.chunkOverlap || 200);
+  console.log(chalk.gray('  Batch Size:'), config.vectorConfig?.batchSize || 10);
+  console.log(chalk.gray('  File Patterns:'), (config.vectorConfig?.filePatterns || ['default patterns']).length + ' patterns');
   
   console.log(chalk.gray(`\nConfig file: ${await configManager.getConfigPath()}`));
   
@@ -242,6 +252,77 @@ async function resetConfiguration(configManager: ConfigManager, chalk: any): Pro
     console.log(chalk.yellow('\n❌ Reset cancelled.'));
   }
   
+  await runInteractiveConfig();
+}
+
+async function configureVectorIndexing(configManager: ConfigManager): Promise<void> {
+  const currentConfig = await configManager.getConfig();
+  const vectorConfig = currentConfig.vectorConfig || {};
+
+  console.log(chalk.blue('\n🔍 Configure Vector Indexing'));
+  console.log(chalk.gray('Press Enter to keep the current value.\n'));
+
+  const response = await prompts([
+    {
+      type: 'select',
+      name: 'defaultProvider',
+      message: 'Default embedding provider:',
+      choices: [
+        { title: 'OpenAI', value: 'openai' },
+        { title: 'Azure', value: 'azure' },
+        { title: 'Google Gemini', value: 'gemini' },
+      ],
+      initial: vectorConfig.defaultProvider === 'azure' ? 1 : 
+               vectorConfig.defaultProvider === 'gemini' ? 2 : 0,
+    },
+    {
+      type: 'number',
+      name: 'chunkSize',
+      message: 'Chunk size (500-4000):',
+      initial: vectorConfig.chunkSize || 1500,
+      min: 500,
+      max: 4000,
+    },
+    {
+      type: 'number',
+      name: 'chunkOverlap',
+      message: 'Chunk overlap (0-500):',
+      initial: vectorConfig.chunkOverlap || 200,
+      min: 0,
+      max: 500,
+    },
+    {
+      type: 'number',
+      name: 'batchSize',
+      message: 'Batch size for embeddings (1-50):',
+      initial: vectorConfig.batchSize || 10,
+      min: 1,
+      max: 50,
+    },
+    {
+      type: 'text',
+      name: 'filePatterns',
+      message: 'File patterns (comma-separated):',
+      initial: (vectorConfig.filePatterns || [
+        '**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx',
+        '**/*.md', '**/*.mdx', '**/*.txt', '**/*.json',
+        '**/*.yaml', '**/*.yml'
+      ]).join(', '),
+    },
+  ]);
+
+  if (response.defaultProvider) {
+    await configManager.setVectorConfig({
+      ...vectorConfig,
+      defaultProvider: response.defaultProvider,
+      chunkSize: response.chunkSize,
+      chunkOverlap: response.chunkOverlap,
+      batchSize: response.batchSize,
+      filePatterns: response.filePatterns.split(',').map((p: string) => p.trim()).filter(Boolean),
+    });
+    console.log(chalk.green('\n✅ Vector indexing configuration updated!'));
+  }
+
   await runInteractiveConfig();
 }
 

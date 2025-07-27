@@ -166,12 +166,10 @@ async function getRequestStartTime(requestId: string): Promise<number> {
 }
 
 // Utility function to get usage statistics
-export async function getUsageStats(days: number = 30) {
+export async function getUsageStats(_days: number = 30) {
   try {
     await ensureDatabaseReady();
     const db = await getDatabase();
-    
-    const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
     
     // This is a simplified query - in a real implementation you'd want more sophisticated aggregations
     const stats = await db.select()

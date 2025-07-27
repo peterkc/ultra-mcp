@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is an MCP (Model Context Protocol) server called "Ultra MCP" that exposes OpenAI, Gemini, Azure OpenAI, and xAI Grok AI models through a single MCP interface for use with Claude Code and Cursor. The project uses TypeScript, Node.js, and the Vercel AI SDK.
+This is an MCP (Model Context Protocol) server called "Ultra MCP" that exposes OpenAI, Gemini, Azure OpenAI, and xAI Grok AI models through a single MCP interface for use with Claude Code and Cursor. It also includes built-in vector indexing for semantic code search across your codebase. The project uses TypeScript, Node.js, the Vercel AI SDK, and libsql for vector storage.
 
 ## Development Commands
 
@@ -163,6 +163,53 @@ Features:
 - Breakdown by AI provider
 - Tracks all LLM interactions automatically
 
+### index - Index Code Files
+
+Index code files for semantic search using vector embeddings:
+
+```bash
+npx -y ultra-mcp index [paths...]
+# or locally:
+node dist/cli.js index [paths...]
+
+# Index current directory
+npx -y ultra-mcp index
+
+# Index specific files or directories
+npx -y ultra-mcp index src/ docs/ package.json
+
+# Force re-indexing with specific provider
+npx -y ultra-mcp index --force --provider openai
+```
+
+Features:
+
+- Automatically detects and indexes supported file types
+- Configurable chunk size and overlap for optimal search results
+- Batch processing for efficient indexing
+- Stores vectors in local SQLite database with libsql
+- Supports multiple embedding providers (OpenAI, Azure, Gemini)
+
+### search - Semantic Code Search
+
+Search indexed code files using natural language queries:
+
+```bash
+npx -y ultra-mcp search "query"
+# or locally:
+node dist/cli.js search "query"
+
+# Search with options
+npx -y ultra-mcp search "authentication logic" --max-results 20 --min-score 0.2
+```
+
+Features:
+
+- Natural language semantic search across indexed code
+- Configurable result count and similarity thresholds
+- Shows file paths, line numbers, and relevant code snippets
+- Highlights matching sections with context
+
 ## Configuration
 
 Ultra MCP uses the `conf` library to store configuration locally in your system's default config directory:
@@ -200,6 +247,37 @@ You can also set API keys and base URLs via environment variables:
 
 Note: Configuration file takes precedence over environment variables.
 
+### Vector Configuration
+
+Ultra MCP includes built-in vector indexing for semantic code search. The vector configuration is stored alongside API provider settings:
+
+```json
+{
+  "vectorConfig": {
+    "defaultProvider": "openai",
+    "chunkSize": 1500,
+    "chunkOverlap": 200,
+    "batchSize": 10,
+    "filePatterns": [
+      "**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx",
+      "**/*.md", "**/*.mdx", "**/*.txt", "**/*.json",
+      "**/*.yaml", "**/*.yml"
+    ]
+  }
+}
+```
+
+**Vector Database Location:**
+- Unix (macOS/Linux): `~/.config/ultra-mcp/vector-index-v1.sqlite3`
+- Windows: `%APPDATA%\ultra-mcp-nodejs\vector-index-v1.sqlite3`
+
+**Configuration Options:**
+- `defaultProvider`: Which AI provider to use for generating embeddings ("openai", "azure", "gemini", "grok")
+- `chunkSize`: Maximum tokens per text chunk for embedding (default: 1500)
+- `chunkOverlap`: Token overlap between consecutive chunks (default: 200)
+- `batchSize`: Number of files to process simultaneously (default: 10)
+- `filePatterns`: Glob patterns for files to include in indexing
+
 ### Provider Priority
 
 When Azure OpenAI is configured, it is automatically preferred over other providers:
@@ -215,7 +293,8 @@ This MCP server acts as a bridge between multiple AI model providers and MCP cli
 1. **MCP Protocol Layer**: Implements the Model Context Protocol to communicate with Claude Code/Cursor
 2. **Model Providers**: Integrates with OpenAI, Google (Gemini), Azure OpenAI, and xAI Grok models via Vercel AI SDK
 3. **Usage Tracking**: SQLite database with Drizzle ORM for automatic LLM usage tracking
-4. **Unified Interface**: Provides a single MCP interface to access multiple AI models
+4. **Vector Search**: Built-in semantic code search using vector embeddings and libsql database
+5. **Unified Interface**: Provides a single MCP interface to access multiple AI models and search capabilities
 
 ### Key Components
 
@@ -225,6 +304,7 @@ This MCP server acts as a bridge between multiple AI model providers and MCP cli
 - `src/handlers/`: MCP protocol handlers for different tool types
 - `src/providers/`: Model provider implementations (OpenAI, Gemini, Azure, Grok)
 - `src/db/`: Database schema, connection, and usage tracking utilities
+- `src/vector/`: Vector indexing and semantic search functionality
 - `src/utils/`: Shared utilities for streaming, error handling, etc.
 
 ## MCP Tools
@@ -268,6 +348,26 @@ Conduct comprehensive research with multiple output formats.
 ### 4. `list-ai-models`
 
 List all available AI models and their configuration status.
+
+### 5. `search-code`
+
+Perform semantic search across indexed code files using vector embeddings.
+
+- **Parameters**:
+  - `query`: Search query describing what you're looking for (required)
+  - `maxResults`: Maximum number of results to return (optional, default: 10)
+  - `minScore`: Minimum similarity score threshold (optional, default: 0.1)
+  - `provider`: Embedding provider to use for search (optional, uses vector config default)
+
+### 6. `index-code`
+
+Index code files for semantic search using vector embeddings.
+
+- **Parameters**:
+  - `paths`: File or directory paths to index (optional, defaults to current directory)
+  - `provider`: Embedding provider to use for indexing (optional, uses vector config default)
+  - `force`: Force re-indexing of existing files (optional, default: false)
+  - `batchSize`: Number of files to process in each batch (optional, uses config default)
 
 ## Zen-Inspired Simplified Tools
 

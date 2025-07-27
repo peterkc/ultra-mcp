@@ -8,6 +8,8 @@ import { runChat } from './commands/chat';
 import { runInstall } from './commands/install';
 import { runDbShow, runDbView, runDbStats } from './commands/db';
 import { runDashboard } from './commands/dashboard';
+import { createVectorIndexCommand } from './commands/vector-index';
+import { createVectorSearchCommand } from './commands/vector-search';
 import { showQuickApiKeyGuide } from './utils/api-key-guide';
 import { readFileSync } from 'fs';
 import { join } from 'path';
@@ -134,6 +136,10 @@ program
       process.exit(1);
     }
   });
+
+// Add vector commands
+program.addCommand(createVectorIndexCommand());
+program.addCommand(createVectorSearchCommand());
 
 // Default command (when no subcommand is provided)
 program

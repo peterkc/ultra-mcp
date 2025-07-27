@@ -90,9 +90,66 @@ function Configuration() {
         ))}
       </div>
 
+      {/* Vector Indexing Configuration */}
+      <div className="mt-8">
+        <h3 className="text-xl font-semibold mb-4">Vector Indexing Configuration</h3>
+        <Card>
+          <CardHeader>
+            <CardTitle>Semantic Code Search</CardTitle>
+            <CardDescription>
+              Configuration for vector-based semantic code search and indexing
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <span className="text-sm text-muted-foreground">Default Provider: </span>
+                  <code className="text-sm bg-muted px-1 py-0.5 rounded">
+                    {config?.vectorConfig?.defaultProvider || 'openai'}
+                  </code>
+                </div>
+                <div>
+                  <span className="text-sm text-muted-foreground">Chunk Size: </span>
+                  <code className="text-sm bg-muted px-1 py-0.5 rounded">
+                    {config?.vectorConfig?.chunkSize || 1500} tokens
+                  </code>
+                </div>
+                <div>
+                  <span className="text-sm text-muted-foreground">Chunk Overlap: </span>
+                  <code className="text-sm bg-muted px-1 py-0.5 rounded">
+                    {config?.vectorConfig?.chunkOverlap || 200} tokens
+                  </code>
+                </div>
+                <div>
+                  <span className="text-sm text-muted-foreground">Batch Size: </span>
+                  <code className="text-sm bg-muted px-1 py-0.5 rounded">
+                    {config?.vectorConfig?.batchSize || 10} files
+                  </code>
+                </div>
+              </div>
+              <div>
+                <span className="text-sm text-muted-foreground">File Patterns: </span>
+                <div className="mt-2 flex flex-wrap gap-1">
+                  {(config?.vectorConfig?.filePatterns || [
+                    '**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx',
+                    '**/*.md', '**/*.mdx', '**/*.txt', '**/*.json',
+                    '**/*.yaml', '**/*.yml'
+                  ]).map((pattern: string, index: number) => (
+                    <code key={index} className="text-xs bg-muted px-1 py-0.5 rounded">
+                      {pattern}
+                    </code>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
       <div className="mt-8 p-4 bg-muted rounded-lg">
         <p className="text-sm text-muted-foreground">
-          To update your API keys, run <code className="bg-background px-1 py-0.5 rounded">npx ultra-mcp config</code> in your terminal.
+          To update your API keys and vector settings, run <code className="bg-background px-1 py-0.5 rounded">npx ultra-mcp config</code> in your terminal.
         </p>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import { ConfigSchema, Config, defaultConfig } from './schema';
+import { ConfigSchema, Config, defaultConfig, VectorConfig } from './schema';
 import { join } from 'path';
 import { platform, homedir } from 'os';
 import { mkdirSync } from 'fs';
@@ -33,6 +33,10 @@ export class ConfigManager {
     if (!this.store) {
       throw new Error('Configuration store not initialized');
     }
+    
+    // Handle legacy Azure configuration migration
+    await this.migrateLegacyAzureConfig();
+    
     const rawConfig = this.store.store;
     const result = ConfigSchema.safeParse(rawConfig);
     
@@ -43,6 +47,28 @@ export class ConfigManager {
     }
     
     return result.data;
+  }
+
+  // Migrate legacy Azure configuration
+  private async migrateLegacyAzureConfig(): Promise<void> {
+    if (!this.store) return;
+    
+    const rawConfig = this.store.store as any;
+    if (rawConfig?.azure && !rawConfig?.azure?.resourceName) {
+      // Check for legacy endpoint or baseURL
+      const legacyUrl = rawConfig.azure.endpoint || rawConfig.azure.baseURL;
+      if (legacyUrl) {
+        // Extract resource name from legacy URL
+        const match = legacyUrl.match(/https:\/\/(.+?)\.openai\.azure\.com/);
+        if (match && match[1]) {
+          // Migrate to new structure
+          this.store.set('azure.resourceName', match[1]);
+          this.store.delete('azure.endpoint');
+          this.store.delete('azure.baseURL');
+          logger.info(`Migrated legacy Azure ${rawConfig.azure.endpoint ? 'endpoint' : 'baseURL'} to resourceName: ${match[1]}`);
+        }
+      }
+    }
   }
 
   // Set a specific API key
@@ -92,6 +118,37 @@ export class ConfigManager {
   // Set Azure baseURL (deprecated, use setBaseURL instead)
   async setAzureBaseURL(baseURL: string | undefined): Promise<void> {
     return this.setBaseURL('azure', baseURL);
+  }
+
+  // Set Azure resource name
+  async setAzureResourceName(resourceName: string | undefined): Promise<void> {
+    await this.ensureInitialized();
+    if (!this.store) {
+      throw new Error('Configuration store not initialized');
+    }
+    if (!resourceName) {
+      this.store.delete('azure.resourceName');
+    } else {
+      this.store.set('azure.resourceName', resourceName);
+    }
+  }
+
+  // Get Azure resource name
+  async getAzureResourceName(): Promise<string | undefined> {
+    await this.ensureInitialized();
+    if (!this.store) {
+      throw new Error('Configuration store not initialized');
+    }
+    return this.store.get('azure.resourceName');
+  }
+
+  // Set vector configuration
+  async setVectorConfig(vectorConfig: VectorConfig): Promise<void> {
+    await this.ensureInitialized();
+    if (!this.store) {
+      throw new Error('Configuration store not initialized');
+    }
+    this.store.set('vectorConfig', vectorConfig);
   }
 
   // Check if any API keys are configured
@@ -168,7 +225,7 @@ export class ConfigManager {
     // Ensure directory exists
     try {
       mkdirSync(configDir, { recursive: true });
-    } catch (error) {
+    } catch {
       // Directory might already exist, that's ok
     }
 

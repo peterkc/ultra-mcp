@@ -40,7 +40,7 @@ export class ProviderManager {
     for (const [name, provider] of this.providers) {
       try {
         models[name] = provider.listModels();
-      } catch (error) {
+      } catch {
         // Provider might not be configured, skip it
         models[name] = [];
       }
@@ -62,7 +62,7 @@ export class ProviderManager {
     }
 
     if ((config.azure?.apiKey || process.env.AZURE_API_KEY) && 
-        (config.azure?.baseURL || process.env.AZURE_BASE_URL)) {
+        (config.azure?.resourceName || process.env.AZURE_BASE_URL || process.env.AZURE_ENDPOINT)) {
       configured.push("azure");
     }
 

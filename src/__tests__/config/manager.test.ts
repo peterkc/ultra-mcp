@@ -63,6 +63,17 @@ describe('ConfigManager', () => {
         google: { apiKey: undefined, baseURL: undefined },
         azure: { apiKey: undefined, baseURL: undefined },
         xai: { apiKey: undefined, baseURL: undefined },
+        vectorConfig: {
+          defaultProvider: 'openai',
+          chunkSize: 1500,
+          chunkOverlap: 200,
+          batchSize: 10,
+          filePatterns: [
+            '**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx',
+            '**/*.md', '**/*.mdx', '**/*.txt', '**/*.json',
+            '**/*.yaml', '**/*.yml'
+          ],
+        },
       });
     });
   });
@@ -96,17 +107,17 @@ describe('ConfigManager', () => {
   });
 
   describe('setBaseURL', () => {
-    it('should set Azure baseURL', async () => {
-      await configManager.setBaseURL('azure', 'https://test.azure.com');
+    it('should set Azure resource name', async () => {
+      await configManager.setAzureResourceName('test-resource');
       const config = await configManager.getConfig();
-      expect(config.azure?.baseURL).toBe('https://test.azure.com');
+      expect(config.azure?.resourceName).toBe('test-resource');
     });
 
-    it('should delete Azure baseURL when setting to undefined', async () => {
-      await configManager.setBaseURL('azure', 'https://test.azure.com');
-      await configManager.setBaseURL('azure', undefined);
+    it('should delete Azure resource name when setting to undefined', async () => {
+      await configManager.setAzureResourceName('test-resource');
+      await configManager.setAzureResourceName(undefined);
       const config = await configManager.getConfig();
-      expect(config.azure?.baseURL).toBeUndefined();
+      expect(config.azure?.resourceName).toBeUndefined();
     });
 
     it('should set OpenAI baseURL', async () => {
@@ -160,6 +171,17 @@ describe('ConfigManager', () => {
         google: { apiKey: undefined, baseURL: undefined },
         azure: { apiKey: undefined, baseURL: undefined },
         xai: { apiKey: undefined, baseURL: undefined },
+        vectorConfig: {
+          defaultProvider: 'openai',
+          chunkSize: 1500,
+          chunkOverlap: 200,
+          batchSize: 10,
+          filePatterns: [
+            '**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx',
+            '**/*.md', '**/*.mdx', '**/*.txt', '**/*.json',
+            '**/*.yaml', '**/*.yml'
+          ],
+        },
       });
     });
   });

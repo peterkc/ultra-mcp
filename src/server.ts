@@ -122,6 +122,26 @@ const TracerSchema = z.object({
   provider: z.enum(["openai", "gemini", "azure", "grok"]).optional().default("gemini").describe("AI provider to use"),
 });
 
+// Vector indexing schemas
+const IndexVectorsSchema = z.object({
+  path: z.string().default(process.cwd()).describe("Project path to index (defaults to current directory)"),
+  provider: z.enum(["openai", "azure", "gemini"]).optional().describe("Embedding provider to use (defaults to configured provider)"),
+  force: z.boolean().default(false).describe("Force re-indexing of all files"),
+});
+
+const SearchVectorsSchema = z.object({
+  query: z.string().describe("Natural language search query"),
+  path: z.string().default(process.cwd()).describe("Project path to search (defaults to current directory)"),
+  provider: z.enum(["openai", "azure", "gemini"]).optional().describe("Embedding provider to use (defaults to configured provider)"),
+  limit: z.number().min(1).max(50).default(10).describe("Maximum number of results"),
+  similarityThreshold: z.number().min(0).max(1).default(0.7).describe("Minimum similarity score (0-1)"),
+  filesOnly: z.boolean().default(false).describe("Return only file paths without chunks"),
+});
+
+const ClearVectorsSchema = z.object({
+  path: z.string().default(process.cwd()).describe("Project path to clear vectors from (defaults to current directory)"),
+});
+
 export function createServer() {
   const server = new McpServer(
     {
@@ -328,6 +348,34 @@ export function createServer() {
   }, async (args) => {
     const aiHandlers = await getHandlers();
     return await aiHandlers.handleTracer(args);
+  });
+
+  // Register vector indexing tools
+  server.registerTool("index-vectors", {
+    title: "Index Vectors",
+    description: "Index project files for semantic search using vector embeddings",
+    inputSchema: IndexVectorsSchema.shape,
+  }, async (args) => {
+    const { handleIndexVectors } = await import("./handlers/vector");
+    return await handleIndexVectors(args);
+  });
+
+  server.registerTool("search-vectors", {
+    title: "Search Vectors",
+    description: "Search for files and code snippets using natural language queries",
+    inputSchema: SearchVectorsSchema.shape,
+  }, async (args) => {
+    const { handleSearchVectors } = await import("./handlers/vector");
+    return await handleSearchVectors(args);
+  });
+
+  server.registerTool("clear-vectors", {
+    title: "Clear Vectors",
+    description: "Clear all indexed vectors for a project",
+    inputSchema: ClearVectorsSchema.shape,
+  }, async (args) => {
+    const { handleClearVectors } = await import("./handlers/vector");
+    return await handleClearVectors(args);
   });
 
   return server;

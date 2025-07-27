@@ -12,7 +12,7 @@ describe('ConfigSchema', () => {
       },
       azure: {
         apiKey: 'test-azure-key',
-        baseURL: 'https://test.azure.com',
+        resourceName: 'test-resource',
       },
       xai: {
         apiKey: 'xai-test-key',
@@ -57,19 +57,16 @@ describe('ConfigSchema', () => {
     expect(result.success).toBe(true);
   });
 
-  it('should reject invalid URL for Azure baseURL', () => {
-    const invalidConfig = {
+  it('should accept valid Azure resourceName', () => {
+    const validConfig = {
       azure: {
         apiKey: 'test-key',
-        baseURL: 'not-a-url',
+        resourceName: 'my-resource',
       },
     };
 
-    const result = ConfigSchema.safeParse(invalidConfig);
-    expect(result.success).toBe(false);
-    if (!result.success) {
-      expect(result.error.errors[0].path).toContain('baseURL');
-    }
+    const result = ConfigSchema.safeParse(validConfig);
+    expect(result.success).toBe(true);
   });
 
   it('should have correct default configuration', () => {
@@ -84,11 +81,22 @@ describe('ConfigSchema', () => {
       },
       azure: {
         apiKey: undefined,
-        baseURL: undefined,
+        resourceName: undefined,
       },
       xai: {
         apiKey: undefined,
         baseURL: undefined,
+      },
+      vectorConfig: {
+        defaultProvider: 'openai',
+        chunkSize: 1500,
+        chunkOverlap: 200,
+        batchSize: 10,
+        filePatterns: [
+          '**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx',
+          '**/*.md', '**/*.mdx', '**/*.txt', '**/*.json',
+          '**/*.yaml', '**/*.yml'
+        ],
       },
     });
   });

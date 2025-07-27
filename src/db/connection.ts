@@ -26,7 +26,7 @@ export async function getDatabase() {
     // This is a simple way to initialize the database
     try {
       await db.select().from(schema.llmRequests).limit(1).execute();
-    } catch (error) {
+    } catch {
       // Table might not exist yet, that's fine
       logger.log('Database initialized, will create tables on first migration');
     }

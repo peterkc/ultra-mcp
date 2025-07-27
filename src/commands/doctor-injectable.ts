@@ -81,19 +81,22 @@ export async function runDoctorWithDeps(
 
     // Check 4: Azure Configuration
     const azureKey = config.azure?.apiKey || env.AZURE_API_KEY;
-    // Support both new AZURE_BASE_URL and legacy AZURE_ENDPOINT for backward compatibility
-    const azureBaseURL = config.azure?.baseURL || env.AZURE_BASE_URL || env.AZURE_ENDPOINT;
-    if (azureKey && azureBaseURL) {
+    // Support both new resourceName and legacy baseURL/endpoint for backward compatibility
+    const azureResourceName = config.azure?.resourceName;
+    const azureBaseURL = env.AZURE_BASE_URL || env.AZURE_ENDPOINT;
+    const hasAzureConfig = azureKey && (azureResourceName || azureBaseURL);
+    
+    if (hasAzureConfig) {
       results.push({
         name: 'Azure OpenAI',
         status: true,
-        message: 'API Key and baseURL configured',
+        message: azureResourceName ? 'API Key and resource name configured' : 'API Key and baseURL configured',
       });
-    } else if (azureKey || azureBaseURL) {
+    } else if (azureKey || azureResourceName || azureBaseURL) {
       results.push({
         name: 'Azure OpenAI',
         status: false,
-        message: azureKey ? 'Missing baseURL' : 'Missing API key',
+        message: azureKey ? 'Missing resource name or baseURL' : 'Missing API key',
       });
     } else {
       results.push({
@@ -120,7 +123,7 @@ export async function runDoctorWithDeps(
     }
 
     // Check 6: At least one provider configured
-    const hasAnyProvider = !!(openaiKey || googleKey || (azureKey && azureBaseURL) || xaiKey);
+    const hasAnyProvider = !!(openaiKey || googleKey || hasAzureConfig || xaiKey);
     results.push({
       name: 'Provider availability',
       status: hasAnyProvider,
