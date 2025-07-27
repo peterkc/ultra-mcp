@@ -2,6 +2,7 @@ import { migrate } from 'drizzle-orm/libsql/migrator';
 import { getDatabase } from './connection';
 import { join } from 'path';
 import { existsSync } from 'fs';
+import { logger } from '../utils/logger';
 
 export async function runMigrations(): Promise<void> {
   try {
@@ -22,9 +23,9 @@ export async function runMigrations(): Promise<void> {
     
     await migrate(db as any, { migrationsFolder });
     
-    console.log('Database migrations completed successfully');
+    logger.log('Database migrations completed successfully');
   } catch (error) {
-    console.error('Database migration failed:', error);
+    logger.error('Database migration failed:', error);
     throw error;
   }
 }
@@ -35,6 +36,6 @@ export async function ensureDatabaseReady(): Promise<void> {
   try {
     await runMigrations();
   } catch (error) {
-    console.warn('Failed to run migrations, database may not be initialized:', error instanceof Error ? error.message : String(error));
+    logger.warn('Failed to run migrations, database may not be initialized:', error instanceof Error ? error.message : String(error));
   }
 }

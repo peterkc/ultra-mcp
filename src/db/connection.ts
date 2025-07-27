@@ -2,6 +2,7 @@ import { drizzle } from 'drizzle-orm/libsql';
 import { createClient } from '@libsql/client';
 import { ConfigManager } from '../config/manager';
 import * as schema from './schema';
+import { logger } from '../utils/logger';
 
 let db: ReturnType<typeof drizzle> | null = null;
 
@@ -27,10 +28,10 @@ export async function getDatabase() {
       await db.select().from(schema.llmRequests).limit(1).execute();
     } catch (error) {
       // Table might not exist yet, that's fine
-      console.log('Database initialized, will create tables on first migration');
+      logger.log('Database initialized, will create tables on first migration');
     }
     
-    console.log('Database connected using @libsql/client');
+    logger.log('Database connected using @libsql/client');
     return db;
   } catch (error) {
     throw new Error(`Failed to connect to database: ${error instanceof Error ? error.message : String(error)}`);
@@ -48,7 +49,7 @@ export async function closeDatabase(): Promise<void> {
       // libsql client doesn't need explicit closing
       db = null;
     } catch (error) {
-      console.warn('Error closing database:', error);
+      logger.warn('Error closing database:', error);
     }
   }
 }

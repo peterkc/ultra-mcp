@@ -3,6 +3,7 @@ import { llmRequests, type LlmRequest } from './schema';
 import { ensureDatabaseReady } from './migrate';
 import { eq } from 'drizzle-orm';
 import * as crypto from 'crypto';
+import { logger } from '../utils/logger';
 
 // Pricing data for cost estimation (per 1K tokens)
 const PRICING = {
@@ -77,7 +78,7 @@ export async function trackLLMRequest(data: TrackingData): Promise<string> {
         durationMs: 0, // Will update when completed
       }).execute();
     } catch (error) {
-      console.warn('Failed to track LLM request:', error instanceof Error ? error.message : String(error));
+      logger.warn('Failed to track LLM request:', error instanceof Error ? error.message : String(error));
     }
   });
   
@@ -144,7 +145,7 @@ export async function updateLLMCompletion(data: CompletionData): Promise<void> {
         .execute();
         
     } catch (error) {
-      console.warn('Failed to update LLM completion:', error instanceof Error ? error.message : String(error));
+      logger.warn('Failed to update LLM completion:', error instanceof Error ? error.message : String(error));
     }
   });
 }

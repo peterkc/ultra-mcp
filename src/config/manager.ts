@@ -3,6 +3,7 @@ import { join } from 'path';
 import { platform, homedir } from 'os';
 import { mkdirSync } from 'fs';
 import type Conf from 'conf';
+import { logger } from '../utils/logger';
 
 export type { Config };
 
@@ -36,7 +37,7 @@ export class ConfigManager {
     const result = ConfigSchema.safeParse(rawConfig);
     
     if (!result.success) {
-      console.error('Invalid configuration found, resetting to defaults');
+      logger.error('Invalid configuration found, resetting to defaults');
       await this.reset();
       return defaultConfig;
     }
