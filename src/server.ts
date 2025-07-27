@@ -1,4 +1,5 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { toolDefinitions } from "./tools/definitions";
 
 export function createServer() {
   const server = new McpServer(
@@ -12,86 +13,6 @@ export function createServer() {
       },
     }
   );
-
-  // Define minimal tool schemas for registration
-  // Real schemas will be loaded when handlers are initialized
-  const toolDefinitions = [
-    {
-      name: "deep-reasoning",
-      description: "Use advanced AI models for deep reasoning and complex problem-solving. Supports O3 models for OpenAI/Azure and Gemini 2.5 Pro with Google Search.",
-      inputSchema: { type: "object", properties: {}, additionalProperties: true }
-    },
-    {
-      name: "investigate",
-      description: "Investigate topics thoroughly with configurable depth",
-      inputSchema: { type: "object", properties: {}, additionalProperties: true }
-    },
-    {
-      name: "research",
-      description: "Conduct comprehensive research with multiple output formats",
-      inputSchema: { type: "object", properties: {}, additionalProperties: true }
-    },
-    {
-      name: "list-ai-models",
-      description: "List all available AI models and their configuration status",
-      inputSchema: { type: "object", properties: {}, additionalProperties: true }
-    },
-    {
-      name: "analyze-code",
-      description: "Analyze code for architecture, performance, security, or quality issues",
-      inputSchema: { type: "object", properties: {}, additionalProperties: true }
-    },
-    {
-      name: "review-code",
-      description: "Review code for bugs, security issues, performance, or style problems",
-      inputSchema: { type: "object", properties: {}, additionalProperties: true }
-    },
-    {
-      name: "debug-issue",
-      description: "Debug technical issues with systematic problem-solving approach",
-      inputSchema: { type: "object", properties: {}, additionalProperties: true }
-    },
-    {
-      name: "plan-feature",
-      description: "Plan feature implementation with step-by-step approach",
-      inputSchema: { type: "object", properties: {}, additionalProperties: true }
-    },
-    {
-      name: "generate-docs",
-      description: "Generate documentation in various formats",
-      inputSchema: { type: "object", properties: {}, additionalProperties: true }
-    },
-    {
-      name: "challenge",
-      description: "Challenge a statement or assumption with critical thinking",
-      inputSchema: { type: "object", properties: {}, additionalProperties: true }
-    },
-    {
-      name: "consensus",
-      description: "Get consensus from multiple AI models on a proposal",
-      inputSchema: { type: "object", properties: {}, additionalProperties: true }
-    },
-    {
-      name: "planner",
-      description: "Multi-step planning with revisions and branches",
-      inputSchema: { type: "object", properties: {}, additionalProperties: true }
-    },
-    {
-      name: "precommit",
-      description: "Pre-commit validation for code changes",
-      inputSchema: { type: "object", properties: {}, additionalProperties: true }
-    },
-    {
-      name: "secaudit",
-      description: "Security audit for code and configurations",
-      inputSchema: { type: "object", properties: {}, additionalProperties: true }
-    },
-    {
-      name: "tracer",
-      description: "Trace execution flow and debug complex issues",
-      inputSchema: { type: "object", properties: {}, additionalProperties: true }
-    }
-  ];
 
   // Lazy loading of handlers
   let handlers: any = null;
