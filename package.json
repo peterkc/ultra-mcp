@@ -1,6 +1,6 @@
 {
   "name": "ultra-mcp",
-  "version": "0.5.5",
+  "version": "0.5.6",
   "main": "dist/cli.js",
   "bin": {
     "ultra": "dist/cli.js"
