@@ -42,6 +42,24 @@ export class EmbeddingProvider {
     const model = await this.getEmbeddingModel();
     
     try {
+      // WORKAROUND: Azure OpenAI has a bug with batch embeddings in the Vercel AI SDK
+      // It incorrectly wraps the input array in another array, causing a 400 error.
+      // Process embeddings sequentially for Azure until the SDK is fixed.
+      // Note: This impacts performance - sequential processing is slower than batch.
+      // See: https://github.com/vercel/ai/issues (TODO: file issue)
+      if (this.config.provider === 'azure') {
+        const embeddings: number[][] = [];
+        for (const text of texts) {
+          const result = await embed({
+            model,
+            value: text, // Single string for single embedding
+          });
+          embeddings.push(result.embedding);
+        }
+        return embeddings;
+      }
+      
+      // For other providers, use batch processing as normal
       const result = await embed({
         model,
         value: texts,
