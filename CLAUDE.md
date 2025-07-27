@@ -386,7 +386,7 @@ Or if installed globally via npm:
   "mcpServers": {
     "ultra-mcp": {
       "command": "npx",
-      "args": ["-y", "ultra"]
+      "args": ["-y", "ultra-mcp@latest"]
     }
   }
 }

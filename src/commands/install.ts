@@ -112,7 +112,7 @@ export async function runInstall(): Promise<void> {
     '--',
     'npx',
     '-y',
-    'ultra'
+    'ultra-mcp@latest'
   ];
   
   const result = await runClaudeCommand(args);
@@ -152,7 +152,7 @@ function showManualInstructions(): void {
   "mcpServers": {
     "ultra-mcp": {
       "command": "npx",
-      "args": ["-y", "ultra"]
+      "args": ["-y", "ultra-mcp@latest"]
     }
   }
 }

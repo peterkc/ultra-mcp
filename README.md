@@ -94,7 +94,7 @@ This will:
 
 ```bash
 # Run the MCP server
-npx -y ultra
+npx -y ultra-mcp
 
 # Or after building locally
 npm run build
@@ -209,7 +209,7 @@ Add to your Claude Code settings:
   "mcpServers": {
     "ultra-mcp": {
       "command": "npx",
-      "args": ["-y", "ultra"]
+      "args": ["-y", "ultra-mcp@latest"]
     }
   }
 }
@@ -230,7 +230,7 @@ Then add to your Cursor MCP settings:
   "mcpServers": {
     "ultra-mcp": {
       "command": "npx",
-      "args": ["-y", "ultra"]
+      "args": ["-y", "ultra-mcp@latest"]
     }
   }
 }
