@@ -12,10 +12,10 @@
   ],
   "scripts": {
     "build": "tsup && chmod +x dist/cli.js && cp -r drizzle dist/",
-    "build:dashboard": "cd web && npm install && npm run build",
-    "build:all": "npm run build && npm run build:dashboard",
+    "build:dashboard": "cd web && bun install && bun run build",
+    "build:all": "bun run build && bun run build:dashboard",
     "dev": "tsup --watch",
-    "dev:api": "npm run build && node dist/cli.js dashboard --dev",
+    "dev:api": "bun run build && bun dist/cli.js dashboard --dev",
     "build:tsc": "tsc --noEmit",
     "lint": "eslint src --ext .ts",
     "lint:fix": "eslint src --ext .ts --fix",
@@ -24,7 +24,7 @@
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage --exclude '**/e2e/**' --exclude '**/web/**'",
     "test:e2e": "vitest run src/__tests__/e2e",
-    "prepublishOnly": "npm run build:all"
+    "prepublishOnly": "bun run build:all"
   },
   "keywords": [
     "mcp",

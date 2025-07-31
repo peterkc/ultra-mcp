@@ -10,36 +10,36 @@ This is an MCP (Model Context Protocol) server called "Ultra MCP" that exposes O
 
 ```bash
 # Install dependencies
-npm install
+bun install
 
 # Build TypeScript
-npm run build
+bun run build
 
 # Run the MCP server locally (after building)
-node dist/cli.js
+bun dist/cli.js
 
 # Development mode with TypeScript watch
-npm run dev
+bun run dev
 
 # Run tests
-npm test
+bun test
 
 # Run tests with UI
-npm run test:ui
+bun run test:ui
 
 # Run tests with coverage
-npm run test:coverage
+bun run test:coverage
 
 # Test with MCP Inspector
-npx @modelcontextprotocol/inspector node dist/cli.js
+bunx @modelcontextprotocol/inspector bun dist/cli.js
 
 # Configure API keys
-npx -y ultra-mcp config
+bunx -y ultra-mcp config
 # or after building locally:
-node dist/cli.js config
+bun dist/cli.js config
 
-# Run via npx (after publishing)
-npx -y ultra-mcp
+# Run via bunx (after publishing)
+bunx -y ultra-mcp
 ```
 
 ## CLI Commands
@@ -52,9 +52,9 @@ When run without arguments, Ultra MCP starts as an MCP server using stdio protoc
 
 ```bash
 # Start MCP server (stdio protocol)
-npx -y ultra-mcp
+bunx -y ultra-mcp
 # or locally:
-node dist/cli.js
+bun dist/cli.js
 ```
 
 ### config - Interactive Configuration
@@ -62,9 +62,9 @@ node dist/cli.js
 Configure API keys interactively (similar to rclone):
 
 ```bash
-npx -y ultra-mcp config
+bunx -y ultra-mcp config
 # or locally:
-node dist/cli.js config
+bun dist/cli.js config
 ```
 
 Features:
@@ -80,12 +80,12 @@ Features:
 Check installation and configuration health:
 
 ```bash
-npx -y ultra-mcp doctor
+bunx -y ultra-mcp doctor
 # or locally:
-node dist/cli.js doctor
+bun dist/cli.js doctor
 
 # Test connections to configured providers
-npx -y ultra-mcp doctor --test
+bunx -y ultra-mcp doctor --test
 ```
 
 The doctor command checks:
@@ -100,13 +100,13 @@ The doctor command checks:
 Chat interactively with AI models:
 
 ```bash
-npx -y ultra-mcp chat
+bunx -y ultra-mcp chat
 # or locally:
-node dist/cli.js chat
+bun dist/cli.js chat
 
 # Specify model and provider
-npx -y ultra-mcp chat -m o3 -p openai
-npx -y ultra-mcp chat -m grok-4 -p grok
+bunx -y ultra-mcp chat -m o3 -p openai
+bunx -y ultra-mcp chat -m grok-4 -p grok
 ```
 
 ### install - Install for Claude Code
@@ -114,9 +114,9 @@ npx -y ultra-mcp chat -m grok-4 -p grok
 Install Ultra MCP as an MCP server for Claude Code:
 
 ```bash
-npx -y ultra-mcp install
+bunx -y ultra-mcp install
 # or locally:
-node dist/cli.js install
+bun dist/cli.js install
 ```
 
 Features:
@@ -132,9 +132,9 @@ Features:
 Display database file location and statistics:
 
 ```bash
-npx -y ultra-mcp db:show
+bunx -y ultra-mcp db:show
 # or locally:
-node dist/cli.js db:show
+bun dist/cli.js db:show
 ```
 
 ### db:view - View Database with Drizzle Studio
@@ -142,9 +142,9 @@ node dist/cli.js db:show
 Launch Drizzle Studio to view and query the usage database:
 
 ```bash
-npx -y ultra-mcp db:view
+bunx -y ultra-mcp db:view
 # or locally:
-node dist/cli.js db:view
+bun dist/cli.js db:view
 ```
 
 ### db:stats - Usage Statistics
@@ -152,9 +152,9 @@ node dist/cli.js db:view
 Show LLM usage statistics for the last 30 days:
 
 ```bash
-npx -y ultra-mcp db:stats
+bunx -y ultra-mcp db:stats
 # or locally:
-node dist/cli.js db:stats
+bun dist/cli.js db:stats
 ```
 
 Features:
@@ -168,18 +168,18 @@ Features:
 Index code files for semantic search using vector embeddings:
 
 ```bash
-npx -y ultra-mcp index [paths...]
+bunx -y ultra-mcp index [paths...]
 # or locally:
-node dist/cli.js index [paths...]
+bun dist/cli.js index [paths...]
 
 # Index current directory
-npx -y ultra-mcp index
+bunx -y ultra-mcp index
 
 # Index specific files or directories
-npx -y ultra-mcp index src/ docs/ package.json
+bunx -y ultra-mcp index src/ docs/ package.json
 
 # Force re-indexing with specific provider
-npx -y ultra-mcp index --force --provider openai
+bunx -y ultra-mcp index --force --provider openai
 ```
 
 Features:
@@ -195,12 +195,12 @@ Features:
 Search indexed code files using natural language queries:
 
 ```bash
-npx -y ultra-mcp search "query"
+bunx -y ultra-mcp search "query"
 # or locally:
-node dist/cli.js search "query"
+bun dist/cli.js search "query"
 
 # Search with options
-npx -y ultra-mcp search "authentication logic" --max-results 20 --min-score 0.2
+bunx -y ultra-mcp search "authentication logic" --max-results 20 --min-score 0.2
 ```
 
 Features:
@@ -228,7 +228,7 @@ The usage tracking database is stored separately:
 Run the interactive configuration:
 
 ```bash
-npx -y ultra-mcp config
+bunx -y ultra-mcp config
 ```
 
 This will:
@@ -468,7 +468,7 @@ When implementing, the MCP server should be configured in Claude Code or Cursor'
 {
   "mcpServers": {
     "ultra-mcp": {
-      "command": "node",
+      "command": "bun",
       "args": ["path/to/dist/cli.js"],
       "env": {
         "OPENAI_API_KEY": "your-key",
@@ -479,13 +479,13 @@ When implementing, the MCP server should be configured in Claude Code or Cursor'
 }
 ```
 
-Or if installed globally via npm:
+Or if installed globally:
 
 ```json
 {
   "mcpServers": {
     "ultra-mcp": {
-      "command": "npx",
+      "command": "bunx",
       "args": ["-y", "ultra-mcp@latest"]
     }
   }
@@ -527,7 +527,7 @@ Or if installed globally via npm:
 ## Coding Guide
 
 1. Be a good TypeScript citizen, DO NOT USE `as any`. Find good typing when needed.
-2. Run `npm run lint` after each code iteration. Fix any lint errors if any.
+2. Run `bun run lint` after each code iteration. Fix any lint errors if any.
 3. Have good unit test coverage. For 3rd party dependencies which are hard to test, mock them. But don't write test for test. Just need good coverage for complicated logic.
 4. Do not use `as any` unless you don't have any better way to do that. For Zod to TS interface conversion if you cannot do it, define TS shadow types.
 5. We should not import TS files using .js like `import { ProviderManager } from '../providers/manager.js';` it should be `import { ProviderManager } from '../providers/manager.';` instead.
