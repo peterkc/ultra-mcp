@@ -534,4 +534,16 @@ Or if installed globally via npm:
 
 ## Development Best Practices
 
-- We don't require like 100% unit test coverage, but good to have like unit test coverages for critical logic so that we won't regress critical logic. 
+- We don't require like 100% unit test coverage, but good to have like unit test coverages for critical logic so that we won't regress critical logic.
+
+## Project-Specific Preferences
+
+### Testing Philosophy
+- **Skip migration tests**: We don't care about testing configuration migration logic - users can handle migration issues manually if they arise
+- **Trust resource names**: Assume Azure resource names provided by users are valid - no need for validation 
+- **Focus on core functionality**: Prioritize testing the main features over edge cases and migration scenarios
+
+### Code Review Priorities
+- **Performance over safety**: Focus on optimizing performance and user experience rather than defensive programming
+- **Practical over perfect**: Prefer working solutions over comprehensive validation and error handling
+- **User trust**: Assume users provide valid inputs and configurations rather than building extensive validation 

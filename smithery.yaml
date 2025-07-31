@@ -1,0 +1,97 @@
+# Smithery configuration file: https://smithery.ai/docs/config#smitheryyaml
+
+startCommand:
+  type: stdio
+  configSchema:
+    # JSON Schema defining the configuration options for Ultra MCP
+    type: object
+    properties:
+      # API Keys for different AI providers
+      openaiApiKey:
+        type: string
+        description: The API key for OpenAI (for GPT models and O3)
+      openaiBaseUrl:
+        type: string
+        description: Optional base URL for OpenAI API (for custom endpoints)
+      googleApiKey:
+        type: string
+        description: The API key for Google Gemini AI
+      googleBaseUrl:
+        type: string
+        description: Optional base URL for Google Gemini API
+      azureApiKey:
+        type: string
+        description: The API key for Azure OpenAI Service
+      azureBaseUrl:
+        type: string
+        description: The base URL for Azure OpenAI Service (required for Azure)
+      azureResourceName:
+        type: string
+        description: Azure OpenAI resource name (alternative to baseUrl)
+      xaiApiKey:
+        type: string
+        description: The API key for xAI Grok
+      xaiBaseUrl:
+        type: string
+        description: Optional base URL for xAI API
+      
+      # Vector configuration
+      vectorProvider:
+        type: string
+        enum: ["openai", "azure", "gemini", "grok"]
+        default: "openai"
+        description: Default provider for vector embeddings
+      vectorChunkSize:
+        type: number
+        default: 1500
+        description: Maximum tokens per text chunk for embedding
+      vectorChunkOverlap:
+        type: number
+        default: 200
+        description: Token overlap between consecutive chunks
+      vectorBatchSize:
+        type: number
+        default: 10
+        description: Number of files to process simultaneously
+      
+      # Server configuration
+      port:
+        type: number
+        default: 3000
+        description: The port on which the server will run (for HTTP mode)
+      debug:
+        type: boolean
+        default: false
+        description: Enable debug logging
+        
+  commandFunction: |
+    config => {
+      const env = {};
+      
+      // Map API keys to environment variables
+      if (config.openaiApiKey) env.OPENAI_API_KEY = config.openaiApiKey;
+      if (config.openaiBaseUrl) env.OPENAI_BASE_URL = config.openaiBaseUrl;
+      if (config.googleApiKey) env.GOOGLE_API_KEY = config.googleApiKey;
+      if (config.googleBaseUrl) env.GOOGLE_BASE_URL = config.googleBaseUrl;
+      if (config.azureApiKey) env.AZURE_API_KEY = config.azureApiKey;
+      if (config.azureBaseUrl) env.AZURE_BASE_URL = config.azureBaseUrl;
+      if (config.azureResourceName) env.AZURE_RESOURCE_NAME = config.azureResourceName;
+      if (config.xaiApiKey) env.XAI_API_KEY = config.xaiApiKey;
+      if (config.xaiBaseUrl) env.XAI_BASE_URL = config.xaiBaseUrl;
+      
+      // Map vector configuration
+      if (config.vectorProvider) env.ULTRA_MCP_VECTOR_PROVIDER = config.vectorProvider;
+      if (config.vectorChunkSize) env.ULTRA_MCP_CHUNK_SIZE = config.vectorChunkSize.toString();
+      if (config.vectorChunkOverlap) env.ULTRA_MCP_CHUNK_OVERLAP = config.vectorChunkOverlap.toString();
+      if (config.vectorBatchSize) env.ULTRA_MCP_BATCH_SIZE = config.vectorBatchSize.toString();
+      
+      // Map other configuration
+      if (config.port) env.PORT = config.port.toString();
+      if (config.debug) env.DEBUG = 'ultra-mcp:*';
+      
+      return {
+        command: 'node',
+        args: ['dist/cli.js'],
+        env: env
+      };
+    }
