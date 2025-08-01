@@ -83,7 +83,7 @@ export async function runDoctorWithDeps(
     const azureKey = config.azure?.apiKey || env.AZURE_API_KEY;
     // Support both new resourceName and legacy baseURL/endpoint for backward compatibility
     const azureResourceName = config.azure?.resourceName;
-    const azureBaseURL = env.AZURE_BASE_URL || env.AZURE_ENDPOINT;
+    const azureBaseURL = config.azure?.baseURL || env.AZURE_BASE_URL || env.AZURE_ENDPOINT;
     const hasAzureConfig = azureKey && (azureResourceName || azureBaseURL);
     
     if (hasAzureConfig) {
