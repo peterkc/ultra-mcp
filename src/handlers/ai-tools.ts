@@ -141,7 +141,7 @@ export class AIToolHandlers {
   async handleDeepReasoning(params: z.infer<typeof DeepReasoningSchema>) {
     // Use provided provider or get the preferred one (Azure if configured)
     const providerName = params.provider || await this.providerManager.getPreferredProvider(['openai', 'azure']);
-    const provider = this.providerManager.getProvider(providerName);
+    const provider = await this.providerManager.getProvider(providerName);
     
     // Build a comprehensive system prompt for deep reasoning
     const systemPrompt = params.systemPrompt || `You are an expert AI assistant specializing in deep reasoning and complex problem-solving. 
@@ -178,7 +178,7 @@ export class AIToolHandlers {
   async handleInvestigation(params: z.infer<typeof InvestigationSchema>) {
     // Use provided provider or get the preferred one (Azure if configured)
     const providerName = params.provider || await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure', 'grok']);
-    const provider = this.providerManager.getProvider(providerName);
+    const provider = await this.providerManager.getProvider(providerName);
     
     // Build investigation prompts based on depth
     const depthPrompts = {
@@ -222,7 +222,7 @@ export class AIToolHandlers {
   async handleResearch(params: z.infer<typeof ResearchSchema>) {
     // Use provided provider or get the preferred one (Azure if configured)
     const providerName = params.provider || await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure', 'grok']);
-    const provider = this.providerManager.getProvider(providerName);
+    const provider = await this.providerManager.getProvider(providerName);
     
     // Build research prompts based on output format
     const formatInstructions = {
@@ -299,7 +299,7 @@ export class AIToolHandlers {
   async handleAnalyzeCode(params: z.infer<typeof AnalyzeCodeSchema>) {
     // Use provided provider or get the preferred one (Azure if configured)
     const providerName = params.provider || await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure', 'grok']);
-    const provider = this.providerManager.getProvider(providerName);
+    const provider = await this.providerManager.getProvider(providerName);
     
     const focusPrompts = {
       architecture: "Focus on architectural patterns, design decisions, modularity, and code organization",
@@ -350,7 +350,7 @@ export class AIToolHandlers {
   async handleReviewCode(params: z.infer<typeof ReviewCodeSchema>) {
     // Use provided provider or get the preferred one (Azure if configured)
     const providerName = params.provider || await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure', 'grok']);
-    const provider = this.providerManager.getProvider(providerName);
+    const provider = await this.providerManager.getProvider(providerName);
     
     const focusPrompts = {
       bugs: "Focus on identifying potential bugs, logic errors, and runtime issues",
@@ -401,7 +401,7 @@ export class AIToolHandlers {
   async handleDebugIssue(params: z.infer<typeof DebugIssueSchema>) {
     // Use provided provider or get the preferred one (Azure if configured)
     const providerName = params.provider || await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure']);
-    const provider = this.providerManager.getProvider(providerName);
+    const provider = await this.providerManager.getProvider(providerName);
     
     const systemPrompt = `You are an expert debugger and problem solver. Help identify and solve technical issues.
     
@@ -450,7 +450,7 @@ export class AIToolHandlers {
   async handlePlanFeature(params: z.infer<typeof PlanFeatureSchema>) {
     // Use provided provider or get the preferred one (Azure if configured)
     const providerName = params.provider || await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure', 'grok']);
-    const provider = this.providerManager.getProvider(providerName);
+    const provider = await this.providerManager.getProvider(providerName);
     
     const scopePrompts = {
       minimal: "Provide a basic implementation plan with essential components only",
@@ -503,7 +503,7 @@ export class AIToolHandlers {
   async handleGenerateDocs(params: z.infer<typeof GenerateDocsSchema>) {
     // Use provided provider or get the preferred one (Azure if configured)
     const providerName = params.provider || await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure', 'grok']);
-    const provider = this.providerManager.getProvider(providerName);
+    const provider = await this.providerManager.getProvider(providerName);
     
     const formatPrompts = {
       markdown: "Generate documentation in markdown format with proper structure and formatting",
@@ -596,7 +596,7 @@ export class AIToolHandlers {
     // Consult each model with their specified stance
     for (const modelConfig of params.models) {
       const providerName = modelConfig.provider || await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure', 'grok']);
-      const provider = this.providerManager.getProvider(providerName);
+      const provider = await this.providerManager.getProvider(providerName);
       
       // Build stance-specific system prompt
       let stancePrompt = "";
@@ -673,7 +673,7 @@ Please synthesize these perspectives into:
 
 Be objective and highlight both the strongest arguments for and against the proposal.`;
 
-    const synthesisProvider = this.providerManager.getProvider(await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure', 'grok']));
+    const synthesisProvider = await this.providerManager.getProvider(await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure', 'grok']));
     const synthesis = await synthesisProvider.generateText({
       prompt: synthesisPrompt,
       systemPrompt: "You are an expert facilitator synthesizing multiple expert opinions. Provide balanced, objective analysis that captures the full spectrum of perspectives.",
@@ -717,7 +717,7 @@ Be objective and highlight both the strongest arguments for and against the prop
 
   async handlePlanner(params: z.infer<typeof PlannerSchema>) {
     const providerName = params.provider || await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure']);
-    const provider = this.providerManager.getProvider(providerName);
+    const provider = await this.providerManager.getProvider(providerName);
     
     // Track planning state for step-by-step guidance
     const isFirstStep = params.stepNumber === 1;
@@ -875,7 +875,7 @@ ${params.requirements ? `\nREQUIREMENTS TO CONSIDER:\n${params.requirements}` : 
 
   async handlePrecommit(params: z.infer<typeof PrecommitSchema>) {
     const providerName = params.provider || await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure', 'grok']);
-    const provider = this.providerManager.getProvider(providerName);
+    const provider = await this.providerManager.getProvider(providerName);
     
     // Build focus-specific system prompt
     const focusPrompts = {
@@ -1022,7 +1022,7 @@ Please provide a comprehensive pre-commit validation analysis with specific find
 
   async handleSecaudit(params: z.infer<typeof SecauditSchema>) {
     const providerName = params.provider || await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure']);
-    const provider = this.providerManager.getProvider(providerName);
+    const provider = await this.providerManager.getProvider(providerName);
     
     // Build focus-specific system prompt
     const focusPrompts = {
@@ -1198,7 +1198,7 @@ Minimum severity to report: ${params.severity}`;
 
   async handleTracer(params: z.infer<typeof TracerSchema>) {
     const providerName = params.provider || await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure', 'grok']);
-    const provider = this.providerManager.getProvider(providerName);
+    const provider = await this.providerManager.getProvider(providerName);
     
     // Build trace mode specific system prompt
     const traceModePrompts = {

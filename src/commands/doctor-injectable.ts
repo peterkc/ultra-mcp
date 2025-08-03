@@ -138,7 +138,7 @@ export async function runDoctorWithDeps(
 
       for (const providerName of configuredProviders) {
         try {
-          const provider = providerManager.getProvider(providerName);
+          const provider = await providerManager.getProvider(providerName);
           // Simple test - just check if we can create the provider
           const models = provider.listModels();
           results.push({

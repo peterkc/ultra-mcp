@@ -59,7 +59,7 @@ export async function runChatWithDeps(
       selectedProvider = configuredProviders[0];
     }
 
-    provider = providerManager.getProvider(selectedProvider);
+    provider = await providerManager.getProvider(selectedProvider);
     
     // Determine model
     if (options.model) {

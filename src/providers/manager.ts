@@ -22,12 +22,27 @@ export class ProviderManager {
     this.providers.set("grok", new GrokProvider(this.configManager));
   }
 
-  getProvider(name: string): AIProvider {
+  async getProvider(name: string): Promise<AIProvider> {
     const provider = this.providers.get(name);
     if (!provider) {
       throw new Error(`Unknown provider: ${name}. Available providers: ${Array.from(this.providers.keys()).join(", ")}`);
     }
-    return provider;
+
+    // Check if the requested provider is configured
+    const configuredProviders = await this.getConfiguredProviders();
+    
+    // If the requested provider is configured, return it
+    if (configuredProviders.includes(name)) {
+      return provider;
+    }
+
+    // Special case: if OpenAI is requested but not configured, fallback to Azure if available
+    if (name === "openai" && configuredProviders.includes("azure")) {
+      return this.providers.get("azure")!;
+    }
+
+    // If the requested provider is not configured, throw an error
+    throw new Error(`Provider '${name}' is not configured. Available configured providers: ${configuredProviders.join(", ")}. Run 'ultra-mcp config' to set up API keys.`);
   }
 
   listProviders(): string[] {

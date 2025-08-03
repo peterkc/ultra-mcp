@@ -12,10 +12,14 @@ export class MockProviderManager extends ProviderManager {
     super(mockConfigManager);
   }
 
-  getProvider(name: string): AIProvider {
+  async getProvider(name: string): Promise<AIProvider> {
     const provider = this.mockProviders.get(name);
     if (!provider) {
-      throw new Error(`Provider "${name}" is not configured.`);
+      // Special case: if OpenAI is requested but not configured, fallback to Azure if available
+      if (name === "openai" && this.configuredProviders.includes("azure")) {
+        return this.mockProviders.get("azure")!;
+      }
+      throw new Error(`Provider "${name}" is not configured. Available configured providers: ${this.configuredProviders.join(", ")}. Run 'ultra-mcp config' to set up API keys.`);
     }
     return provider;
   }
