@@ -8,6 +8,7 @@ import { serve } from '@hono/node-server';
 import { serveStatic } from '@hono/node-server/serve-static';
 import path from 'path';
 import { createServer } from 'http';
+import { existsSync, readFileSync } from 'fs';
 
 const app = new Hono();
 
@@ -35,7 +36,7 @@ async function findAvailablePort(startPort: number): Promise<number> {
 // Middleware
 app.use('*', logger());
 app.use('/api/*', cors({
-  origin: ['http://localhost:5173', 'http://localhost:3000'],
+  origin: ['http://localhost:5173', 'http://localhost:3000', 'http://localhost:3001'],
   credentials: true,
 }));
 
@@ -53,29 +54,40 @@ app.get('/api/health', (c) => {
   return c.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-// Serve static files in production
-if (process.env.NODE_ENV === 'production') {
-  const distPath = path.join(process.cwd(), 'dist-web');
-  app.use('/*', serveStatic({ root: distPath }));
+// Serve static files when dist-web directory exists
+const distPath = path.join(process.cwd(), 'dist-web');
+if (existsSync(distPath)) {
+  // First, set up static file serving for specific asset paths
+  app.use('/assets/*', serveStatic({ root: distPath }));
+  app.use('/favicon.ico', serveStatic({ root: distPath }));
+  app.use('/vite.svg', serveStatic({ root: distPath }));
   
-  // SPA fallback
-  app.get('/*', (c) => {
-    return c.html(
-      `<!DOCTYPE html>
-      <html>
-        <head>
-          <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>Ultra MCP Dashboard</title>
-          <script type="module" crossorigin src="/assets/index.js"></script>
-          <link rel="stylesheet" href="/assets/index.css">
-        </head>
-        <body>
-          <div id="root"></div>
-        </body>
-      </html>`
-    );
-  });
+  // SPA fallback - serve index.html for non-API routes
+  const indexPath = path.join(distPath, 'index.html');
+  let indexHtml = '';
+  
+  if (existsSync(indexPath)) {
+    indexHtml = readFileSync(indexPath, 'utf-8');
+  } else {
+    // Fallback HTML if index.html doesn't exist
+    indexHtml = `<!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Ultra MCP Dashboard</title>
+      </head>
+      <body>
+        <div id="root">Dashboard not available - build not found</div>
+      </body>
+    </html>`;
+  }
+  
+  // Only serve index.html for non-API routes
+  app.get('/', (c) => c.html(indexHtml));
+  app.get('/config', (c) => c.html(indexHtml));
+  app.get('/models', (c) => c.html(indexHtml));
+  app.get('/usage', (c) => c.html(indexHtml));
 }
 
 export async function startDashboardServer(port: number = 3000) {
