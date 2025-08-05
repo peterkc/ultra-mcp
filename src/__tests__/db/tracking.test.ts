@@ -38,8 +38,8 @@ describe('LLM Tracking', () => {
       requestId,
       responseData: { text: 'test response' },
       usage: {
-        promptTokens: 10,
-        completionTokens: 20,
+        inputTokens: 10,
+        outputTokens: 20,
         totalTokens: 30,
       },
       finishReason: 'stop',
@@ -86,8 +86,8 @@ describe('LLM Tracking', () => {
         requestId,
         responseData: { text: 'response' },
         usage: {
-          promptTokens: req.tokens / 2,
-          completionTokens: req.tokens / 2,
+          inputTokens: req.tokens / 2,
+          outputTokens: req.tokens / 2,
           totalTokens: req.tokens,
         },
         endTime: Date.now(),

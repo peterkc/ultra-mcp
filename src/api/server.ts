@@ -54,40 +54,27 @@ app.get('/api/health', (c) => {
   return c.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-// Serve static files when dist-web directory exists
-const distPath = path.join(process.cwd(), 'dist-web');
-if (existsSync(distPath)) {
-  // First, set up static file serving for specific asset paths
-  app.use('/assets/*', serveStatic({ root: distPath }));
-  app.use('/favicon.ico', serveStatic({ root: distPath }));
-  app.use('/vite.svg', serveStatic({ root: distPath }));
-  
-  // SPA fallback - serve index.html for non-API routes
-  const indexPath = path.join(distPath, 'index.html');
-  let indexHtml = '';
-  
-  if (existsSync(indexPath)) {
-    indexHtml = readFileSync(indexPath, 'utf-8');
-  } else {
-    // Fallback HTML if index.html doesn't exist
-    indexHtml = `<!DOCTYPE html>
-    <html>
-      <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Ultra MCP Dashboard</title>
-      </head>
-      <body>
-        <div id="root">Dashboard not available - build not found</div>
-      </body>
-    </html>`;
-  }
-  
-  // Only serve index.html for non-API routes
-  app.get('/', (c) => c.html(indexHtml));
-  app.get('/config', (c) => c.html(indexHtml));
-  app.get('/models', (c) => c.html(indexHtml));
-  app.get('/usage', (c) => c.html(indexHtml));
+// Serve static files for the dashboard
+const distWebPath = path.join(__dirname, '..', 'dist-web');
+
+// Create a new Hono instance for the web server
+const webApp = new Hono();
+
+if (existsSync(distWebPath)) {
+  // Serve static assets from the root of the dist-web directory
+  webApp.use('/*', serveStatic({ root: distWebPath }));
+
+  // SPA Fallback: Serve index.html for any other non-API route
+  webApp.get('*', (c) => {
+    const indexPath = path.join(distWebPath, 'index.html');
+    if (existsSync(indexPath)) {
+      return c.html(readFileSync(indexPath, 'utf-8'));
+    }
+    return c.text('Dashboard not found. Please run `npm run build:dashboard`.', 404);
+  });
+
+  // Mount the web server as middleware
+  app.route('/', webApp);
 }
 
 export async function startDashboardServer(port: number = 3000) {

@@ -7,7 +7,7 @@ const DeepReasoningSchema = z.object({
   prompt: z.string().describe("The complex question or problem requiring deep reasoning"),
   model: z.string().optional().describe("Specific model to use (optional, will use provider default)"),
   temperature: z.number().min(0).max(2).optional().default(0.7).describe("Temperature for response generation"),
-  maxTokens: z.number().positive().optional().describe("Maximum tokens in response"),
+  maxOutputTokens: z.number().positive().optional().describe("Maximum tokens in response"),
   systemPrompt: z.string().optional().describe("System prompt to set context for reasoning"),
   reasoningEffort: z.enum(["low", "medium", "high"]).optional().default("high").describe("Reasoning effort level (for O3 models)"),
   enableSearch: z.boolean().optional().default(true).describe("Enable Google Search for Gemini models"),
@@ -140,7 +140,7 @@ export class AIToolHandlers {
 
   async handleDeepReasoning(params: z.infer<typeof DeepReasoningSchema>) {
     // Use provided provider or get the preferred one (Azure if configured)
-    const providerName = params.provider || await this.providerManager.getPreferredProvider(['openai', 'azure']);
+    const providerName = params.provider || (await this.providerManager.getPreferredProvider(['openai', 'azure']));
     const provider = await this.providerManager.getProvider(providerName);
     
     // Build a comprehensive system prompt for deep reasoning
@@ -152,7 +152,7 @@ export class AIToolHandlers {
       prompt: params.prompt,
       model: params.model,
       temperature: params.temperature,
-      maxTokens: params.maxTokens,
+      maxOutputTokens: params.maxOutputTokens,
       systemPrompt,
       reasoningEffort: params.reasoningEffort,
       useSearchGrounding: providerName === "gemini" ? params.enableSearch : false,
@@ -163,7 +163,7 @@ export class AIToolHandlers {
       content: [
         {
           type: "text",
-          text: response.text,
+          text: response.text.text,
         },
       ],
       metadata: {
@@ -177,7 +177,7 @@ export class AIToolHandlers {
 
   async handleInvestigation(params: z.infer<typeof InvestigationSchema>) {
     // Use provided provider or get the preferred one (Azure if configured)
-    const providerName = params.provider || await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure', 'grok']);
+    const providerName = params.provider || (await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure', 'grok']));
     const provider = await this.providerManager.getProvider(providerName);
     
     // Build investigation prompts based on depth
@@ -206,7 +206,7 @@ export class AIToolHandlers {
       content: [
         {
           type: "text",
-          text: response.text,
+          text: response.text.text,
         },
       ],
       metadata: {
@@ -221,7 +221,7 @@ export class AIToolHandlers {
 
   async handleResearch(params: z.infer<typeof ResearchSchema>) {
     // Use provided provider or get the preferred one (Azure if configured)
-    const providerName = params.provider || await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure', 'grok']);
+    const providerName = params.provider || (await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure', 'grok']));
     const provider = await this.providerManager.getProvider(providerName);
     
     // Build research prompts based on output format
@@ -249,7 +249,7 @@ export class AIToolHandlers {
       content: [
         {
           type: "text",
-          text: response.text,
+          text: response.text.text,
         },
       ],
       metadata: {
@@ -298,7 +298,7 @@ export class AIToolHandlers {
   // Zen-inspired simplified tool handlers
   async handleAnalyzeCode(params: z.infer<typeof AnalyzeCodeSchema>) {
     // Use provided provider or get the preferred one (Azure if configured)
-    const providerName = params.provider || await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure', 'grok']);
+    const providerName = params.provider || (await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure', 'grok']));
     const provider = await this.providerManager.getProvider(providerName);
     
     const focusPrompts = {
@@ -334,7 +334,7 @@ export class AIToolHandlers {
       content: [
         {
           type: "text",
-          text: response.text,
+          text: response.text.text,
         },
       ],
       metadata: {
@@ -349,7 +349,7 @@ export class AIToolHandlers {
 
   async handleReviewCode(params: z.infer<typeof ReviewCodeSchema>) {
     // Use provided provider or get the preferred one (Azure if configured)
-    const providerName = params.provider || await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure', 'grok']);
+    const providerName = params.provider || (await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure', 'grok']));
     const provider = await this.providerManager.getProvider(providerName);
     
     const focusPrompts = {
@@ -385,7 +385,7 @@ export class AIToolHandlers {
       content: [
         {
           type: "text",
-          text: response.text,
+          text: response.text.text,
         },
       ],
       metadata: {
@@ -400,7 +400,7 @@ export class AIToolHandlers {
 
   async handleDebugIssue(params: z.infer<typeof DebugIssueSchema>) {
     // Use provided provider or get the preferred one (Azure if configured)
-    const providerName = params.provider || await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure']);
+    const providerName = params.provider || (await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure']));
     const provider = await this.providerManager.getProvider(providerName);
     
     const systemPrompt = `You are an expert debugger and problem solver. Help identify and solve technical issues.
@@ -434,7 +434,7 @@ export class AIToolHandlers {
       content: [
         {
           type: "text",
-          text: response.text,
+          text: response.text.text,
         },
       ],
       metadata: {
@@ -449,7 +449,7 @@ export class AIToolHandlers {
 
   async handlePlanFeature(params: z.infer<typeof PlanFeatureSchema>) {
     // Use provided provider or get the preferred one (Azure if configured)
-    const providerName = params.provider || await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure', 'grok']);
+    const providerName = params.provider || (await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure', 'grok']));
     const provider = await this.providerManager.getProvider(providerName);
     
     const scopePrompts = {
@@ -487,7 +487,7 @@ export class AIToolHandlers {
       content: [
         {
           type: "text",
-          text: response.text,
+          text: response.text.text,
         },
       ],
       metadata: {
@@ -502,7 +502,7 @@ export class AIToolHandlers {
 
   async handleGenerateDocs(params: z.infer<typeof GenerateDocsSchema>) {
     // Use provided provider or get the preferred one (Azure if configured)
-    const providerName = params.provider || await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure', 'grok']);
+    const providerName = params.provider || (await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure', 'grok']));
     const provider = await this.providerManager.getProvider(providerName);
     
     const formatPrompts = {
@@ -540,7 +540,7 @@ export class AIToolHandlers {
       content: [
         {
           type: "text",
-          text: response.text,
+          text: response.text.text,
         },
       ],
       metadata: {
@@ -595,7 +595,7 @@ export class AIToolHandlers {
     
     // Consult each model with their specified stance
     for (const modelConfig of params.models) {
-      const providerName = modelConfig.provider || await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure', 'grok']);
+      const providerName = modelConfig.provider || (await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure', 'grok']));
       const provider = await this.providerManager.getProvider(providerName);
       
       // Build stance-specific system prompt
@@ -643,7 +643,7 @@ export class AIToolHandlers {
           model: modelConfig.model,
           provider: providerName,
           stance: modelConfig.stance,
-          analysis: response.text,
+          analysis: response.text.text,
           usage: response.usage,
         });
       } catch (error) {
@@ -704,8 +704,8 @@ Be objective and highlight both the strongest arguments for and against the prop
         totalUsage: responses.reduce((acc, r) => {
           if (r.usage) {
             return {
-              promptTokens: (acc.promptTokens || 0) + (r.usage.promptTokens || 0),
-              completionTokens: (acc.completionTokens || 0) + (r.usage.completionTokens || 0),
+              inputTokens: (acc.inputTokens || 0) + (r.usage.inputTokens || 0),
+              outputTokens: (acc.outputTokens || 0) + (r.usage.outputTokens || 0),
               totalTokens: (acc.totalTokens || 0) + (r.usage.totalTokens || 0),
             };
           }
@@ -716,7 +716,7 @@ Be objective and highlight both the strongest arguments for and against the prop
   }
 
   async handlePlanner(params: z.infer<typeof PlannerSchema>) {
-    const providerName = params.provider || await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure']);
+    const providerName = params.provider || (await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure']));
     const provider = await this.providerManager.getProvider(providerName);
     
     // Track planning state for step-by-step guidance
@@ -802,7 +802,7 @@ ${params.requirements ? `\nREQUIREMENTS TO CONSIDER:\n${params.requirements}` : 
       const planningStep = {
         stepNumber: params.stepNumber,
         totalSteps: params.totalSteps,
-        stepContent: response.text,
+        stepContent: response.text.text,
         scope: params.scope,
         isRevision: params.isRevision || false,
         revisingStep: params.revisingStep,
@@ -874,7 +874,7 @@ ${params.requirements ? `\nREQUIREMENTS TO CONSIDER:\n${params.requirements}` : 
   }
 
   async handlePrecommit(params: z.infer<typeof PrecommitSchema>) {
-    const providerName = params.provider || await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure', 'grok']);
+    const providerName = params.provider || (await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure', 'grok']));
     const provider = await this.providerManager.getProvider(providerName);
     
     // Build focus-specific system prompt
@@ -949,13 +949,13 @@ Please provide a comprehensive pre-commit validation analysis with specific find
           include_unstaged: params.includeUnstaged,
           compare_to: params.compareTo,
         },
-        validation_report: response.text,
+        validation_report: response.text.text,
         provider_used: providerName,
         model_used: response.model,
       };
 
       // Parse validation report to extract key sections (simplified extraction)
-      const reportText = response.text.toLowerCase();
+      const reportText = response.text.text.toLowerCase();
       const hasCriticalIssues = reportText.includes("critical") || reportText.includes("blocks commit") || reportText.includes("must fix");
       const hasHighIssues = reportText.includes("high") || reportText.includes("should fix");
       const hasMediumIssues = reportText.includes("medium") || reportText.includes("consider fixing");
@@ -1021,7 +1021,7 @@ Please provide a comprehensive pre-commit validation analysis with specific find
   }
 
   async handleSecaudit(params: z.infer<typeof SecauditSchema>) {
-    const providerName = params.provider || await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure']);
+    const providerName = params.provider || (await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure']));
     const provider = await this.providerManager.getProvider(providerName);
     
     // Build focus-specific system prompt
@@ -1117,13 +1117,13 @@ Minimum severity to report: ${params.severity}`;
         compliance_requirements: params.complianceRequirements || [],
         severity_filter: params.severity,
         files_audited: params.files || "comprehensive analysis",
-        audit_report: response.text,
+        audit_report: response.text.text,
         provider_used: providerName,
         model_used: response.model,
       };
 
       // Parse audit report to extract security findings (simplified extraction)
-      const reportText = response.text.toLowerCase();
+      const reportText = response.text.text.toLowerCase();
       const hasCriticalVulns = reportText.includes("critical") || reportText.includes("urgent") || reportText.includes("immediate risk");
       const hasHighVulns = reportText.includes("high") || reportText.includes("significant") || reportText.includes("major vulnerability");
       const hasMediumVulns = reportText.includes("medium") || reportText.includes("moderate") || reportText.includes("should be addressed");
@@ -1197,7 +1197,7 @@ Minimum severity to report: ${params.severity}`;
   }
 
   async handleTracer(params: z.infer<typeof TracerSchema>) {
-    const providerName = params.provider || await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure', 'grok']);
+    const providerName = params.provider || (await this.providerManager.getPreferredProvider(['openai', 'gemini', 'azure', 'grok']));
     const provider = await this.providerManager.getProvider(providerName);
     
     // Build trace mode specific system prompt
@@ -1293,13 +1293,13 @@ Explain these options clearly and wait for the user to specify which mode to use
         trace_mode: params.traceMode,
         target_description: params.targetDescription,
         files_analyzed: params.files || "comprehensive codebase analysis",
-        trace_analysis: response.text,
+        trace_analysis: response.text.text,
         provider_used: providerName,
         model_used: response.model,
       };
 
       // Analyze response to determine trace completion status
-      const analysisText = response.text.toLowerCase();
+      const analysisText = response.text.text.toLowerCase();
       const isAskingForMode = params.traceMode === 'ask' || analysisText.includes("choose") || analysisText.includes("which mode") || analysisText.includes("precision or dependencies");
       const hasCodeReferences = analysisText.includes("line") || analysisText.includes("file") || analysisText.includes(".js") || analysisText.includes(".ts") || analysisText.includes(".py");
       const hasTraceFindings = analysisText.includes("trace") || analysisText.includes("calls") || analysisText.includes("dependencies") || analysisText.includes("flow");
@@ -1390,7 +1390,7 @@ Explain these options clearly and wait for the user to specify which mode to use
               default: 0.7,
               description: "Temperature for response generation",
             },
-            maxTokens: {
+            maxOutputTokens: {
               type: "number",
               description: "Maximum tokens in response",
             },

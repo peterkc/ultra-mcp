@@ -150,6 +150,39 @@ export async function runChatWithDeps(
   }
 }
 
+// Helper function to determine provider and model for CLI tools
+export async function promptForModel(
+  requestedProvider?: string,
+  requestedModel?: string,
+  config?: any,
+  providerManager?: ProviderManager
+): Promise<{ provider: string; model: string }> {
+  const configManager = new ConfigManager();
+  const manager = providerManager || new ProviderManager(configManager);
+  const configuredProviders = await manager.getConfiguredProviders();
+  
+  if (configuredProviders.length === 0) {
+    throw new Error('No AI providers configured. Please run: bunx ultra-mcp config');
+  }
+  
+  // Determine provider
+  let selectedProvider: string;
+  if (requestedProvider && configuredProviders.includes(requestedProvider)) {
+    selectedProvider = requestedProvider;
+  } else {
+    // Use Azure as preferred default if available, otherwise first configured
+    selectedProvider = configuredProviders.includes('azure') 
+      ? 'azure' 
+      : configuredProviders[0];
+  }
+  
+  // Get the provider to determine model
+  const provider = await manager.getProvider(selectedProvider);
+  const selectedModel = requestedModel || provider.getDefaultModel();
+  
+  return { provider: selectedProvider, model: selectedModel };
+}
+
 // Maintain backward compatibility
 export async function runChat(options: ChatOptions = {}): Promise<void> {
   return runChatWithDeps(options);

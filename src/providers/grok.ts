@@ -52,7 +52,7 @@ export class GrokProvider implements AIProvider {
         prompt: request.prompt,
         systemPrompt: request.systemPrompt,
         temperature: request.temperature,
-        maxTokens: request.maxTokens,
+        maxOutputTokens: request.maxOutputTokens,
         reasoningEffort: request.reasoningEffort,
       },
       startTime,
@@ -65,7 +65,7 @@ export class GrokProvider implements AIProvider {
       model: typeof modelInstance;
       prompt: string;
       temperature?: number;
-      maxTokens?: number;
+      maxOutputTokens?: number;
       system?: string;
       reasoningEffort?: 'low' | 'medium' | 'high';
       onFinish?: (result: {
@@ -79,12 +79,12 @@ export class GrokProvider implements AIProvider {
       model: modelInstance,
       prompt: request.prompt,
       temperature: request.temperature,
-      maxTokens: request.maxTokens,
+      maxOutputTokens: request.maxOutputTokens,
       onFinish: async (result) => {
         // Track completion using onFinish callback
         await updateLLMCompletion({
           requestId,
-          responseData: { text: result.text },
+          responseData: { text: result.text.text },
           usage: result.usage,
           finishReason: result.finishReason,
           endTime: Date.now(),
@@ -106,11 +106,11 @@ export class GrokProvider implements AIProvider {
       const result = await generateText(options);
 
       return {
-        text: result.text,
+        text: result.text.text,
         model: model,
         usage: result.usage ? {
-          promptTokens: result.usage.promptTokens || 0,
-          completionTokens: result.usage.completionTokens || 0,
+          inputTokens: result.usage.inputTokens || 0,
+          outputTokens: result.usage.outputTokens || 0,
           totalTokens: result.usage.totalTokens || 0,
         } : undefined,
         metadata: result.experimental_providerMetadata,
@@ -141,7 +141,7 @@ export class GrokProvider implements AIProvider {
         prompt: request.prompt,
         systemPrompt: request.systemPrompt,
         temperature: request.temperature,
-        maxTokens: request.maxTokens,
+        maxOutputTokens: request.maxOutputTokens,
         reasoningEffort: request.reasoningEffort,
       },
       startTime,
@@ -154,7 +154,7 @@ export class GrokProvider implements AIProvider {
       model: typeof modelInstance;
       prompt: string;
       temperature?: number;
-      maxTokens?: number;
+      maxOutputTokens?: number;
       system?: string;
       reasoningEffort?: 'low' | 'medium' | 'high';
       onFinish?: (result: {
@@ -168,12 +168,12 @@ export class GrokProvider implements AIProvider {
       model: modelInstance,
       prompt: request.prompt,
       temperature: request.temperature,
-      maxTokens: request.maxTokens,
+      maxOutputTokens: request.maxOutputTokens,
       onFinish: async (result) => {
         // Track completion using onFinish callback
         await updateLLMCompletion({
           requestId,
-          responseData: { text: result.text },
+          responseData: { text: result.text.text },
           usage: result.usage,
           finishReason: result.finishReason,
           endTime: Date.now(),
@@ -190,7 +190,7 @@ export class GrokProvider implements AIProvider {
     }
 
     try {
-      const result = await streamText(options);
+      const result = streamText(options);
 
       for await (const chunk of result.textStream) {
         yield chunk;

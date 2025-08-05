@@ -10,6 +10,13 @@ import { runDbShow, runDbView, runDbStats } from './commands/db';
 import { runDashboard } from './commands/dashboard';
 import { createVectorIndexCommand } from './commands/vector-index';
 import { createVectorSearchCommand } from './commands/vector-search';
+import { 
+  createReviewCommand, 
+  createAnalyzeCommand, 
+  createDebugCommand, 
+  createPlanCommand, 
+  createDocsCommand 
+} from './commands/workflow-tools';
 import { showQuickApiKeyGuide } from './utils/api-key-guide';
 import { readFileSync } from 'fs';
 import { join } from 'path';
@@ -140,6 +147,13 @@ program
 // Add vector commands
 program.addCommand(createVectorIndexCommand());
 program.addCommand(createVectorSearchCommand());
+
+// Add advanced workflow commands
+program.addCommand(createReviewCommand());
+program.addCommand(createAnalyzeCommand());
+program.addCommand(createDebugCommand());
+program.addCommand(createPlanCommand());
+program.addCommand(createDocsCommand());
 
 // Default command (when no subcommand is provided)
 program

@@ -45,7 +45,7 @@ export interface RequestData {
   prompt: string;
   systemPrompt?: string;
   temperature?: number;
-  maxTokens?: number;
+  maxOutputTokens?: number;
   reasoningEffort?: string;
   useSearchGrounding?: boolean;
 }
@@ -119,8 +119,8 @@ export async function updateLLMCompletion(data: CompletionData): Promise<void> {
       };
       
       if (data.usage) {
-        updateData.inputTokens = data.usage.promptTokens;
-        updateData.outputTokens = data.usage.completionTokens;
+        updateData.inputTokens = data.usage.inputTokens;
+        updateData.outputTokens = data.usage.outputTokens;
         updateData.totalTokens = data.usage.totalTokens;
         
         // Get model name for cost estimation
@@ -133,8 +133,8 @@ export async function updateLLMCompletion(data: CompletionData): Promise<void> {
         if (request.length > 0 && request[0].model) {
           updateData.estimatedCost = estimateCost(
             request[0].model,
-            data.usage.promptTokens,
-            data.usage.completionTokens
+            data.usage.inputTokens,
+            data.usage.outputTokens
           );
         }
       }

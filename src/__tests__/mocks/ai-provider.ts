@@ -35,8 +35,8 @@ export class MockAIProvider implements AIProvider {
       text: `Mock response for: ${request.prompt}`,
       model: request.model || this.getDefaultModel(),
       usage: {
-        promptTokens: 10,
-        completionTokens: 20,
+        inputTokens: 10,
+        outputTokens: 20,
         totalTokens: 30,
       },
     };

@@ -307,6 +307,70 @@ This MCP server acts as a bridge between multiple AI model providers and MCP cli
 - `src/vector/`: Vector indexing and semantic search functionality
 - `src/utils/`: Shared utilities for streaming, error handling, etc.
 
+## Advanced Workflow Commands
+
+Ultra MCP includes advanced step-by-step workflow commands inspired by zen-mcp-server:
+
+### review - Code Review Workflow
+```bash
+bunx -y ultra-mcp review "review the authentication module"
+bunx -y ultra-mcp review "check for security issues in the API" --focus security
+```
+
+Performs comprehensive code review with:
+- Step-by-step analysis workflow
+- Focus options: bugs, security, performance, style, architecture, all
+- Automatic issue tracking with severity levels
+- Actionable recommendations
+
+### analyze - Code Analysis Workflow  
+```bash
+bunx -y ultra-mcp analyze "analyze the database schema design"
+bunx -y ultra-mcp analyze "evaluate system scalability" --focus scalability
+```
+
+Deep code analysis with:
+- Architecture and design pattern evaluation
+- Focus options: architecture, performance, security, quality, scalability, all
+- Technical debt assessment
+- Improvement opportunities
+
+### debug - Systematic Debugging
+```bash
+bunx -y ultra-mcp debug "users cannot login after deployment"
+bunx -y ultra-mcp debug "memory leak in production" -m o3
+```
+
+Root cause analysis with:
+- Step-by-step debugging workflow
+- Hypothesis formation and testing
+- Systematic investigation approach
+- Concrete fix recommendations
+
+### plan - Feature Planning
+```bash
+bunx -y ultra-mcp plan "implement user authentication system"
+bunx -y ultra-mcp plan "add payment processing" --scope comprehensive
+```
+
+Multi-step planning with:
+- Scope options: minimal, standard, comprehensive
+- Revision and branching support
+- Dependency identification
+- Success criteria definition
+
+### docs - Documentation Generation
+```bash
+bunx -y ultra-mcp docs "document the REST API endpoints"
+bunx -y ultra-mcp docs "create setup guide" --format readme
+```
+
+Documentation generation with:
+- Format options: markdown, comments, api-docs, readme, jsdoc
+- Code examples inclusion
+- Type information support
+- Step-by-step content building
+
 ## MCP Tools
 
 Ultra MCP exposes the following AI-powered tools through the Model Context Protocol:
@@ -422,6 +486,65 @@ Generate documentation in various formats.
   - `files`: File paths to document (optional)
   - `format`: "markdown", "comments", "api-docs", "readme" (default: "markdown")
   - `provider`: "openai", "gemini", "azure", "grok" (default: "gemini")
+
+## Advanced Workflow MCP Tools
+
+Ultra MCP includes advanced step-by-step workflow tools that can be called through MCP:
+
+### 10. `ultra-review`
+
+Comprehensive code review with step-by-step workflow analysis.
+
+- **Parameters**:
+  - `task`: What to review in the code (required)
+  - `files`: File paths to review (optional)
+  - `focus`: "bugs", "security", "performance", "style", "architecture", "all" (default: "all")
+  - `provider`: AI provider to use (optional)
+  - Workflow parameters: `stepNumber`, `totalSteps`, `findings`, `nextStepRequired`, `confidence`, `filesChecked`, `issuesFound`
+
+### 11. `ultra-analyze`
+
+Comprehensive code analysis with step-by-step workflow.
+
+- **Parameters**:
+  - `task`: What to analyze in the code (required)
+  - `files`: File paths to analyze (optional)
+  - `focus`: "architecture", "performance", "security", "quality", "scalability", "all" (default: "all")
+  - `provider`: AI provider to use (optional)
+  - Workflow parameters: `stepNumber`, `totalSteps`, `findings`, `nextStepRequired`, `confidence`
+
+### 12. `ultra-debug`
+
+Systematic debugging with step-by-step root cause analysis.
+
+- **Parameters**:
+  - `issue`: The issue or error to debug (required)
+  - `files`: Relevant file paths (optional)
+  - `symptoms`: Error symptoms or behavior observed (optional)
+  - `provider`: AI provider to use (optional)
+  - Workflow parameters: `stepNumber`, `totalSteps`, `findings`, `nextStepRequired`, `hypothesis`, `confidence`
+
+### 13. `ultra-plan`
+
+Multi-step feature planning with revisions and branches.
+
+- **Parameters**:
+  - `task`: What to plan (required)
+  - `requirements`: Specific requirements or constraints (optional)
+  - `scope`: "minimal", "standard", "comprehensive" (default: "standard")
+  - `provider`: AI provider to use (optional)
+  - Planning parameters: `isRevision`, `revisingStep`, `isBranching`, `branchingFrom`, `branchId`
+
+### 14. `ultra-docs`
+
+Generate comprehensive documentation with step-by-step workflow.
+
+- **Parameters**:
+  - `task`: What to document (required)
+  - `files`: File paths to document (optional)
+  - `format`: "markdown", "comments", "api-docs", "readme", "jsdoc" (default: "markdown")
+  - `provider`: AI provider to use (optional)
+  - Doc parameters: `includeExamples`, `includeTypes`
 
 ### Tool Design Philosophy
 

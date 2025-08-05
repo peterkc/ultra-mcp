@@ -53,7 +53,7 @@ export class GeminiProvider implements AIProvider {
         prompt: request.prompt,
         systemPrompt: request.systemPrompt,
         temperature: request.temperature,
-        maxTokens: request.maxTokens,
+        maxOutputTokens: request.maxOutputTokens,
         useSearchGrounding,
       },
       startTime,
@@ -66,7 +66,7 @@ export class GeminiProvider implements AIProvider {
       model: typeof modelInstance;
       prompt: string;
       temperature?: number;
-      maxTokens?: number;
+      maxOutputTokens?: number;
       system?: string;
       onFinish?: (result: {
         text: string;
@@ -79,7 +79,7 @@ export class GeminiProvider implements AIProvider {
       model: modelInstance,
       prompt: request.prompt,
       temperature: request.temperature,
-      maxTokens: request.maxTokens,
+      maxOutputTokens: request.maxOutputTokens,
       onFinish: async (result) => {
         // Track completion using onFinish callback
         await updateLLMCompletion({
@@ -143,7 +143,7 @@ export class GeminiProvider implements AIProvider {
         prompt: request.prompt,
         systemPrompt: request.systemPrompt,
         temperature: request.temperature,
-        maxTokens: request.maxTokens,
+        maxOutputTokens: request.maxOutputTokens,
         useSearchGrounding,
       },
       startTime,
@@ -156,7 +156,7 @@ export class GeminiProvider implements AIProvider {
       model: typeof modelInstance;
       prompt: string;
       temperature?: number;
-      maxTokens?: number;
+      maxOutputTokens?: number;
       system?: string;
       onFinish?: (result: {
         text: string;
@@ -169,7 +169,7 @@ export class GeminiProvider implements AIProvider {
       model: modelInstance,
       prompt: request.prompt,
       temperature: request.temperature,
-      maxTokens: request.maxTokens,
+      maxOutputTokens: request.maxOutputTokens,
       onFinish: async (result) => {
         // Track completion using onFinish callback
         await updateLLMCompletion({
@@ -187,7 +187,7 @@ export class GeminiProvider implements AIProvider {
     }
 
     try {
-      const result = await streamText(options);
+      const result = streamText(options);
 
       for await (const chunk of result.textStream) {
         yield chunk;
