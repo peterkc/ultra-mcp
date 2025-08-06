@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { logger } from '../utils/logger';
 import { ConfigManager } from '../config/manager';
+import { VectorConfigSchema } from '../config/schema';
 import { getDefaultEmbeddingProvider, EmbeddingProvider } from '../providers/embeddings';
 import { indexProject } from '../vector/indexer';
 import { searchVectors, getRelatedFiles } from '../vector/search';
@@ -58,7 +59,7 @@ export async function handleIndexVectors(args: IndexVectorsInput): Promise<strin
     const result = await indexProject({
       projectPath: args.path,
       provider,
-      config: config.vectorConfig || {},
+      config: config.vectorConfig || VectorConfigSchema.parse({}),
       force: args.force,
       onProgress: (message) => {
         messages.push(message);

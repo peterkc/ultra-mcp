@@ -1,6 +1,6 @@
 import { embed, EmbeddingModel } from 'ai';
-import { openai } from '@ai-sdk/openai';
-import { google } from '@ai-sdk/google';
+import { createOpenAI } from '@ai-sdk/openai';
+import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { createAzure } from '@ai-sdk/azure';
 import { ConfigManager } from '../config/manager';
 import { logger } from '../utils/logger';
@@ -65,7 +65,7 @@ export class EmbeddingProvider {
         value: texts,
       });
       
-      return result.embeddings;
+      return [result.embedding];
     } catch (error) {
       logger.error(`Batch embedding error with ${this.config.provider}:`, error);
       throw new Error(`Failed to generate embeddings: ${error instanceof Error ? error.message : String(error)}`);
@@ -82,11 +82,12 @@ export class EmbeddingProvider {
           throw new Error('OpenAI API key not configured');
         }
         
-        const modelName = this.config.model || config.vectorConfig?.embeddingModel?.openai || 'text-embedding-3-small';
-        return openai.embedding(modelName, {
+        const openaiInstance = createOpenAI({
           apiKey,
           baseURL: this.config.baseURL || config.openai?.baseURL,
         });
+        const modelName = this.config.model || config.vectorConfig?.embeddingModel?.openai || 'text-embedding-3-small';
+        return openaiInstance.embedding(modelName);
       }
       
       case 'azure': {
@@ -126,11 +127,12 @@ export class EmbeddingProvider {
           throw new Error('Google API key not configured');
         }
         
-        const modelName = this.config.model || config.vectorConfig?.embeddingModel?.gemini || 'text-embedding-004';
-        return google.embedding(modelName, {
+        const googleInstance = createGoogleGenerativeAI({
           apiKey,
           baseURL: this.config.baseURL || config.google?.baseURL,
         });
+        const modelName = this.config.model || config.vectorConfig?.embeddingModel?.gemini || 'text-embedding-004';
+        return googleInstance.embedding(modelName);
       }
       
       default:

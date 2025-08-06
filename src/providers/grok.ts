@@ -109,11 +109,11 @@ export class GrokProvider implements AIProvider {
         text: result.text,
         model: model,
         usage: result.usage ? {
-          inputTokens: result.usage.promptTokens || 0,
-          outputTokens: result.usage.completionTokens || 0,
+          promptTokens: result.usage.inputTokens || 0,
+          completionTokens: result.usage.outputTokens || 0,
           totalTokens: result.usage.totalTokens || 0,
         } : undefined,
-        metadata: result.experimental_providerMetadata,
+        metadata: result.providerMetadata,
       };
     } catch (error) {
       // Track error
@@ -150,32 +150,24 @@ export class GrokProvider implements AIProvider {
     const grokClient = createXai({ apiKey, baseURL });
     const modelInstance = grokClient(model);
     
-    type StreamTextOptions = {
-      model: typeof modelInstance;
-      prompt: string;
-      temperature?: number;
-      maxOutputTokens?: number;
-      system?: string;
-      reasoningEffort?: 'low' | 'medium' | 'high';
-      onFinish?: (result: {
-        text: string;
-        usage?: { promptTokens: number; completionTokens: number; totalTokens: number };
-        finishReason?: string;
-      }) => Promise<void>;
-    };
-
-    const options: StreamTextOptions = {
+    const options: any = {
       model: modelInstance,
       prompt: request.prompt,
       temperature: request.temperature,
       maxOutputTokens: request.maxOutputTokens,
-      onFinish: async (result) => {
+      onFinish: async (event: any) => {
         // Track completion using onFinish callback
+        const usage = event.totalUsage ? {
+          promptTokens: event.totalUsage.inputTokens || 0,
+          completionTokens: event.totalUsage.outputTokens || 0,
+          totalTokens: event.totalUsage.totalTokens || 0,
+        } : undefined;
+        
         await updateLLMCompletion({
           requestId,
-          responseData: { text: result.text },
-          usage: result.usage,
-          finishReason: result.finishReason,
+          responseData: { text: event.text },
+          usage,
+          finishReason: event.finishReason,
           endTime: Date.now(),
         });
       },

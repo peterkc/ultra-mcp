@@ -63,9 +63,10 @@ export class ConfigManager {
         if (match && match[1]) {
           // Migrate to new structure
           this.store.set('azure.resourceName', match[1]);
-          this.store.delete('azure.endpoint');
+          // 'azure.endpoint' doesn't exist in the new schema, just skip
+          // this.store.delete('azure.endpoint');
           this.store.delete('azure.baseURL');
-          logger.info(`Migrated legacy Azure ${rawConfig.azure.endpoint ? 'endpoint' : 'baseURL'} to resourceName: ${match[1]}`);
+          logger.log(`Migrated legacy Azure ${rawConfig.azure.endpoint ? 'endpoint' : 'baseURL'} to resourceName: ${match[1]}`);
         }
       }
     }

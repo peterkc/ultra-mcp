@@ -1,5 +1,6 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
+import { AdvancedToolsHandler, CodeReviewSchema, CodeAnalysisSchema, DebugSchema, PlanSchema, DocsSchema } from './handlers/advanced-tools';
 
 // Import Zod schemas from ai-tools
 const DeepReasoningSchema = z.object({
@@ -352,51 +353,9 @@ export function createServer() {
 
   // Register advanced workflow tools
   server.registerTool("ultra-review", {
-    title: "Ultra Review",
+    title: "Ultra Review", 
     description: "Comprehensive code review with step-by-step workflow analysis",
-    inputSchema: {
-      type: "object",
-      properties: {
-        task: { type: "string", description: "What to review in the code" },
-        files: { type: "array", items: { type: "string" }, description: "File paths to review (optional)" },
-        focus: { 
-          type: "string", 
-          enum: ["bugs", "security", "performance", "style", "architecture", "all"],
-          default: "all",
-          description: "Review focus area" 
-        },
-        provider: { 
-          type: "string", 
-          enum: ["openai", "gemini", "azure", "grok"],
-          description: "AI provider to use"
-        },
-        stepNumber: { type: "number", minimum: 1, default: 1, description: "Current step in the review workflow" },
-        totalSteps: { type: "number", minimum: 1, default: 3, description: "Estimated total steps needed" },
-        findings: { type: "string", default: "", description: "Accumulated findings from the review" },
-        nextStepRequired: { type: "boolean", default: true, description: "Whether another step is needed" },
-        confidence: { 
-          type: "string", 
-          enum: ["exploring", "low", "medium", "high", "very_high", "almost_certain", "certain"],
-          description: "Confidence level in findings"
-        },
-        filesChecked: { type: "array", items: { type: "string" }, default: [], description: "Files examined during review" },
-        issuesFound: { 
-          type: "array", 
-          items: {
-            type: "object",
-            properties: {
-              severity: { type: "string", enum: ["critical", "high", "medium", "low"] },
-              description: { type: "string" },
-              location: { type: "string" }
-            },
-            required: ["severity", "description"]
-          },
-          default: [],
-          description: "Issues identified during review"
-        }
-      },
-      required: ["task"]
-    },
+    inputSchema: CodeReviewSchema.shape,
   }, async (args) => {
     const { AdvancedToolsHandler } = await import("./handlers/advanced-tools");
     const handler = new AdvancedToolsHandler();
@@ -406,34 +365,7 @@ export function createServer() {
   server.registerTool("ultra-analyze", {
     title: "Ultra Analyze",
     description: "Comprehensive code analysis with step-by-step workflow",
-    inputSchema: {
-      type: "object",
-      properties: {
-        task: { type: "string", description: "What to analyze in the code" },
-        files: { type: "array", items: { type: "string" }, description: "File paths to analyze (optional)" },
-        focus: { 
-          type: "string", 
-          enum: ["architecture", "performance", "security", "quality", "scalability", "all"],
-          default: "all",
-          description: "Analysis focus area" 
-        },
-        provider: { 
-          type: "string", 
-          enum: ["openai", "gemini", "azure", "grok"],
-          description: "AI provider to use"
-        },
-        stepNumber: { type: "number", minimum: 1, default: 1, description: "Current step in the analysis workflow" },
-        totalSteps: { type: "number", minimum: 1, default: 3, description: "Estimated total steps needed" },
-        findings: { type: "string", default: "", description: "Accumulated findings from the analysis" },
-        nextStepRequired: { type: "boolean", default: true, description: "Whether another step is needed" },
-        confidence: { 
-          type: "string", 
-          enum: ["exploring", "low", "medium", "high", "very_high", "almost_certain", "certain"],
-          description: "Confidence level in findings"
-        }
-      },
-      required: ["task"]
-    },
+    inputSchema: CodeAnalysisSchema.shape,
   }, async (args) => {
     const { AdvancedToolsHandler } = await import("./handlers/advanced-tools");
     const handler = new AdvancedToolsHandler();
@@ -443,30 +375,7 @@ export function createServer() {
   server.registerTool("ultra-debug", {
     title: "Ultra Debug",
     description: "Systematic debugging with step-by-step root cause analysis",
-    inputSchema: {
-      type: "object",
-      properties: {
-        issue: { type: "string", description: "The issue or error to debug" },
-        files: { type: "array", items: { type: "string" }, description: "Relevant file paths (optional)" },
-        symptoms: { type: "string", description: "Error symptoms or behavior observed" },
-        provider: { 
-          type: "string", 
-          enum: ["openai", "gemini", "azure", "grok"],
-          description: "AI provider to use"
-        },
-        stepNumber: { type: "number", minimum: 1, default: 1, description: "Current step in the debug workflow" },
-        totalSteps: { type: "number", minimum: 1, default: 4, description: "Estimated total steps needed" },
-        findings: { type: "string", default: "", description: "Accumulated findings from debugging" },
-        nextStepRequired: { type: "boolean", default: true, description: "Whether another step is needed" },
-        hypothesis: { type: "string", description: "Current theory about the issue" },
-        confidence: { 
-          type: "string", 
-          enum: ["exploring", "low", "medium", "high", "very_high", "almost_certain", "certain"],
-          description: "Confidence level in findings"
-        }
-      },
-      required: ["issue"]
-    },
+    inputSchema: DebugSchema.shape,
   }, async (args) => {
     const { AdvancedToolsHandler } = await import("./handlers/advanced-tools");
     const handler = new AdvancedToolsHandler();
@@ -476,34 +385,7 @@ export function createServer() {
   server.registerTool("ultra-plan", {
     title: "Ultra Plan",
     description: "Multi-step feature planning with revisions and branches",
-    inputSchema: {
-      type: "object",
-      properties: {
-        task: { type: "string", description: "What to plan (e.g., 'add user profiles', 'implement payment system')" },
-        requirements: { type: "string", description: "Specific requirements or constraints" },
-        scope: { 
-          type: "string", 
-          enum: ["minimal", "standard", "comprehensive"],
-          default: "standard",
-          description: "Planning scope and depth" 
-        },
-        provider: { 
-          type: "string", 
-          enum: ["openai", "gemini", "azure", "grok"],
-          description: "AI provider to use"
-        },
-        stepNumber: { type: "number", minimum: 1, default: 1, description: "Current step in the planning workflow" },
-        totalSteps: { type: "number", minimum: 1, default: 5, description: "Estimated total steps needed" },
-        currentStep: { type: "string", default: "", description: "Current planning step content" },
-        nextStepRequired: { type: "boolean", default: true, description: "Whether another step is needed" },
-        isRevision: { type: "boolean", default: false, description: "True if this step revises a previous step" },
-        revisingStep: { type: "number", description: "Which step number is being revised" },
-        isBranching: { type: "boolean", default: false, description: "True if exploring alternative approach" },
-        branchingFrom: { type: "number", description: "Which step to branch from" },
-        branchId: { type: "string", description: "Identifier for this planning branch" }
-      },
-      required: ["task"]
-    },
+    inputSchema: PlanSchema.shape,
   }, async (args) => {
     const { AdvancedToolsHandler } = await import("./handlers/advanced-tools");
     const handler = new AdvancedToolsHandler();
@@ -513,31 +395,7 @@ export function createServer() {
   server.registerTool("ultra-docs", {
     title: "Ultra Docs",
     description: "Generate comprehensive documentation with step-by-step workflow",
-    inputSchema: {
-      type: "object",
-      properties: {
-        task: { type: "string", description: "What to document (e.g., 'API endpoints', 'setup instructions')" },
-        files: { type: "array", items: { type: "string" }, description: "File paths to document (optional)" },
-        format: { 
-          type: "string", 
-          enum: ["markdown", "comments", "api-docs", "readme", "jsdoc"],
-          default: "markdown",
-          description: "Documentation format" 
-        },
-        provider: { 
-          type: "string", 
-          enum: ["openai", "gemini", "azure", "grok"],
-          description: "AI provider to use"
-        },
-        stepNumber: { type: "number", minimum: 1, default: 1, description: "Current step in the documentation workflow" },
-        totalSteps: { type: "number", minimum: 1, default: 2, description: "Estimated total steps needed" },
-        findings: { type: "string", default: "", description: "Accumulated documentation content" },
-        nextStepRequired: { type: "boolean", default: true, description: "Whether another step is needed" },
-        includeExamples: { type: "boolean", default: true, description: "Include code examples in documentation" },
-        includeTypes: { type: "boolean", default: true, description: "Include type information for TypeScript/Flow" }
-      },
-      required: ["task"]
-    },
+    inputSchema: DocsSchema.shape,
   }, async (args) => {
     const { AdvancedToolsHandler } = await import("./handlers/advanced-tools");
     const handler = new AdvancedToolsHandler();

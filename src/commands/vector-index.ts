@@ -1,6 +1,7 @@
 import { Command } from 'commander';
 import chalk from 'chalk';
 import { ConfigManager } from '../config/manager';
+import { VectorConfigSchema } from '../config/schema';
 import { getDefaultEmbeddingProvider } from '../providers/embeddings';
 import { indexProject } from '../vector/indexer';
 import { getVectorCount } from '../vector/db';
@@ -43,7 +44,7 @@ export function createVectorIndexCommand() {
         const result = await indexProject({
           projectPath: options.path,
           provider,
-          config: config.vectorConfig || {},
+          config: config.vectorConfig || VectorConfigSchema.parse({}),
           force: options.force,
           onProgress: (message) => {
             logger.log(chalk.dim(message));

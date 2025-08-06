@@ -1,6 +1,7 @@
 import prompts from 'prompts';
 import chalk from 'chalk';
 import { ConfigManager } from './manager';
+import { VectorConfigSchema } from './schema';
 
 export async function runInteractiveConfig(): Promise<void> {
   const configManager = new ConfigManager();
@@ -257,7 +258,7 @@ async function resetConfiguration(configManager: ConfigManager, chalk: any): Pro
 
 async function configureVectorIndexing(configManager: ConfigManager): Promise<void> {
   const currentConfig = await configManager.getConfig();
-  const vectorConfig = currentConfig.vectorConfig || {};
+  const vectorConfig = currentConfig.vectorConfig || VectorConfigSchema.parse({});
 
   console.log(chalk.blue('\n🔍 Configure Vector Indexing'));
   console.log(chalk.gray('Press Enter to keep the current value.\n'));

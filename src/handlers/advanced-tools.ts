@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { CallToolResultSchema } from '@modelcontextprotocol/sdk/types.js';
+import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { ProviderManager } from '../providers/manager';
 // Removed import for non-existent stream-utils
 import { ConfigManager } from '../config/manager';
@@ -15,8 +15,8 @@ interface WorkflowStep {
   confidence?: 'exploring' | 'low' | 'medium' | 'high' | 'very_high' | 'almost_certain' | 'certain';
 }
 
-// Handler response type
-interface HandlerResponse {
+// Handler response type - must extend CallToolResult
+interface HandlerResponse extends CallToolResult {
   content: Array<{ type: 'text'; text: string }>;
 }
 
@@ -166,7 +166,8 @@ export class AdvancedToolsHandler {
     const { provider: requestedProvider, model: requestedModel, stepNumber, totalSteps, nextStepRequired, confidence, findings, files, focus, task, filesChecked, issuesFound } = params;
     
     const config = await this.configManager.getConfig();
-    const provider = await this.providerManager.getProvider(requestedProvider);
+    const providerName = requestedProvider || await this.providerManager.getPreferredProvider();
+    const provider = await this.providerManager.getProvider(providerName);
     
     if (!provider) {
       throw new Error('No AI provider configured. Please run: bunx ultra-mcp config');
@@ -294,7 +295,8 @@ Now finalize your review by:
     const { provider: requestedProvider, model: requestedModel, stepNumber, totalSteps, nextStepRequired, confidence, findings, files, focus, task } = params;
     
     const config = await this.configManager.getConfig();
-    const provider = await this.providerManager.getProvider(requestedProvider);
+    const providerName = requestedProvider || await this.providerManager.getPreferredProvider();
+    const provider = await this.providerManager.getProvider(providerName);
     
     if (!provider) {
       throw new Error('No AI provider configured. Please run: bunx ultra-mcp config');
@@ -388,7 +390,8 @@ Deepen your investigation into:
     const { provider: requestedProvider, model: requestedModel, stepNumber, totalSteps, nextStepRequired, confidence, findings, issue, files, symptoms, hypothesis } = params;
     
     const config = await this.configManager.getConfig();
-    const provider = await this.providerManager.getProvider(requestedProvider);
+    const providerName = requestedProvider || await this.providerManager.getPreferredProvider();
+    const provider = await this.providerManager.getProvider(providerName);
     
     if (!provider) {
       throw new Error('No AI provider configured. Please run: bunx ultra-mcp config');
@@ -514,7 +517,8 @@ Provide:
     const { provider: requestedProvider, model: requestedModel, stepNumber, totalSteps, nextStepRequired, task, requirements, scope, currentStep, isRevision, revisingStep, isBranching, branchingFrom, branchId } = params;
     
     const config = await this.configManager.getConfig();
-    const provider = await this.providerManager.getProvider(requestedProvider);
+    const providerName = requestedProvider || await this.providerManager.getPreferredProvider();
+    const provider = await this.providerManager.getProvider(providerName);
     
     if (!provider) {
       throw new Error('No AI provider configured. Please run: bunx ultra-mcp config');
@@ -651,7 +655,8 @@ Develop the next aspect of your plan:
     const { provider: requestedProvider, model: requestedModel, stepNumber, totalSteps, nextStepRequired, task, files, format, findings, includeExamples, includeTypes } = params;
     
     const config = await this.configManager.getConfig();
-    const provider = await this.providerManager.getProvider(requestedProvider);
+    const providerName = requestedProvider || await this.providerManager.getPreferredProvider();
+    const provider = await this.providerManager.getProvider(providerName);
     
     if (!provider) {
       throw new Error('No AI provider configured. Please run: bunx ultra-mcp config');
@@ -751,7 +756,7 @@ Finalize by:
     }
   }
 
-  async handle(request: { method: string; params: { arguments: unknown } }): Promise<CallToolResultSchema> {
+  async handle(request: { method: string; params: { arguments: unknown } }): Promise<CallToolResult> {
     const { method, params } = request;
 
     switch (method) {
