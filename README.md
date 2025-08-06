@@ -86,9 +86,15 @@ npx -y ultra-mcp config
 This will:
 
 1. Show current configuration status
-2. Allow you to set/update API keys and base URLs for OpenAI, Google Gemini, Azure OpenAI, and xAI Grok
-3. Store configuration securely on your system
-4. Auto-load API keys when the server starts
+2. Present a provider-first menu to select which AI provider to configure
+3. Guide you through setting API keys, base URLs, and preferred models
+4. Store configuration securely on your system
+5. Auto-load settings when the server starts
+
+**New in v0.5.10:**
+- 🎯 **Provider-first configuration** - Select specific provider to configure
+- 🤖 **OpenAI-Compatible support** - Configure Ollama (local) or OpenRouter (400+ models)
+- 📋 **Model selection** - Choose your preferred model from categorized lists
 
 ### Running the Server
 
