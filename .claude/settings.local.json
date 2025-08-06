@@ -1,5 +1,9 @@
 {
   "permissions": {
+    "allow": [
+      "WebFetch(domain:ai-sdk.dev)",
+      "mcp__zen__thinkdeep"
+    ],
     "additionalDirectories": [
       "/Volumes/SandE/temp/zen-mcp-server-2025-july"
     ]

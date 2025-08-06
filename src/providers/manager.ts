@@ -3,6 +3,7 @@ import { OpenAIProvider } from "./openai";
 import { GeminiProvider } from "./gemini";
 import { AzureOpenAIProvider } from "./azure";
 import { GrokProvider } from "./grok";
+import { OpenAICompatibleProvider } from "./openai-compatible";
 import { ConfigManager } from "../config/manager";
 
 export class ProviderManager {
@@ -20,6 +21,7 @@ export class ProviderManager {
     this.providers.set("gemini", new GeminiProvider(this.configManager));
     this.providers.set("azure", new AzureOpenAIProvider(this.configManager));
     this.providers.set("grok", new GrokProvider(this.configManager));
+    this.providers.set("openai-compatible", new OpenAICompatibleProvider(this.configManager));
   }
 
   async getProvider(name: string): Promise<AIProvider> {
@@ -83,6 +85,15 @@ export class ProviderManager {
 
     if (config.xai?.apiKey || process.env.XAI_API_KEY) {
       configured.push("grok");
+    }
+
+    if (config.openaiCompatible?.baseURL) {
+      // For Ollama, we don't require an API key (can use fake key)
+      // For OpenRouter, we require a real API key
+      const providerName = config.openaiCompatible?.providerName || 'ollama';
+      if (providerName === 'ollama' || config.openaiCompatible?.apiKey) {
+        configured.push("openai-compatible");
+      }
     }
 
     return configured;

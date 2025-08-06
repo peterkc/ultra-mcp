@@ -82,10 +82,17 @@ describe('ConfigSchema', () => {
       azure: {
         apiKey: undefined,
         resourceName: undefined,
+        baseURL: undefined,
       },
       xai: {
         apiKey: undefined,
         baseURL: undefined,
+      },
+      openaiCompatible: {
+        apiKey: undefined,
+        baseURL: 'http://localhost:11434/v1',
+        providerName: 'ollama',
+        models: undefined,
       },
       vectorConfig: {
         defaultProvider: 'openai',

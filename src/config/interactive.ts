@@ -16,6 +16,7 @@ export async function runInteractiveConfig(): Promise<void> {
   console.log(chalk.gray('- Google API Key:'), currentConfig.google?.apiKey ? chalk.green('✓ Set') : chalk.red('✗ Not set'));
   console.log(chalk.gray('- Azure API Key:'), currentConfig.azure?.apiKey ? chalk.green('✓ Set') : chalk.red('✗ Not set'));
   console.log(chalk.gray('- xAI API Key:'), currentConfig.xai?.apiKey ? chalk.green('✓ Set') : chalk.red('✗ Not set'));
+  console.log(chalk.gray('- OpenAI-Compatible:'), currentConfig.openaiCompatible?.baseURL ? chalk.green('✓ Set') : chalk.red('✗ Not set'));
   console.log();
 
   const response = await prompts([
@@ -193,6 +194,69 @@ async function configureApiKeys(configManager: ConfigManager): Promise<void> {
     }
   }
 
+  // OpenAI-Compatible configuration (optional)
+  const compatiblePrompt = await prompts({
+    type: 'confirm',
+    name: 'configureCompatible',
+    message: 'Would you like to configure OpenAI-Compatible provider (Ollama/OpenRouter)?',
+    initial: false,
+  });
+
+  if (compatiblePrompt.configureCompatible) {
+    const providerTypeResponse = await prompts({
+      type: 'select',
+      name: 'providerName',
+      message: 'Select provider type:',
+      choices: [
+        { title: 'Ollama (Local models)', value: 'ollama' },
+        { title: 'OpenRouter (Cloud proxy)', value: 'openrouter' },
+      ],
+    });
+
+    let baseURL = '';
+    let requiresApiKey = false;
+    
+    if (providerTypeResponse.providerName === 'ollama') {
+      baseURL = 'http://localhost:11434/v1';
+      requiresApiKey = false;
+    } else if (providerTypeResponse.providerName === 'openrouter') {
+      baseURL = 'https://openrouter.ai/api/v1';
+      requiresApiKey = true;
+    }
+
+    const compatibleResponse = await prompts([
+      {
+        type: 'text',
+        name: 'baseURL',
+        message: 'Base URL:',
+        initial: currentConfig.openaiCompatible?.baseURL || baseURL,
+      },
+      {
+        type: requiresApiKey ? 'text' : 'text',
+        name: 'apiKey',
+        message: requiresApiKey ? 'API Key (required for OpenRouter):' : 'API Key (optional for Ollama, can use "fake-key"):',
+        initial: currentConfig.openaiCompatible?.apiKey ? '(current value hidden)' : (requiresApiKey ? '' : 'fake-key'),
+      },
+    ]);
+
+    // Update the complete openai-compatible configuration
+    await configManager.updateConfig({
+      ...currentConfig,
+      openaiCompatible: {
+        baseURL: compatibleResponse.baseURL,
+        providerName: providerTypeResponse.providerName,
+        apiKey: compatibleResponse.apiKey && compatibleResponse.apiKey !== '(current value hidden)' 
+          ? (compatibleResponse.apiKey.toLowerCase() === 'clear' ? undefined : compatibleResponse.apiKey)
+          : currentConfig.openaiCompatible?.apiKey,
+        models: currentConfig.openaiCompatible?.models,
+      }
+    });
+    
+    console.log(chalk.green('OpenAI-Compatible configuration updated'));
+    
+    console.log(chalk.green(`✅ ${providerTypeResponse.providerName} configuration saved!`));
+  }
+
   console.log(chalk.green('\n✅ Configuration updated successfully!'));
   
   // Run the main menu again
@@ -219,6 +283,11 @@ async function viewConfiguration(configManager: ConfigManager, chalk: any): Prom
   console.log(chalk.bold('\nxAI:'));
   console.log(chalk.gray('  API Key:'), config.xai?.apiKey ? chalk.green(maskApiKey(config.xai.apiKey)) : chalk.red('Not set'));
   console.log(chalk.gray('  Base URL:'), config.xai?.baseURL || chalk.gray('Default'));
+
+  console.log(chalk.bold('\nOpenAI-Compatible:'));
+  console.log(chalk.gray('  Provider:'), config.openaiCompatible?.providerName || chalk.gray('ollama'));
+  console.log(chalk.gray('  Base URL:'), config.openaiCompatible?.baseURL || chalk.gray('http://localhost:11434/v1'));
+  console.log(chalk.gray('  API Key:'), config.openaiCompatible?.apiKey ? chalk.green(maskApiKey(config.openaiCompatible.apiKey)) : chalk.red('Not set'));
 
   console.log(chalk.bold('\nVector Indexing:'));
   console.log(chalk.gray('  Default Provider:'), config.vectorConfig?.defaultProvider || chalk.gray('openai'));

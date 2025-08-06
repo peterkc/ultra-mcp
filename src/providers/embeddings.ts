@@ -6,7 +6,7 @@ import { ConfigManager } from '../config/manager';
 import { logger } from '../utils/logger';
 
 export interface EmbeddingConfig {
-  provider: 'openai' | 'azure' | 'gemini';
+  provider: 'openai' | 'azure' | 'gemini' | 'openai-compatible';
   model?: string;
   apiKey?: string;
   baseURL?: string;
@@ -146,7 +146,7 @@ export async function getDefaultEmbeddingProvider(configManager: ConfigManager):
   const vectorConfig = config.vectorConfig;
   
   // Determine provider priority
-  let provider: 'openai' | 'azure' | 'gemini' = 'openai';
+  let provider: 'openai' | 'azure' | 'gemini' | 'openai-compatible' = 'openai';
   
   if (vectorConfig?.defaultProvider) {
     provider = vectorConfig.defaultProvider;

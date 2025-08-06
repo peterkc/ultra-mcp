@@ -48,10 +48,12 @@ export interface RequestData {
   maxOutputTokens?: number;
   reasoningEffort?: string;
   useSearchGrounding?: boolean;
+  providerName?: string; // For openai-compatible provider name
+  baseURL?: string;      // For openai-compatible custom base URL
 }
 
 export interface TrackingData {
-  provider: 'openai' | 'gemini' | 'azure' | 'grok';
+  provider: 'openai' | 'gemini' | 'azure' | 'grok' | 'openai-compatible';
   model: string;
   toolName?: string;
   requestData: RequestData;

@@ -5,7 +5,7 @@ const ApiKeySchema = z.string().min(1).optional();
 
 // Vector configuration schema
 export const VectorConfigSchema = z.object({
-  defaultProvider: z.enum(['openai', 'azure', 'gemini']).default('openai'),
+  defaultProvider: z.enum(['openai', 'azure', 'gemini', 'openai-compatible']).default('openai'),
   chunkSize: z.number().min(500).max(4000).default(1500),
   chunkOverlap: z.number().min(0).max(500).default(200),
   batchSize: z.number().min(1).max(50).default(10),
@@ -18,6 +18,7 @@ export const VectorConfigSchema = z.object({
     openai: z.string().default('text-embedding-3-small'),
     azure: z.string().default('text-embedding-3-small'),
     gemini: z.string().default('text-embedding-004'),
+    'openai-compatible': z.string().default('text-embedding-3-small'),
   }).optional(),
 });
 
@@ -40,6 +41,12 @@ export const ConfigSchema = z.object({
   xai: z.object({
     apiKey: ApiKeySchema,
     baseURL: z.string().url().optional(),
+  }).optional(),
+  openaiCompatible: z.object({
+    apiKey: ApiKeySchema,
+    baseURL: z.string().url(),
+    providerName: z.enum(['ollama', 'openrouter']).default('ollama'),
+    models: z.array(z.string()).optional(),
   }).optional(),
   vectorConfig: VectorConfigSchema.optional(),
 });
@@ -65,6 +72,12 @@ export const defaultConfig: Config = {
   xai: {
     apiKey: undefined,
     baseURL: undefined,
+  },
+  openaiCompatible: {
+    apiKey: undefined,
+    baseURL: 'http://localhost:11434/v1',
+    providerName: 'ollama' as const,
+    models: undefined,
   },
   vectorConfig: VectorConfigSchema.parse({}),
 };

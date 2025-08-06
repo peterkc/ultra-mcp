@@ -172,6 +172,29 @@ export class ConfigManager {
     return this.store.path;
   }
 
+  // Update configuration with partial data
+  async updateConfig(updates: Partial<Config>): Promise<void> {
+    await this.ensureInitialized();
+    if (!this.store) {
+      throw new Error('Configuration store not initialized');
+    }
+    
+    const currentConfig = await this.getConfig();
+    const newConfig = { ...currentConfig, ...updates };
+    
+    // Deep merge for nested objects
+    Object.keys(updates).forEach(key => {
+      if (updates[key as keyof Config] && typeof updates[key as keyof Config] === 'object' && !Array.isArray(updates[key as keyof Config])) {
+        newConfig[key as keyof Config] = { 
+          ...currentConfig[key as keyof Config], 
+          ...updates[key as keyof Config] 
+        } as any;
+      }
+    });
+    
+    this.store.store = newConfig;
+  }
+
   // Reset configuration to defaults
   async reset(): Promise<void> {
     await this.ensureInitialized();

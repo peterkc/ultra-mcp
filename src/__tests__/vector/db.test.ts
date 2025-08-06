@@ -15,12 +15,18 @@ describe('Vector Database', () => {
   it('should handle Float32Array buffer conversions', async () => {
     const { float32ArrayToBuffer, bufferToFloat32Array } = await import('../../vector/db');
     
-    const originalArray = new Float32Array([1.5, 2.7, 3.14]);
+    const originalArray = [1.5, 2.7, 3.14]; // Use regular array instead of Float32Array
     const buffer = float32ArrayToBuffer(originalArray);
     expect(buffer).toBeInstanceOf(Buffer);
     
     const restoredArray = bufferToFloat32Array(buffer);
     expect(restoredArray).toBeInstanceOf(Float32Array);
     expect(restoredArray.length).toBe(originalArray.length);
+    
+    // Float32 precision may cause slight differences, so check approximate equality
+    const restoredArrayValues = Array.from(restoredArray);
+    for (let i = 0; i < originalArray.length; i++) {
+      expect(restoredArrayValues[i]).toBeCloseTo(originalArray[i], 5);
+    }
   });
 });
