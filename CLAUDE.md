@@ -220,8 +220,8 @@ Ultra MCP uses the `conf` library to store configuration locally in your system'
 
 The usage tracking database is stored separately:
 
-- Unix (macOS/Linux): `~/.config/ultra-mcp/usage.db`
-- Windows: `%APPDATA%\ultra-mcp-nodejs\usage.db`
+- Unix (macOS/Linux): `~/.config/ultra-mcp/usage-v1.db`
+- Windows: `%APPDATA%\ultra-mcp-nodejs\usage-v1.db`
 
 ### Setting up API Keys
 

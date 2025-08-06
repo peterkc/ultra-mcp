@@ -91,8 +91,8 @@ describe('Workflow Tools - Zen MCP Integration', () => {
       expect(responseJson.total_models_consulted).toBe(3);
       
       // Check metadata structure
-      expect(result.metadata.toolName).toBe('consensus');
-      expect(result.metadata.modelsConsulted).toBe(3);
+      expect(result.metadata?.toolName).toBe('consensus');
+      expect(result.metadata?.modelsConsulted).toBe(3);
     });
 
     it('should handle consensus with files context', async () => {
@@ -150,7 +150,9 @@ describe('Workflow Tools - Zen MCP Integration', () => {
         stepNumber: 1,
         totalSteps: 5,
         scope: 'standard' as const,
-        provider: 'gemini' as const
+        provider: 'gemini' as const,
+        isRevision: false,
+        isBranching: false
       };
 
       const result = await handlers.handlePlanner(params);
@@ -166,10 +168,10 @@ describe('Workflow Tools - Zen MCP Integration', () => {
       expect(responseJson.currentStep.scope).toBe('standard');
       
       // Check metadata structure
-      expect(result.metadata.toolName).toBe('planner');
-      expect(result.metadata.stepNumber).toBe(1);
-      expect(result.metadata.totalSteps).toBe(5);
-      expect(result.metadata.scope).toBe('standard');
+      expect(result.metadata?.toolName).toBe('planner');
+      expect(result.metadata?.stepNumber).toBe(1);
+      expect(result.metadata?.totalSteps).toBe(5);
+      expect(result.metadata?.scope).toBe('standard');
     });
 
     it('should handle comprehensive scope planning', async () => {
@@ -179,7 +181,9 @@ describe('Workflow Tools - Zen MCP Integration', () => {
         totalSteps: 8,
         scope: 'comprehensive' as const,
         requirements: 'SAML, OAuth2, LDAP integration, multi-factor auth',
-        provider: 'azure' as const
+        provider: 'azure' as const,
+        isRevision: false,
+        isBranching: false
       };
 
       const result = await handlers.handlePlanner(params);
@@ -188,7 +192,7 @@ describe('Workflow Tools - Zen MCP Integration', () => {
       const responseJson = JSON.parse(result.content[0].text);
       expect(responseJson.currentStep.scope).toBe('comprehensive');
       expect(responseJson.currentStep.requirements).toBe('SAML, OAuth2, LDAP integration, multi-factor auth');
-      expect(result.metadata.scope).toBe('comprehensive');
+      expect(result.metadata?.scope).toBe('comprehensive');
     });
 
     it('should handle step revision', async () => {
@@ -199,7 +203,8 @@ describe('Workflow Tools - Zen MCP Integration', () => {
         scope: 'standard' as const,
         isRevision: true,
         revisingStep: 3,
-        provider: 'gemini' as const
+        provider: 'gemini' as const,
+        isBranching: false
       };
 
       const result = await handlers.handlePlanner(params);
@@ -219,7 +224,8 @@ describe('Workflow Tools - Zen MCP Integration', () => {
         isBranching: true,
         branchingFrom: 2,
         branchId: 'microservices-approach',
-        provider: 'openai' as const
+        provider: 'openai' as const,
+        isRevision: false
       };
 
       const result = await handlers.handlePlanner(params);
@@ -236,7 +242,10 @@ describe('Workflow Tools - Zen MCP Integration', () => {
         task: 'Invalid step number test',
         stepNumber: 0,
         totalSteps: 1,
-        scope: 'minimal' as const
+        scope: 'minimal' as const,
+        provider: 'gemini' as const,
+        isRevision: false,
+        isBranching: false
       };
 
       const result = await handlers.handlePlanner(params);
@@ -251,7 +260,10 @@ describe('Workflow Tools - Zen MCP Integration', () => {
         task: 'Validate authentication changes before commit',
         files: ['/src/auth.ts', '/src/middleware.ts', '/src/types.ts'],
         focus: 'all' as const,
-        provider: 'gemini' as const
+        provider: 'gemini' as const,
+        severity: 'medium' as const,
+        includeStaged: true,
+        includeUnstaged: false
       };
 
       const result = await handlers.handlePrecommit(params);
@@ -266,8 +278,8 @@ describe('Workflow Tools - Zen MCP Integration', () => {
       expect(responseJson.validation.focus).toBe('all');
       
       // Check metadata structure
-      expect(result.metadata.toolName).toBe('precommit');
-      expect(result.metadata.focus).toBe('all');
+      expect(result.metadata?.toolName).toBe('precommit');
+      expect(result.metadata?.focus).toBe('all');
     });
 
     it('should handle precommit with security focus', async () => {
@@ -276,7 +288,9 @@ describe('Workflow Tools - Zen MCP Integration', () => {
         files: ['/src/payment.ts', '/src/db.ts'],
         focus: 'security' as const,
         severity: 'high' as const,
-        provider: 'azure' as const
+        provider: 'azure' as const,
+        includeStaged: true,
+        includeUnstaged: false
       };
 
       const result = await handlers.handlePrecommit(params);
@@ -287,8 +301,8 @@ describe('Workflow Tools - Zen MCP Integration', () => {
       expect(responseJson.validation.focus).toBe('security');
       expect(responseJson.validation.severity).toBe('high');
       
-      expect(result.metadata.focus).toBe('security');
-      expect(result.metadata.severity).toBe('high');
+      expect(result.metadata?.focus).toBe('security');
+      expect(result.metadata?.severity).toBe('high');
     });
 
     it('should handle git comparison settings', async () => {
@@ -298,7 +312,8 @@ describe('Workflow Tools - Zen MCP Integration', () => {
         includeStaged: true,
         includeUnstaged: false,
         focus: 'all' as const,
-        provider: 'openai' as const
+        provider: 'openai' as const,
+        severity: 'medium' as const
       };
 
       const result = await handlers.handlePrecommit(params);
@@ -318,12 +333,14 @@ describe('Workflow Tools - Zen MCP Integration', () => {
           task: 'Test severity validation',
           focus: 'all' as const,
           severity: severity as any,
-          provider: 'gemini' as const
+          provider: 'gemini' as const,
+          includeStaged: true,
+          includeUnstaged: false
         };
 
         const result = await handlers.handlePrecommit(params);
         expect(result).toBeDefined();
-        expect(result.metadata.severity).toBe(severity);
+        expect(result.metadata?.severity).toBe(severity);
       }
     });
   });
@@ -335,7 +352,8 @@ describe('Workflow Tools - Zen MCP Integration', () => {
         files: ['/src/auth.ts', '/src/middleware.ts', '/src/crypto.ts'],
         focus: 'comprehensive' as const,
         threatLevel: 'high' as const,
-        provider: 'azure' as const
+        provider: 'azure' as const,
+        severity: 'all' as const
       };
 
       const result = await handlers.handleSecaudit(params);
@@ -351,9 +369,9 @@ describe('Workflow Tools - Zen MCP Integration', () => {
       expect(responseJson.audit.threat_level).toBe('high');
       
       // Check metadata structure
-      expect(result.metadata.toolName).toBe('secaudit');
-      expect(result.metadata.focus).toBe('comprehensive');
-      expect(result.metadata.threatLevel).toBe('high');
+      expect(result.metadata?.toolName).toBe('secaudit');
+      expect(result.metadata?.focus).toBe('comprehensive');
+      expect(result.metadata?.threatLevel).toBe('high');
     });
 
     it('should handle OWASP focused audit', async () => {
@@ -372,8 +390,8 @@ describe('Workflow Tools - Zen MCP Integration', () => {
       expect(responseJson.audit.focus).toBe('owasp');
       expect(responseJson.audit.threat_level).toBe('critical');
       
-      expect(result.metadata.focus).toBe('owasp');
-      expect(result.metadata.threatLevel).toBe('critical');
+      expect(result.metadata?.focus).toBe('owasp');
+      expect(result.metadata?.threatLevel).toBe('critical');
     });
 
     it('should handle compliance audit', async () => {
@@ -382,7 +400,8 @@ describe('Workflow Tools - Zen MCP Integration', () => {
         focus: 'compliance' as const,
         complianceRequirements: ['GDPR', 'SOC2', 'ISO27001'],
         threatLevel: 'medium' as const,
-        provider: 'gemini' as const
+        provider: 'gemini' as const,
+        severity: 'all' as const
       };
 
       const result = await handlers.handleSecaudit(params);
@@ -392,7 +411,7 @@ describe('Workflow Tools - Zen MCP Integration', () => {
       expect(responseJson.audit.focus).toBe('compliance');
       expect(responseJson.audit.compliance_requirements).toEqual(['GDPR', 'SOC2', 'ISO27001']);
       
-      expect(result.metadata.focus).toBe('compliance');
+      expect(result.metadata?.focus).toBe('compliance');
     });
 
     it('should validate threat levels', async () => {
@@ -403,12 +422,13 @@ describe('Workflow Tools - Zen MCP Integration', () => {
           task: 'Test threat level validation',
           focus: 'comprehensive' as const,
           threatLevel: threatLevel as any,
-          provider: 'gemini' as const
+          provider: 'gemini' as const,
+          severity: 'all' as const
         };
 
         const result = await handlers.handleSecaudit(params);
         expect(result).toBeDefined();
-        expect(result.metadata.threatLevel).toBe(threatLevel);
+        expect(result.metadata?.threatLevel).toBe(threatLevel);
       }
     });
   });
@@ -436,8 +456,8 @@ describe('Workflow Tools - Zen MCP Integration', () => {
       expect(responseJson.trace.target_description).toBe('Authentication flow from login to session creation');
       
       // Check metadata structure
-      expect(result.metadata.toolName).toBe('tracer');
-      expect(result.metadata.traceMode).toBe('precision');
+      expect(result.metadata?.toolName).toBe('tracer');
+      expect(result.metadata?.traceMode).toBe('precision');
     });
 
     it('should handle dependencies tracing mode', async () => {
@@ -456,7 +476,7 @@ describe('Workflow Tools - Zen MCP Integration', () => {
       expect(responseJson.trace.trace_mode).toBe('dependencies');
       expect(responseJson.trace.target_description).toBe('Map all incoming and outgoing dependencies for UserService');
       
-      expect(result.metadata.traceMode).toBe('dependencies');
+      expect(result.metadata?.traceMode).toBe('dependencies');
     });
 
     it('should handle ask mode for mode selection', async () => {
@@ -474,7 +494,7 @@ describe('Workflow Tools - Zen MCP Integration', () => {
       expect(responseJson.trace.trace_mode).toBe('ask');
       expect(responseJson.trace.target_description).toBe('Understanding PaymentProcessor class structure and behavior');
       
-      expect(result.metadata.traceMode).toBe('ask');
+      expect(result.metadata?.traceMode).toBe('ask');
     });
 
     it('should validate trace modes', async () => {
@@ -490,7 +510,7 @@ describe('Workflow Tools - Zen MCP Integration', () => {
 
         const result = await handlers.handleTracer(params);
         expect(result).toBeDefined();
-        expect(result.metadata.traceMode).toBe(traceMode);
+        expect(result.metadata?.traceMode).toBe(traceMode);
       }
     });
 
@@ -622,7 +642,8 @@ describe('Workflow Tools - Zen MCP Integration', () => {
       // Test tracer with minimal required parameters
       const validParams = {
         task: 'Test task',
-        traceMode: 'precision' as const
+        traceMode: 'precision' as const,
+        provider: 'gemini' as const
       };
 
       const result = await handlers.handleTracer(validParams);

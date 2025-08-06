@@ -34,7 +34,7 @@ export function setupDefaultMocks(context: MockContext): void {
     google: { apiKey: 'mock-google-key', baseURL: undefined },
     azure: {
       apiKey: 'mock-azure-key',
-      baseURL: 'https://mock.openai.azure.com/',
+      resourceName: 'mock-resource',
     },
     xai: { apiKey: 'mock-xai-key', baseURL: undefined },
   });

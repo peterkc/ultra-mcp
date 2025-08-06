@@ -551,7 +551,15 @@ export function createServer() {
     inputSchema: IndexVectorsSchema.shape,
   }, async (args) => {
     const { handleIndexVectors } = await import("./handlers/vector");
-    return await handleIndexVectors(args);
+    const result = await handleIndexVectors(args);
+    return {
+      content: [
+        {
+          type: "text",
+          text: result
+        }
+      ]
+    };
   });
 
   server.registerTool("search-vectors", {
@@ -560,7 +568,15 @@ export function createServer() {
     inputSchema: SearchVectorsSchema.shape,
   }, async (args) => {
     const { handleSearchVectors } = await import("./handlers/vector");
-    return await handleSearchVectors(args);
+    const result = await handleSearchVectors(args);
+    return {
+      content: [
+        {
+          type: "text",
+          text: result
+        }
+      ]
+    };
   });
 
   server.registerTool("clear-vectors", {
@@ -569,7 +585,15 @@ export function createServer() {
     inputSchema: ClearVectorsSchema.shape,
   }, async (args) => {
     const { handleClearVectors } = await import("./handlers/vector");
-    return await handleClearVectors(args);
+    const result = await handleClearVectors(args);
+    return {
+      content: [
+        {
+          type: "text",
+          text: result
+        }
+      ]
+    };
   });
 
   return server;

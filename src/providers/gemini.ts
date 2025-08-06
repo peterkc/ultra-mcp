@@ -104,8 +104,8 @@ export class GeminiProvider implements AIProvider {
         text: result.text,
         model: model,
         usage: result.usage ? {
-          promptTokens: result.usage.promptTokens || 0,
-          completionTokens: result.usage.completionTokens || 0,
+          inputTokens: result.usage.promptTokens || 0,
+          outputTokens: result.usage.completionTokens || 0,
           totalTokens: result.usage.totalTokens || 0,
         } : undefined,
         metadata: {
@@ -187,7 +187,7 @@ export class GeminiProvider implements AIProvider {
     }
 
     try {
-      const result = streamText(options);
+      const result = await streamText(options);
 
       for await (const chunk of result.textStream) {
         yield chunk;

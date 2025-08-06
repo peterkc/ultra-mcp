@@ -92,7 +92,7 @@ export class AzureOpenAIProvider implements AIProvider {
         // Track completion using onFinish callback
         await updateLLMCompletion({
           requestId,
-          responseData: { text: result.text.text },
+          responseData: { text: result.text },
           usage: result.usage,
           finishReason: result.finishReason,
           endTime: Date.now(),
@@ -114,14 +114,14 @@ export class AzureOpenAIProvider implements AIProvider {
       const result = await generateText(options);
 
       return {
-        text: result.text.text,
+        text: result.text,
         model: model,
         usage: result.usage ? {
-          inputTokens: result.usage.inputTokens || 0,
-          outputTokens: result.usage.outputTokens || 0,
+          promptTokens: result.usage.promptTokens || 0,
+          completionTokens: result.usage.completionTokens || 0,
           totalTokens: result.usage.totalTokens || 0,
         } : undefined,
-        metadata: result.experimental_providerMetadata,
+        metadata: result.providerMetadata,
       };
     } catch (error) {
       // Track error
@@ -184,7 +184,7 @@ export class AzureOpenAIProvider implements AIProvider {
         // Track completion using onFinish callback
         await updateLLMCompletion({
           requestId,
-          responseData: { text: result.text.text },
+          responseData: { text: result.text },
           usage: result.usage,
           finishReason: result.finishReason,
           endTime: Date.now(),
@@ -201,7 +201,7 @@ export class AzureOpenAIProvider implements AIProvider {
     }
 
     try {
-      const result = streamText(options);
+      const result = await streamText(options);
 
       for await (const chunk of result.textStream) {
         yield chunk;

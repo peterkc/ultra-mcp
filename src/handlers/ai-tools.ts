@@ -163,7 +163,7 @@ export class AIToolHandlers {
       content: [
         {
           type: "text",
-          text: response.text.text,
+          text: response.text,
         },
       ],
       metadata: {
@@ -206,7 +206,7 @@ export class AIToolHandlers {
       content: [
         {
           type: "text",
-          text: response.text.text,
+          text: response.text,
         },
       ],
       metadata: {
@@ -249,7 +249,7 @@ export class AIToolHandlers {
       content: [
         {
           type: "text",
-          text: response.text.text,
+          text: response.text,
         },
       ],
       metadata: {
@@ -334,7 +334,7 @@ export class AIToolHandlers {
       content: [
         {
           type: "text",
-          text: response.text.text,
+          text: response.text,
         },
       ],
       metadata: {
@@ -385,7 +385,7 @@ export class AIToolHandlers {
       content: [
         {
           type: "text",
-          text: response.text.text,
+          text: response.text,
         },
       ],
       metadata: {
@@ -434,7 +434,7 @@ export class AIToolHandlers {
       content: [
         {
           type: "text",
-          text: response.text.text,
+          text: response.text,
         },
       ],
       metadata: {
@@ -487,7 +487,7 @@ export class AIToolHandlers {
       content: [
         {
           type: "text",
-          text: response.text.text,
+          text: response.text,
         },
       ],
       metadata: {
@@ -540,7 +540,7 @@ export class AIToolHandlers {
       content: [
         {
           type: "text",
-          text: response.text.text,
+          text: response.text,
         },
       ],
       metadata: {
@@ -643,7 +643,7 @@ export class AIToolHandlers {
           model: modelConfig.model,
           provider: providerName,
           stance: modelConfig.stance,
-          analysis: response.text.text,
+          analysis: response.text,
           usage: response.usage,
         });
       } catch (error) {
@@ -802,7 +802,7 @@ ${params.requirements ? `\nREQUIREMENTS TO CONSIDER:\n${params.requirements}` : 
       const planningStep = {
         stepNumber: params.stepNumber,
         totalSteps: params.totalSteps,
-        stepContent: response.text.text,
+        stepContent: response.text,
         scope: params.scope,
         isRevision: params.isRevision || false,
         revisingStep: params.revisingStep,
@@ -949,13 +949,13 @@ Please provide a comprehensive pre-commit validation analysis with specific find
           include_unstaged: params.includeUnstaged,
           compare_to: params.compareTo,
         },
-        validation_report: response.text.text,
+        validation_report: response.text,
         provider_used: providerName,
         model_used: response.model,
       };
 
       // Parse validation report to extract key sections (simplified extraction)
-      const reportText = response.text.text.toLowerCase();
+      const reportText = response.text.toLowerCase();
       const hasCriticalIssues = reportText.includes("critical") || reportText.includes("blocks commit") || reportText.includes("must fix");
       const hasHighIssues = reportText.includes("high") || reportText.includes("should fix");
       const hasMediumIssues = reportText.includes("medium") || reportText.includes("consider fixing");
@@ -1117,13 +1117,13 @@ Minimum severity to report: ${params.severity}`;
         compliance_requirements: params.complianceRequirements || [],
         severity_filter: params.severity,
         files_audited: params.files || "comprehensive analysis",
-        audit_report: response.text.text,
+        audit_report: response.text,
         provider_used: providerName,
         model_used: response.model,
       };
 
       // Parse audit report to extract security findings (simplified extraction)
-      const reportText = response.text.text.toLowerCase();
+      const reportText = response.text.toLowerCase();
       const hasCriticalVulns = reportText.includes("critical") || reportText.includes("urgent") || reportText.includes("immediate risk");
       const hasHighVulns = reportText.includes("high") || reportText.includes("significant") || reportText.includes("major vulnerability");
       const hasMediumVulns = reportText.includes("medium") || reportText.includes("moderate") || reportText.includes("should be addressed");
@@ -1293,13 +1293,13 @@ Explain these options clearly and wait for the user to specify which mode to use
         trace_mode: params.traceMode,
         target_description: params.targetDescription,
         files_analyzed: params.files || "comprehensive codebase analysis",
-        trace_analysis: response.text.text,
+        trace_analysis: response.text,
         provider_used: providerName,
         model_used: response.model,
       };
 
       // Analyze response to determine trace completion status
-      const analysisText = response.text.text.toLowerCase();
+      const analysisText = response.text.toLowerCase();
       const isAskingForMode = params.traceMode === 'ask' || analysisText.includes("choose") || analysisText.includes("which mode") || analysisText.includes("precision or dependencies");
       const hasCodeReferences = analysisText.includes("line") || analysisText.includes("file") || analysisText.includes(".js") || analysisText.includes(".ts") || analysisText.includes(".py");
       const hasTraceFindings = analysisText.includes("trace") || analysisText.includes("calls") || analysisText.includes("dependencies") || analysisText.includes("flow");

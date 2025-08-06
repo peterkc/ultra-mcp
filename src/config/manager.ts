@@ -202,7 +202,7 @@ export class ConfigManager {
   // Get the database file path
   getDatabasePath(): string {
     const configDir = this.getConfigDir();
-    return join(configDir, 'usage.db');
+    return join(configDir, 'usage-v1.db');
   }
 
   // Get the configuration directory path

@@ -81,10 +81,10 @@ export class OpenAIProvider implements AIProvider {
         // Track completion using onFinish callback
         await updateLLMCompletion({
           requestId,
-          responseData: { text: result.text.text },
+          responseData: { text: result.text },
           usage: result.usage ? {
-            inputTokens: result.usage.inputTokens || 0,
-            outputTokens: result.usage.outputTokens || 0,
+            inputTokens: result.usage.promptTokens || 0,
+            outputTokens: result.usage.completionTokens || 0,
             totalTokens: result.usage.totalTokens || 0,
           } : undefined,
           finishReason: result.finishReason,
@@ -107,11 +107,11 @@ export class OpenAIProvider implements AIProvider {
       const result = await generateText(options);
 
       return {
-        text: result.text.text,
+        text: result.text,
         model: model,
         usage: result.usage ? {
-          inputTokens: result.usage.inputTokens || 0,
-          outputTokens: result.usage.outputTokens || 0,
+          inputTokens: result.usage.promptTokens || 0,
+          outputTokens: result.usage.completionTokens || 0,
           totalTokens: result.usage.totalTokens || 0,
         } : undefined,
         metadata: result.experimental_providerMetadata,
@@ -174,10 +174,10 @@ export class OpenAIProvider implements AIProvider {
         // Track completion using onFinish callback
         await updateLLMCompletion({
           requestId,
-          responseData: { text: result.text.text },
+          responseData: { text: result.text },
           usage: result.usage ? {
-            inputTokens: result.usage.inputTokens || 0,
-            outputTokens: result.usage.outputTokens || 0,
+            inputTokens: result.usage.promptTokens || 0,
+            outputTokens: result.usage.completionTokens || 0,
             totalTokens: result.usage.totalTokens || 0,
           } : undefined,
           finishReason: result.finishReason,
@@ -195,7 +195,7 @@ export class OpenAIProvider implements AIProvider {
     }
 
     try {
-      const result = streamText(options);
+      const result = await streamText(options);
 
       for await (const chunk of result.textStream) {
         yield chunk;

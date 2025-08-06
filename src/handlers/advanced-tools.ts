@@ -256,6 +256,7 @@ Now finalize your review by:
         model: requestedModel,
         temperature: 0.3,
         systemPrompt: 'Provide detailed, actionable code review feedback.',
+        useSearchGrounding: false,
       });
 
 
@@ -350,6 +351,7 @@ Deepen your investigation into:
         prompt,
         model: requestedModel,
         temperature: 0.4,
+        useSearchGrounding: false,
       });
 
       // TODO: Implement tracking
@@ -475,6 +477,7 @@ Provide:
         model: requestedModel,
         temperature: 0.2,
         systemPrompt: 'Focus on systematic debugging and root cause analysis.',
+        useSearchGrounding: false,
       });
 
       // TODO: Implement tracking
@@ -611,6 +614,7 @@ Develop the next aspect of your plan:
           : scope === 'minimal'
           ? 'Keep planning concise and focused on essential elements only.'
           : 'Balance detail with clarity in your planning.',
+        useSearchGrounding: false,
       });
 
       // TODO: Implement tracking
@@ -715,6 +719,7 @@ Finalize by:
         model: requestedModel,
         temperature: 0.3,
         systemPrompt: `Generate high-quality ${format} documentation that is clear, accurate, and helpful.`,
+        useSearchGrounding: false,
       });
 
       // TODO: Implement tracking
