@@ -37,46 +37,79 @@ export class OpenAICompatibleProvider implements AIProvider {
   }
 
   getDefaultModel(): string {
-    return "llama3.1"; // Default to popular Ollama model
+    return "gpt-oss-20b"; // Default to popular open source model
   }
 
   listModels(): string[] {
-    // Default model lists - can be overridden by configuration
+    // Latest Ollama models - top models for 2025
     const ollamaModels = [
+      // DeepSeek R1 series (latest reasoning models)
+      "deepseek-r1:1.5b",
+      "deepseek-r1:7b", 
+      "deepseek-r1:8b",
+      "deepseek-r1:14b",
+      "deepseek-r1:32b",
+      // Latest Llama models
+      "llama3.2:1b",
+      "llama3.2:3b", 
       "llama3.1:8b",
-      "llama3.1:70b", 
-      "llama3.2:3b",
+      "llama3.1:70b",
+      // Qwen series (including QwQ reasoning model)
+      "qwen2.5:7b",
+      "qwen2.5:14b",
+      "qwen2.5:32b",
+      "qwq:32b",
+      // Mistral series
       "mistral:7b",
       "mistral-nemo:12b",
+      "mistral-small:22b",
+      // Specialized models
+      "deepseek-coder:6.7b",
       "codellama:7b",
       "codellama:13b",
-      "deepseek-r1:8b",
-      "deepseek-coder:6.7b",
+      "llava:7b",
+      "llava:13b",
+      // Gemma 2 series
       "gemma2:9b",
       "gemma2:27b",
     ];
 
+    // Latest OpenRouter models - simplified names for 2025
     const openrouterModels = [
-      // OpenAI
-      "openai/gpt-4o",
-      "openai/gpt-4o-mini",
-      "openai/o3-mini",
-      // Anthropic
-      "anthropic/claude-3-5-sonnet-20241022",
-      "anthropic/claude-3-5-haiku-20241022",
-      // Meta
-      "meta-llama/llama-3.1-405b-instruct",
-      "meta-llama/llama-3.1-70b-instruct",
-      "meta-llama/llama-3.1-8b-instruct",
-      // Google
-      "google/gemini-pro-1.5",
-      "google/gemini-flash-1.5",
-      // DeepSeek
-      "deepseek/deepseek-r1",
-      "deepseek/deepseek-chat",
-      // Mistral
-      "mistralai/mistral-large",
-      "mistralai/mixtral-8x7b-instruct",
+      // Latest open source models
+      "gpt-oss-20b",
+      "gpt-oss-120b", 
+      "llama-4-400b",
+      "llama-4-109b",
+      // DeepSeek R1 series (latest reasoning models)
+      "deepseek-r1-70b",
+      "deepseek-r1-32b", 
+      "deepseek-r1-14b",
+      "deepseek-r1-7b",
+      "deepseek-r1-1.5b",
+      "deepseek-chat",
+      // Latest proprietary models
+      "gpt-4o",
+      "gpt-4o-mini",
+      "o3-mini",
+      "claude-3.5-sonnet",
+      "claude-3.5-haiku",
+      // Meta Llama series
+      "llama-3.1-405b",
+      "llama-3.1-70b",
+      "llama-3.1-8b",
+      // Google models
+      "gemini-2.0-flash",
+      "gemini-1.5-pro",
+      "gemini-1.5-flash",
+      // Mistral models
+      "mistral-small-24b",
+      "mistral-large",
+      "mixtral-8x7b",
+      // Qwen models
+      "qwen-2.5-coder-32b",
+      "qwen-2.5-72b",
+      "qwq-32b",
     ];
 
     // Try to get configuration to determine provider
