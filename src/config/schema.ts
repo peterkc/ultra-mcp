@@ -47,6 +47,7 @@ export const ConfigSchema = z.object({
     baseURL: z.string().url(),
     providerName: z.enum(['ollama', 'openrouter']).default('ollama'),
     models: z.array(z.string()).optional(),
+    preferredModel: z.string().optional(),
   }).optional(),
   vectorConfig: VectorConfigSchema.optional(),
 });
@@ -78,6 +79,7 @@ export const defaultConfig: Config = {
     baseURL: 'http://localhost:11434/v1',
     providerName: 'ollama' as const,
     models: undefined,
+    preferredModel: undefined,
   },
   vectorConfig: VectorConfigSchema.parse({}),
 };

@@ -12,6 +12,99 @@ export class OpenAICompatibleProvider implements AIProvider {
     this.configManager = configManager;
   }
 
+  // Helper function to get models filtered by provider type
+  static getModelsByProvider(providerType: 'ollama' | 'openrouter'): string[] {
+    const ollamaModels = [
+      // DeepSeek R1 series (latest reasoning models)
+      "deepseek-r1:1.5b",
+      "deepseek-r1:7b", 
+      "deepseek-r1:8b",
+      "deepseek-r1:14b",
+      "deepseek-r1:32b",
+      // Latest Llama models
+      "llama3.2:1b",
+      "llama3.2:3b", 
+      "llama3.1:8b",
+      "llama3.1:70b",
+      // Qwen series (including QwQ reasoning model)
+      "qwen2.5:7b",
+      "qwen2.5:14b",
+      "qwen2.5:32b",
+      "qwq:32b",
+      // Mistral series
+      "mistral:7b",
+      "mistral-nemo:12b",
+      "mistral-small:22b",
+      // Specialized models
+      "deepseek-coder:6.7b",
+      "codellama:7b",
+      "codellama:13b",
+      "llava:7b",
+      "llava:13b",
+      // Gemma 2 series
+      "gemma2:9b",
+      "gemma2:27b",
+    ];
+
+    const openrouterModels = [
+      // Latest open source models
+      "gpt-oss-20b",
+      "gpt-oss-120b", 
+      "llama-4-400b",
+      "llama-4-109b",
+      // DeepSeek R1 series (latest reasoning models)
+      "deepseek-r1-70b",
+      "deepseek-r1-32b", 
+      "deepseek-r1-14b",
+      "deepseek-r1-7b",
+      "deepseek-r1-1.5b",
+      "deepseek-chat",
+      // Latest proprietary models
+      "gpt-4o",
+      "gpt-4o-mini",
+      "o3-mini",
+      "claude-3.5-sonnet",
+      "claude-3.5-haiku",
+      // Meta Llama series
+      "llama-3.1-405b",
+      "llama-3.1-70b",
+      "llama-3.1-8b",
+      // Google models
+      "gemini-2.0-flash",
+      "gemini-1.5-pro",
+      "gemini-1.5-flash",
+      // Mistral models
+      "mistral-small-24b",
+      "mistral-large",
+      "mixtral-8x7b",
+      // Qwen models
+      "qwen-2.5-coder-32b",
+      "qwen-2.5-72b",
+      "qwq-32b",
+    ];
+
+    return providerType === 'ollama' ? ollamaModels : openrouterModels;
+  }
+
+  // Helper function to get popular models by category and provider
+  static getPopularModelsByCategory(providerType: 'ollama' | 'openrouter'): { [category: string]: string[] } {
+    if (providerType === 'ollama') {
+      return {
+        "Reasoning Models": ["deepseek-r1:7b", "deepseek-r1:14b", "qwq:32b"],
+        "Coding Models": ["deepseek-coder:6.7b", "codellama:7b", "codellama:13b"],
+        "General Purpose": ["llama3.1:8b", "llama3.2:3b", "mistral:7b", "gemma2:9b"],
+        "Multimodal": ["llava:7b", "llava:13b"],
+      };
+    } else {
+      return {
+        "Latest Open Source": ["gpt-oss-20b", "gpt-oss-120b", "llama-4-400b"],
+        "Reasoning Models": ["deepseek-r1-70b", "deepseek-r1-32b", "o3-mini"],
+        "Proprietary Models": ["gpt-4o", "claude-3.5-sonnet", "gemini-2.0-flash"],
+        "Coding Models": ["qwen-2.5-coder-32b", "deepseek-chat"],
+      };
+    }
+  }
+
   private async getCredentials(): Promise<{ 
     apiKey: string; 
     baseURL: string; 
