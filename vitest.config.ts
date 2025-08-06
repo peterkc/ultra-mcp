@@ -16,6 +16,8 @@ export default defineConfig({
       ],
     },
     setupFiles: ['./src/__tests__/setup.ts'],
+    // Enable proper mock hoisting
+    pool: 'forks',
   },
   resolve: {
     alias: {

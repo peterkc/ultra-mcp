@@ -20,6 +20,12 @@ export function formatNumber(num: number): string {
 
 export function formatDate(date: string | Date): string {
   const d = typeof date === 'string' ? new Date(date) : date;
+  
+  // Check if the date is invalid
+  if (isNaN(d.getTime())) {
+    return 'Invalid Date';
+  }
+  
   return new Intl.DateTimeFormat('en-US', {
     month: 'short',
     day: 'numeric',
