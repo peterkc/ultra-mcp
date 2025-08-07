@@ -1,16 +1,14 @@
-import { Hono } from 'hono';
-import { cors } from 'hono/cors';
-import { logger } from 'hono/logger';
-import { trpcServer } from '@hono/trpc-server';
+import express from 'express';
+import cors from 'cors';
+import morgan from 'morgan';
+import * as trpcExpress from '@trpc/server/adapters/express';
 import { appRouter } from './trpc/router';
 import { createContext } from './trpc/context';
-import { serve } from '@hono/node-server';
-import { serveStatic } from '@hono/node-server/serve-static';
 import path from 'path';
 import { createServer } from 'http';
 import { existsSync, readFileSync } from 'fs';
 
-const app = new Hono();
+const app = express();
 
 // Helper function to check if a port is available
 async function isPortAvailable(port: number): Promise<boolean> {
@@ -34,47 +32,53 @@ async function findAvailablePort(startPort: number): Promise<number> {
 }
 
 // Middleware
-app.use('*', logger());
-app.use('/api/*', cors({
+app.use(morgan('dev'));
+app.use(express.json());
+
+// CORS for API routes
+app.use('/api', cors({
   origin: ['http://localhost:5173', 'http://localhost:3000', 'http://localhost:3001'],
   credentials: true,
 }));
 
+// Health check
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
 // tRPC endpoint
 app.use(
-  '/api/trpc/*',
-  trpcServer({
+  '/api/trpc',
+  trpcExpress.createExpressMiddleware({
     router: appRouter,
     createContext,
   })
 );
 
-// Health check
-app.get('/api/health', (c) => {
-  return c.json({ status: 'ok', timestamp: new Date().toISOString() });
-});
-
 // Serve static files for the dashboard
 const distWebPath = path.join(__dirname, '..', 'dist-web');
 
-// Create a new Hono instance for the web server
-const webApp = new Hono();
-
 if (existsSync(distWebPath)) {
-  // Serve static assets from the root of the dist-web directory
-  webApp.use('/*', serveStatic({ root: distWebPath }));
+  // Serve static assets from dist-web/assets at /assets path
+  const assetsPath = path.join(distWebPath, 'assets');
+  if (existsSync(assetsPath)) {
+    app.use('/assets', express.static(assetsPath));
+  }
 
-  // SPA Fallback: Serve index.html for any other non-API route
-  webApp.get('*', (c) => {
+  // SPA Fallback: Serve index.html for any route that's not /api or /assets
+  app.get('*', (req, res) => {
+    // Don't serve index.html for API routes
+    if (req.path.startsWith('/api')) {
+      return res.status(404).send('Not Found');
+    }
+    
     const indexPath = path.join(distWebPath, 'index.html');
     if (existsSync(indexPath)) {
-      return c.html(readFileSync(indexPath, 'utf-8'));
+      res.sendFile(indexPath);
+    } else {
+      res.status(404).send('Dashboard not found. Please run `npm run build:dashboard`.');
     }
-    return c.text('Dashboard not found. Please run `npm run build:dashboard`.', 404);
   });
-
-  // Mount the web server as middleware
-  app.route('/', webApp);
 }
 
 export async function startDashboardServer(port: number = 3000) {
@@ -87,9 +91,8 @@ export async function startDashboardServer(port: number = 3000) {
     
     console.log(`🚀 Dashboard server starting on http://localhost:${availablePort}`);
     
-    serve({
-      fetch: app.fetch,
-      port: availablePort,
+    const server = app.listen(availablePort, () => {
+      console.log(`✅ Dashboard server running on http://localhost:${availablePort}`);
     });
     
     return availablePort;
