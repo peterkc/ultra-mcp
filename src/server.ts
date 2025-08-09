@@ -1,6 +1,6 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import { AdvancedToolsHandler, CodeReviewSchema, CodeAnalysisSchema, DebugSchema, PlanSchema, DocsSchema } from './handlers/advanced-tools';
+import { CodeReviewSchema, CodeAnalysisSchema, DebugSchema, PlanSchema, DocsSchema } from './handlers/advanced-tools';
 
 // Import Zod schemas from ai-tools
 const DeepReasoningSchema = z.object({

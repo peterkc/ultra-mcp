@@ -5,7 +5,7 @@ import { createHash } from 'crypto';
 import fg from 'fast-glob';
 import ignore from 'ignore';
 import { RecursiveCharacterTextSplitter } from '@langchain/textsplitters';
-import { getVectorDB, float32ArrayToBuffer } from './db';
+import { getVectorDB } from './db';
 import { EmbeddingProvider } from '../providers/embeddings';
 import { logger } from '../utils/logger';
 import { VectorConfig } from '../config/schema';
@@ -29,7 +29,7 @@ export async function indexProject(options: IndexingOptions): Promise<IndexingRe
   const { projectPath, provider, config, force = false, onProgress } = options;
   
   onProgress?.('Initializing vector database...');
-  const { db, client } = await getVectorDB(projectPath);
+  const { client } = await getVectorDB(projectPath);
   
   // Update .gitignore if needed
   await updateGitignore(projectPath);

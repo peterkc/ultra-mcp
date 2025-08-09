@@ -24,7 +24,7 @@ export async function searchVectors(options: SearchOptions): Promise<SearchResul
   const queryEmbedding = await provider.getEmbedding(query);
   
   // Get database
-  const { db, client } = await getVectorDB(projectPath);
+  const { client } = await getVectorDB(projectPath);
   
   try {
     // Try to use native vector search if available

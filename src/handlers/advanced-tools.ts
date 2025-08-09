@@ -6,14 +6,6 @@ import { ConfigManager } from '../config/manager';
 // import { trackUsage } from '../db/tracking'; // TODO: Implement tracking
 import { logger } from '../utils/logger';
 
-// Common workflow types
-interface WorkflowStep {
-  stepNumber: number;
-  totalSteps: number;
-  findings: string;
-  nextStepRequired: boolean;
-  confidence?: 'exploring' | 'low' | 'medium' | 'high' | 'very_high' | 'almost_certain' | 'certain';
-}
 
 // Handler response type - must extend CallToolResult
 interface HandlerResponse extends CallToolResult {
@@ -165,7 +157,7 @@ export class AdvancedToolsHandler {
     const params = CodeReviewSchema.parse(args);
     const { provider: requestedProvider, model: requestedModel, stepNumber, totalSteps, nextStepRequired, confidence, findings, files, focus, task, filesChecked, issuesFound } = params;
     
-    const config = await this.configManager.getConfig();
+    const _config = await this.configManager.getConfig();
     const providerName = requestedProvider || await this.providerManager.getPreferredProvider();
     const provider = await this.providerManager.getProvider(providerName);
     
@@ -294,7 +286,7 @@ Now finalize your review by:
     const params = CodeAnalysisSchema.parse(args);
     const { provider: requestedProvider, model: requestedModel, stepNumber, totalSteps, nextStepRequired, confidence, findings, files, focus, task } = params;
     
-    const config = await this.configManager.getConfig();
+    const _config = await this.configManager.getConfig();
     const providerName = requestedProvider || await this.providerManager.getPreferredProvider();
     const provider = await this.providerManager.getProvider(providerName);
     
@@ -389,7 +381,7 @@ Deepen your investigation into:
     const params = DebugSchema.parse(args);
     const { provider: requestedProvider, model: requestedModel, stepNumber, totalSteps, nextStepRequired, confidence, findings, issue, files, symptoms, hypothesis } = params;
     
-    const config = await this.configManager.getConfig();
+    const _config = await this.configManager.getConfig();
     const providerName = requestedProvider || await this.providerManager.getPreferredProvider();
     const provider = await this.providerManager.getProvider(providerName);
     
@@ -516,7 +508,7 @@ Provide:
     const params = PlanSchema.parse(args);
     const { provider: requestedProvider, model: requestedModel, stepNumber, totalSteps, nextStepRequired, task, requirements, scope, currentStep, isRevision, revisingStep, isBranching, branchingFrom, branchId } = params;
     
-    const config = await this.configManager.getConfig();
+    const _config = await this.configManager.getConfig();
     const providerName = requestedProvider || await this.providerManager.getPreferredProvider();
     const provider = await this.providerManager.getProvider(providerName);
     
@@ -654,7 +646,7 @@ Develop the next aspect of your plan:
     const params = DocsSchema.parse(args);
     const { provider: requestedProvider, model: requestedModel, stepNumber, totalSteps, nextStepRequired, task, files, format, findings, includeExamples, includeTypes } = params;
     
-    const config = await this.configManager.getConfig();
+    const _config = await this.configManager.getConfig();
     const providerName = requestedProvider || await this.providerManager.getPreferredProvider();
     const provider = await this.providerManager.getProvider(providerName);
     
